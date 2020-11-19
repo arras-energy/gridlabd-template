@@ -1,3 +1,8 @@
+## QUESTIONS
+1. Where should this md be located? US/CA/SLAC/docs?
+2. Where should ica-analysis.py and ica-analysis.glm be located? US/CA/SLAC/? Create ICA folder?
+3. Where should the command be executed from?
+
 # ICA Analysis
 ## ICA Overview
 
