@@ -1,0 +1,3 @@
+//#input "ica_config.csv" -f config -t 
+#include "ica_config.glm"
+module ica_analysis;
