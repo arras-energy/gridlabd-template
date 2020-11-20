@@ -150,4 +150,10 @@ Includes the default thresholds for all tracked objects and properties in ICA. U
 |                  | nominal_voltage             | Deviation               |
 | meter            | nominal_voltage             | Deviation               |
 
+ica-config.csv also includes 2 user options: (1) input_option, and (2) violation_option:
+
+1. input_option: Can be set to 1 or 2. If 1, the csv file is automatically read in through a csv converter. If 2, the csv file is read in through the python script, allowing for greater flexibility in the format of the csv file.
+
+2. violation_option: Can be set to 1, 2, or 3. If 1, the script records the first violation of each object within the violation dataframe. The entire dataframe, with all objects (violated or not) is saved to a csv. If 2, the script records the first violation of each object in a new dataframe, which only tracks the object, the property violated, the value of the violation, and the time. If 3, the script behaves the same as Option 2, except ALL violations are recorded, rather than just the first.
+
 ## Next Directions
