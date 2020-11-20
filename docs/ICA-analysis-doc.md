@@ -16,7 +16,7 @@ The 4 files needed to run an ICA analysis are summarized as follows:
 | ica-config.csv   | slacgismo/gridlabd-models   | Contains default values for setting violation threshold on network objects. Modifiable by user  |
 | model.glm        | slacgismo/gridlabd-models   | Generic network model                                                                           |
 
-The analysis should be run from ??? using the following command:
+The analysis should be run from `slacgismo/gridlabd-models` using the following command:
 ```
 host% gridlabd template get ica-analysis
 host% gridlabd ica-analysis.glm model.glm
