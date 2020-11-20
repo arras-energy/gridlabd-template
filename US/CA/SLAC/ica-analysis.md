@@ -18,15 +18,45 @@ The 4 files needed to run an ICA analysis are summarized as follows:
 | ica-config.csv   | slacgismo/gridlabd-models   | Contains default values for setting violation threshold on network objects. Modifiable by user  |
 | model.glm        | slacgismo/gridlabd-models   | Generic network model                                                                           |
 
-The analysis should be run from ??? using the following command:
+The analysis should be run from slacgismo/gridlabd-models using the following command:
 ```
 host% gridlabd template get ica-analysis
 host% gridlabd ica-analysis.glm model.glm
 ```
 ### ica-analysis.py
+#### check_phases
+
+Accounts for the phases and configuration aod a meter to determine the voltage properties that should be checked for a given meter.
+
+Args: meter
+
+Returns: list of commit properties to check for that meter
+
+#### get_commit_val
+Accounts for complex number formats and variations in string formatting to return a standardized float value for a given commit property and object
+
+Args: object, object class, commit property
+
+Returns: real-time value (float) for of the commit property for the object
+
 #### on_init
+Sets thresholds for all tracked properties for all tracked objects included in ica-config.csv. Creates a dataframe with properties to check on each commit and their associated thresholds. Sets thresholds by retrieving the library value of each property, and adjusting it according to user inputs in ica-config.csv. For example, if the library value is 1000A, and the user input a 90% threshold, the max threshold would be set to 900A. 
+
+Args: timestep
+
+Returns: True
 
 #### on_commit
+Checks real-time values for all tracked properties for all tracked objects included in ica-config.csv. If the min or max threshold is exceeded, it records the object, violated property, value of property, and time of violation. Writes the violation log to a csv. The contents of the csv is determined by the user in ica-config.csv.
+
+Args: timestep
+
+Returns: True
+
 ### ica-analysis.glm
+Modifies the network model to read in the ica-config.csv and to run the ica-analysis.py script. 
+
 ### ica-config.csv
+Populated with default thresholds for all tracked objects and properties in ICA. User can overwrite default values. 
+
 ## Next Directions
