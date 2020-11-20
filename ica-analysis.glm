@@ -1,0 +1,4 @@
+//#input "ica-config.csv" -f config -t 
+#print "running ica-analysis"
+#include "template/US/CA/SLAC/ica-config.glm" //temporary fix until converter fixed
+module ica-analysis;
