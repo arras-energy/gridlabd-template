@@ -14,7 +14,7 @@ The 4 files needed to run an ICA analysis are summarized as follows:
 |       Files      |           Location          |                                             Contents                                            |
 | ---------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | ica-analysis.py  | slacgismo/gridlabd-template | Applies ICA process to network model, checking for constraint violations at every time step     |
-| ica-analysis.glm | slacgismo/gridlabd-template | Modifies network model import ica_analysis.py and ica_analysis.csv                              |
+| ica-analysis.glm | slacgismo/gridlabd-template | Modifies network model by importing ica_analysis.py and ica_analysis.csv                        |
 | ica-config.csv   | slacgismo/gridlabd-models   | Contains default values for setting violation threshold on network objects. Modifiable by user  |
 | model.glm        | slacgismo/gridlabd-models   | Generic network model                                                                           |
 
@@ -24,11 +24,11 @@ host% gridlabd template get ica-analysis
 host% gridlabd ica-analysis.glm model.glm
 ```
 ### ica-analysis.py
-This script runs an ICA analysis on the given network model. It sets minimum and maximum thresholds for all the objects and their tracked properties. It then checks the real-time values of those properties on each iteration of the power flow, recording any violations in a dataframe that is written to a csv upon termination of the simulation. A description of each of its functions is included below. 
+This script runs an ICA analysis on the given network model. It sets minimum and maximum thresholds for all the objects and their tracked properties. It then checks the real-time values of those properties on each iteration of the power flow simulation, recording any violations in a dataframe that is written to a csv upon termination of the simulation. A description of each of its functions is included below. 
 
 #### def check_phases(obj):
 
-Accounts for the phases and configuration aod a meter to determine the voltage properties that should be checked for a given meter.
+Determines the voltage properties that should be checked for the given meter by considering its phases and configuration.
 ```
 Args: meter
 
@@ -40,7 +40,7 @@ Accounts for complex number formats and variations in string formatting to retur
 ```
 Args: object, object class, commit property
 
-Returns: real-time value (float) for of the commit property for the object
+Returns: real-time value (float) of the object's commit property 
 ```
 
 #### def on_init(t):
@@ -152,9 +152,9 @@ Includes information to set default thresholds for all tracked objects and prope
 
 `ica-config.csv` also includes 2 user options: (1) `input_option`, and (2) `violation_option`:
 
-1. `input_option`: Can be set to 1 or 2. If 1, the csv file is automatically read in through a csv converter. If 2, the csv file is read in directly through the python script, allowing for greater flexibility in the format of the csv file.
+1. `input_option`: Can be set to 1 or 2. If 1, `ica-config.csv` is automatically read in through a csv converter. If 2, `ica-config.csv` is read in directly through the python script, allowing for greater flexibility in the format of the csv file.
 
-2. `violation_option`: Can be set to 1, 2, or 3. If 1, the script records the first violation of each object within the violation dataframe. The entire dataframe, with all objects (violated or not) is saved to a csv. If 2, the script records the first violation of each object in a *new* dataframe. The dataframe saved to a csv only includes objects that incurred violations. If 3, the script behaves the same as 2, except *all* violations are recorded, rather than just the first.
+2. `violation_option`: Can be set to 1, 2, or 3. If 1, the script records the first violation of each object within the violation dataframe. The entire dataframe, with all objects (violated or not) is saved to a csv. If 2, the script records the first violation of each object in a *new* dataframe. This dataframe is saved to a csv, and only includes objects that incurred violations. If 3, the script behaves the same as 2, except *all* violations are recorded, rather than just the first.
 
 ## Next Directions
 
