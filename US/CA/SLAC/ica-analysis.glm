@@ -1,5 +1,0 @@
-//#input "ica-config.csv" -f config -t 
-#print "running ica-analysis glm"
-#include "template/US/CA/SLAC/ica-config.glm" //temporary fix until converter fixed
-// Is there a problem with the hyphen??
-module ica-analysis;
