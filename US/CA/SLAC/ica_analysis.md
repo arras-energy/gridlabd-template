@@ -21,7 +21,7 @@ The 4 files needed to run an ICA analysis are summarized as follows:
 The analysis should be run from `slacgismo/gridlabd-models using` the following command:
 ```
 host% gridlabd template get ica-analysis
-host% gridlabd ica-analysis.glm model.glm
+host% gridlabd /usr/local/share/gridlabd/template/US/CA/SLAC/ica_analysis.glm model.glm
 ```
 ### ica-analysis.py
 This script runs an ICA analysis on the given network model. It sets minimum and maximum thresholds for all the objects and their tracked properties. It then checks the real-time values of those properties on each iteration of the power flow simulation, recording any violations in a dataframe that is written to a csv upon termination of the simulation. A description of each of its functions is included below. 
