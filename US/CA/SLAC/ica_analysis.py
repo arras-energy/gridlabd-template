@@ -166,6 +166,9 @@ def on_init(t):
                 lib_val = float(non_decimal.sub('',lib_val))
                 
                 # Then, use the user input to set the library value to a threshold
+                
+                print(obj_class + '.' + init_prop)
+                print(type(obj_class + '.' + init_prop))
                 user_input = gridlabd.get_global(obj_class + '.' + init_prop)
                 thresh_min = 0.0
         
