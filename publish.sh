@@ -7,10 +7,6 @@ for org in $ORGS; do
 	INDEX=$(grep -v '^#' .index)
 	for zip in $INDEX; do
 		base=${zip/.zip/}
-		if [ -f $zip ]; then
-			(cd $base ; zip -f ../$zip *.*)
-		else
-			(cd $base ; zip ../$zip *.*)
-		fi
+		(cd $base ; zip ../$zip *.*)
 	done
 done
