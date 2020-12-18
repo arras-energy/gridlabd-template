@@ -1,6 +1,6 @@
 # GridLAB-D Analysis Templates
 
-This repository contains the HiPAS GridLAB-D analysis templates.  Templates are published by organizations, which are specified by country and region.  Publishes organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organizations `.index` file.  Templates are contained in folders, the contents of which are published in `.zip` folders.
+This repository contains the HiPAS GridLAB-D analysis templates.  Templates are published by organizations, which are specified by country and region.  Published organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organization's `.index` file.  Templates are contained in folders, the contents of which are published in `.zip` folders.
 
 ## Example
 
@@ -8,7 +8,7 @@ The organization `US/CA/SLAC` is listed in `.orgs` and publishes the template fo
 
 # Publishing Templates
 
-When a change is made to a template or a new template is created, you must run the `publish.sh` script to update the templates from the indexes.
+When a change is made to a template or a new template is created, the `publish.sh` script updates the templates from the indexes.
 
 ## Example
 
