@@ -8,9 +8,9 @@ for org in $ORGS; do
 	for zip in $INDEX; do
 		base=${zip/.zip/}
 		if [ -f $zip ]; then
-			zip -f $zip $base/*.*
+			(cd $base ; zip -f ../$zip *.*)
 		else
-			zip $zip $base/*.*
+			(cd $base ; zip ../$zip *.*)
 		fi
 	done
 done
