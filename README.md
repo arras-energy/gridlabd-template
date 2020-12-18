@@ -27,7 +27,7 @@ The following exmaple illustrates how the ICA template is updated when a file ch
 
 ~~~
 bash$ touch US/CA/SLAC/ica_analysis/README.md
-bash$ ./publish.sh
+bash$ make
 freshening: ica_analysis/README.md (deflated 76%)
 ~~~
 

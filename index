@@ -1,0 +1,6 @@
+#!/bin/bash
+for F in $*; do
+	for G in $(cat $F); do
+		echo ${F/.index/}$G
+	done
+done
