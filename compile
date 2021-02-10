@@ -5,13 +5,13 @@
 #
 for ORG in $(grep -v "^#" .orgs); do
 	for INDEX in $(find $ORG -name .index -print); do
-		ROOT=${INDEX%.*}
+		ROOT=${INDEX%/*}
 		for TEMPLATE in $(grep -v "^#" $INDEX); do
 			if [ -f "$ROOT/$TEMPLATE.zip" ]; then
-				echo -n "Updating $ORG/$TEMPLATE..."
+				echo -n "Updating $ROOT/$TEMPLATE.zip..."
 				zip -u -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*
 			else
-				echo -n "Creating $ORG/$TEMPLATE..."
+				echo -n "Creating $ROOT/$TEMPLATE.zip..."
 				zip -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*
 			fi
 			echo "done"
