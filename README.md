@@ -15,20 +15,16 @@ When a change is made to a template or a new template is created, the `publish.s
 The following example illustrates how the ICA template was first published
 
 ~~~
-bash$ ./publish.sh
-Creating ica_analysis.zip from ica_analysis...
-  adding: ica_analysis/README.md (deflated 76%)
-  adding: ica_analysis/ica_analysis.glm (deflated 25%)
-  adding: ica_analysis/ica_analysis.py (deflated 72%)
-  adding: ica_analysis/ica_config.glm (deflated 66%)
+bash$ ./compile
+Creating US/CA/SLAC/ica_analysis.zip...done
 ~~~
 
 The following exmaple illustrates how the ICA template is updated when a file changes
 
 ~~~
-bash$ touch US/CA/SLAC/ica_analysis/README.md
-bash$ make
-freshening: ica_analysis/README.md (deflated 76%)
+bash$ touch US/CA/SLAC/ica_analysis/ica_analysis.glm
+bash$ ./compile
+Updating US/CA/SLAC/ica_analysis.zip...done
 ~~~
 
-Note that after the `publish.sh` script is run, you must push that changes to the main repository.  Please observe the usual convention for creating pull requests, as pushing directly to `master` is not permitted.
+Note that after the `compile` script is run, you must push that changes to the main repository.  Please observe the usual convention for creating pull requests, as pushing directly to `master` is not permitted.
