@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+
+# Process folders listed in .orgs looking for .index files to process template folders listed in each index
+#
+for ORG in $(grep -v "^#" .orgs); do
+	for INDEX in $(find $ORG -name .index -print); do
+		ROOT=${INDEX%.*}
+		for TEMPLATE in $(grep -v "^#" $INDEX); do
+			if [ -f "$ROOT/$TEMPLATE.zip" ]; then
+				echo -n "Updating $ORG/$TEMPLATE..."
+				zip -u -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*
+			else
+				echo -n "Creating $ORG/$TEMPLATE..."
+				zip -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*
+			fi
+			echo "done"
+		done
+	done
+done

@@ -1,0 +1,21 @@
+// Integration Capacity Analysis (ICA) GridLAB-D auxiliary model file
+
+// convert CSV configuration file, if any
+#ifexist "ica_config.csv"
+#exec strings <ica_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >ica_config.glm
+#endif
+
+// load configuration file, if any
+#ifexist "ica_config.glm"
+#include "ica_config.glm"
+#endif
+
+// load the gridlabd-python module
+module ica_analysis;
+
+// configure the powerflow solver for ICA
+module powerflow
+{
+	// enable violation detection, but don't record the violation in a file
+	violation_record "/dev/null";
+}

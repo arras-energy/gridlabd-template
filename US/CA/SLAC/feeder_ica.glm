@@ -1,5 +1,0 @@
-#define TEMPLATE_NAME="Feeder ICA"
-#define TEMPLATE_VERSION="0.0"
-#define TEMPLATE_AUTHOR="dchassin"
-#define TEMPLATE_DESCRIPTION="Feeder-level Integration Capacity Analysis"
-#define TEMPLATE_MODULES="powerflow"
