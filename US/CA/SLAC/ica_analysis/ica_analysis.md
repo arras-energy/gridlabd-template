@@ -3,7 +3,7 @@ ICA Analysis - Integration Capacity Analysis GridLAB-D Template
 # Synopsis
 
 ~~~
-sh% gridlabd MODEL.glm TEMPLATE_PATH/ica_analysis.glm
+sh% gridlabd -D OUTPUT=<folder> <settings>.glm <network>.glm <recorders>.glm <template-dir>/ica_analysis.glm
 ~~~
 
 # Description
@@ -20,60 +20,68 @@ Two files needed to run an ICA analysis on a GridLAB-D model are summarized as f
 
 | Name | Source | Description |
 | :--- | :----- | :---------- |
-| ica-analysis.py  | slacgismo/gridlabd-template | Implemenets the ICA process on the model 
+| ica-analysis.py  | slacgismo/gridlabd-template | Implements the ICA process on the model 
 | ica-analysis.glm | slacgismo/gridlabd-template | Links the model to the ICA analysis module
 
-Two optional files may also be used to modify how the ICA analysis is performed:
+An optional file `ica_config.csv` may also be used to modify how the ICA analysis is performed.  The parameters that can be set include the following
 
-| Name | Location | Description |
-| :--- | :------- | :-----------|
-| ica_config.csv | $PWD | Table of globals to define after loading the GLM model
-| ica_config.glm | $PWD | GLM file to load before loading the GLM model
+| Name | Default | Type | Description |
+| :--- | :------ | :--- | :-----------|
+| `output_folder` | `"."` | `str` | Folder in which output files are stored
+| `object_list` | `[]` | `list` | List of load of object names to consider ([] means search for all of class "load")
+| `target_properties` | `{"load":"constant_power_{phases}$"}` | `dict` | Target properties to consider in object list
+| `delta` | `10000.0` | `float` | Power delta to apply when exploring limits (W)
+| `reactive_ratio` | `0.1` | `float`  | Reactive power ratio to use when considering property with zero basis
+| `power_limit` | `-1.0e6` | `float` | Minimum power to attempt (W)
+| `results_filename` | "solar_capacity.csv" | `str` | File name to use when storing result of analysis
 
-The analysis should be run from `slacgismo/gridlabd-models using` the following command:
-```
-host% gridlabd template get ica-analysis
-host% export GLD_TEMPLATES="$(gridlabd --version=install)/share/gridlabd/template"
-host% gridlabd model.glm $GLD_TEMPLATES/ica_analysis.glm
-```
+# Example
 
-### ica-analysis.glm
+This example performs a basic ICA in the IEEE-13 bus network model using the following files:
 
-This GLM file provides the links between the ICA module and the model that is analyzed.
+IEEE-13.glm: (see slacgismo/gridlabd-models)
 
-### ica-analysis.py
+config.csv:
 
-This Python module provides the ICA module for GridLAB-D.
+~~~
+TEMPLATE,ica_analysis
+GLMCONFIG,config.glm
+GLMRECORD,
+GLMTIMEZONE,PST+8PDT
+GLMSTARTTIME,2020-01-01 00:00:00 PST
+GLMSTOPTIME,2021-01-01 00:00:00 PST
+~~~
 
-### ica-config.csv
+config.glm:
 
-Includes information to set default thresholds for all tracked objects and properties in ICA. User can overwrite default values. Properties that are left blank have their thresholds set to their library value. Properties for which the user inputs an X are ignored, and not tracked during ICA. Properties for which the user inputs a percentage have their thresholds set either as a percent deviation from their library value (ex. +- 5%) or as a maximum rating (ex. up to 90% of their library value), in accordance with the table below. Properties for which the user inputs a fixed number have their thresholds set to that number. 
+~~~
+clock 
+{
+	timezone "PST+8PDT";
+	starttime "2020-01-01 00:00:00 PST";
+	stoptime "2021-01-01 00:00:00 PST";
+}
+~~~
 
-|       Class      |        Init Property        | Interpretation of %     |
-| ---------------- | --------------------------- |-------------------------|
-| underground_line | rating.summer.continuous    | Rating                  |
-|                  | rating.winter.continuous    | Rating                  |
-| overhead_line    | rating.summer.continuous    | Rating                  |
-|                  | rating.winter.continuous    | Rating                  |
-| transformer      | power_rating                | Rating                  |
-|                  | powerA_rating               | Rating                  |
-|                  | powerB_rating               | Rating                  |
-|                  | powerC_rating               | Rating                  |
-|                  | rated_top_oil_rise          | Rating                  |
-|                  | rated_winding_hot_spot_rise | Rating                  |
-| regulator        | raise_taps                  | Error - cannot enter %  |
-|                  | lower_taps                  | Error - cannot enter %  |
-|                  | continuous_rating           | Rating                  |
-| triplex_meter    | 2* nominal_voltage          | Deviation               |
-|                  | nominal_voltage             | Deviation               |
-| meter            | nominal_voltage             | Deviation               |
+The following command runs the analysis
 
-`ica-config.csv` also includes 2 user options: (1) `input_option`, and (2) `violation_option`:
+~~~
+sh% gridlabd -D OUTPUT=. config.glm IEEE-13.glm $(gridlabd --version=install)/shared/gridlabd/template/ica_analysis/ica_analysis.glm
+~~~
 
-1. `input_option`: Can be set to 1 or 2. If 1, `ica-config.csv` is automatically read in through a csv converter. If 2, `ica-config.csv` is read in directly through the python script, allowing for greater flexibility in the format of the csv file.
+The output is as follows:
 
-2. `violation_option`: Can be set to 1, 2, or 3. If 1, the script records the first violation of each object within the violation dataframe. The entire dataframe, with all objects (violated or not) is saved to a csv. If 2, the script records the first violation of each object in a *new* dataframe. This dataframe is saved to a csv, and only includes objects that incurred violations. If 3, the script behaves the same as 2, except *all* violations are recorded, rather than just the first.
-
-### ica-config.glm
-
-This file can contain GLM declarations to modify the model in order to make the ICA module work problem, if needed.
+solar_capacity.csv:
+~~~
+load,solar_capacity[kW]
+Load634,180.0
+Load645,0.0
+Load646,0.0
+Load652,1000.0
+Load671,2610.0
+Load675,1680.0
+Load692,3000.0
+Load611,330.0
+Load6711,0.0
+Load6321,0.0
+~~~
