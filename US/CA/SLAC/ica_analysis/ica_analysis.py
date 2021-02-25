@@ -30,8 +30,9 @@ object_list = [] # list of load of objects to consider ([] mean search for all o
 target_properties = {"load":"constant_power_{phases}$"} # target properties to consider in object list
 property_list = {} # properties found to use when considering objects
 limit_list = {} # list of limits found in objects considered
-delta = 10000.0 # power delta to apply when considering properties
+delta = 10000.0 # power delta to apply when considering properties (W)
 reactive_ratio = 0.1 # reactive power ratio to use when considering property with zero basis
+power_limit = -1.0e6 # minimum power to attempt (W)
 results_filename = "solar_capacity.csv" # file name to use when storing result of analysis
 
 #
@@ -208,8 +209,28 @@ def on_sync(t):
                     # consider property by relative increments specified by delta
                     value = prop.get_value() - base/base.real*delta
 
+                # if a violation has occurred
+                if violation_active:
+                    gridlabd.debug(f"{dt}: resetting {objname}.{propname} to base {base}")
+
+                    # reset the property to its original value
+                    prop.set_value(base)
+
+                    # flag that processing is done
+                    done = objname
+
+                # if the maximum solar limit is reached
+                elif value < power_limit:
+                    gridlabd.debug(f"{dt}: power limit reach for {objname}.{propname} = {value}")
+
+                    # reset the property to its original value
+                    prop.set_value(base)
+
+                    # flag that processing is done
+                    done = objname
+
                 # if no violation has occurred
-                if not violation_active:
+                else:
                     gridlabd.debug(f"{dt}: updating {objname}.{propname} = {value}")
 
                     # set the new value of the property
@@ -220,16 +241,6 @@ def on_sync(t):
 
                     # record the load limit
                     limit_list[objname][propname] = {"timestamp":t, "real":load_limit.real, "reactive":load_limit.imag}
-
-                # a violation has occurred
-                else:
-                    gridlabd.debug(f"{dt}: resetting {objname}.{propname} to base {base}")
-
-                    # reset the property to its original value
-                    prop.set_value(base)
-
-                    # flag that processing is done
-                    done = objname
 
         # the property list is empty
         else:
