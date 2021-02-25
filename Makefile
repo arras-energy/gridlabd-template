@@ -7,6 +7,9 @@ SOURCE=$(subst $(INSTALL)/share/gridlabd/template,.,$(TARGET))
 TEMPLATES=ica_analysis
 FILES=$(foreach template,$(TEMPLATES),$(wildcard $(SOURCE)/$(template)/*))
 
+build:
+	./compile
+	
 install: $(subst ./,$(INSTALL)/share/gridlabd/template/,$(FILES))
 	@echo Installed $(TEMPLATES) ok
 # 	@echo TARGET=$(TARGET)
