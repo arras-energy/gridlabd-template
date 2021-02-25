@@ -220,7 +220,7 @@ def on_sync(t):
                     done = objname
 
                 # if the maximum solar limit is reached
-                elif value < power_limit:
+                elif value.real < power_limit:
                     gridlabd.debug(f"{dt}: power limit reach for {objname}.{propname} = {value}")
 
                     # reset the property to its original value
