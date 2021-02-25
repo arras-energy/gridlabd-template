@@ -35,6 +35,28 @@ reactive_ratio = 0.1 # reactive power ratio to use when considering property wit
 power_limit = -1.0e6 # minimum power to attempt (W)
 results_filename = "solar_capacity.csv" # file name to use when storing result of analysis
 
+# read globals from py config
+try:
+    from ica_config import *
+except ModuleNotFoundError:
+    pass
+except:
+    raise
+
+# read globals from csv config
+try:
+    with open("ica_config.csv","r") as fh:
+        reader = csv.reader(fh)
+        for row in reader:
+            name = row[0]
+            value = row[1]
+            vtype = type(globals()[name])
+            globals()[name] = vtype(value)
+except FileNotFoundError:
+    pass
+except:
+    raise
+
 #
 # Module utilities
 #
