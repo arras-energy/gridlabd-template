@@ -26,14 +26,18 @@ import re, csv, datetime, gridlabd
 # Module globals
 #
 output_folder = "." # folder in which output files are stored
+delta = 10000.0 # power delta to apply when considering properties (W)
+reactive_ratio = 0.1 # reactive power ratio to use when considering property with zero basis
+power_limit = -1.0e6 # minimum power to attempt (W)
+voltage_limit = 0.03 # maximum power devation (pu)
+results_filename = "solar_capacity.csv" # file name to use when storing result of analysis
+details_filename = "violation_details.csv" # file name in which to write violation details data
+
 object_list = [] # list of load of objects to consider ([] mean search for all of class "load")
 target_properties = {"load":"constant_power_{phases}$"} # target properties to consider in object list
 property_list = {} # properties found to use when considering objects
 limit_list = {} # list of limits found in objects considered
-delta = 10000.0 # power delta to apply when considering properties (W)
-reactive_ratio = 0.1 # reactive power ratio to use when considering property with zero basis
-power_limit = -1.0e6 # minimum power to attempt (W)
-results_filename = "solar_capacity.csv" # file name to use when storing result of analysis
+
 
 # read globals from py config
 try:
@@ -44,11 +48,14 @@ except:
     raise
 
 # read globals from csv config
+config_allowed = ["output_folder","delta","reactive_ratio","power_limit","deviation_limit","results_filename"]
 try:
     with open("ica_config.csv","r") as fh:
         reader = csv.reader(fh)
         for row in reader:
             name = row[0]
+            if not name in config_allowed:
+                raise Exception(f"ica_config.csv: '{name}' is not an allowed ica_analysis configuration option")
             value = row[1]
             vtype = type(globals()[name])
             globals()[name] = vtype(value)
@@ -205,6 +212,8 @@ def on_sync(t):
         # get the object name of the property to consider (the first one in the list of keys
         objname = list(property_list.keys())[0]
         gridlabd.debug(f"{dt}: updating {objname}")
+        if objname not in limit_list:
+            limit_list[objname] = {}
 
         # get the properties being considered for this object
         proplist = property_list[objname]
@@ -214,6 +223,8 @@ def on_sync(t):
 
             # for each property in the object's property list
             for propname, specs in proplist.items():
+                if propname not in limit_list[objname]:
+                    limit_list[objname][propname] = {}
 
                 # get the property name and the property's original value
                 prop = specs[0]
@@ -238,18 +249,56 @@ def on_sync(t):
                     # reset the property to its original value
                     prop.set_value(base)
 
+                    # record the load limit
+                    if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
+                        load_limit = base - value
+                        limit_list[objname][propname] = {
+                            "timestamp" : t, 
+                            "real" : load_limit.real, 
+                            "reactive" : load_limit.imag}
+                    limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violated_detected")
+
                     # flag that processing is done
                     done = objname
 
                 # if the maximum solar limit is reached
-                elif value.real < power_limit:
+                elif power_limit and value.real < power_limit:
                     gridlabd.debug(f"{dt}: power limit reach for {objname}.{propname} = {value}")
 
                     # reset the property to its original value
                     prop.set_value(base)
 
+                    # record the load limit
+                    if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
+                        load_limit = base - value
+                        limit_list[objname][propname] = {
+                            "timestamp" : t, 
+                            "real" : load_limit.real, 
+                            "reactive" : load_limit.imag}
+                    limit_list[objname][propname]["violation"] = "POWERLIMIT"
+
                     # flag that processing is done
                     done = objname
+
+                # if the maximum solar limit is reached
+                elif voltage_limit and base.real != 0.0 and abs((value.real-base.real)/base.real) > voltage_limit:
+                    gridlabd.debug(f"{dt}: power deviation limit reach for {objname}.{propname} = {value}")
+
+                    # reset the property to its original value
+                    prop.set_value(base)
+
+                    # record the load limit
+                    if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
+                        load_limit = base - value
+                        limit_list[objname][propname] = {
+                            "timestamp" : t, 
+                            "real" : load_limit.real, 
+                            "reactive" : load_limit.imag}
+                    limit_list[objname][propname]["violation"] = "VOLTAGELIMIT"
+
+                    # flag that processing is done
+                    done = objname
+
 
                 # if no violation has occurred
                 else:
@@ -262,13 +311,19 @@ def on_sync(t):
                     load_limit = base - value
 
                     # record the load limit
-                    limit_list[objname][propname] = {"timestamp":t, "real":load_limit.real, "reactive":load_limit.imag}
+                    limit_list[objname][propname] = {
+                        "timestamp":t, 
+                        "real":load_limit.real, 
+                        "reactive":load_limit.imag,
+                        "violation" : "NONE"
+                        }
 
         # the property list is empty
         else:
 
             # flag that processing is done
             done = objname
+
 
         # if done
         if done:
@@ -337,3 +392,17 @@ def on_term(t):
 
             # write the total power
             writer.writerow([objname,round(power,1)])
+
+    if type(details_filename) is str:
+        header = None
+        with open(f"{output_folder}/{details_filename}","w") as fh:
+            writer = csv.writer(fh)
+            for objname, property_data in limit_list.items():
+                for propname, data in property_data.items():
+                    if not header:
+                        header = ["objname","propname"]
+                        header.extend(list(data.keys()))
+                        writer.writerow(header)
+                    rowdata = [objname,propname]
+                    rowdata.extend(list(data.values()))
+                    writer.writerow(rowdata)
