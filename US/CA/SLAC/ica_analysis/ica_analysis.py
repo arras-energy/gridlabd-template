@@ -48,7 +48,7 @@ except:
     raise
 
 # read globals from csv config
-config_allowed = ["output_folder","delta","reactive_ratio","power_limit","deviation_limit","results_filename"]
+config_allowed = ["output_folder","delta","reactive_ratio","power_limit","voltage_limit","results_filename","details_filename"]
 try:
     with open("ica_config.csv","r") as fh:
         reader = csv.reader(fh)
@@ -256,7 +256,7 @@ def on_sync(t):
                             "timestamp" : t, 
                             "real" : load_limit.real, 
                             "reactive" : load_limit.imag}
-                    limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violated_detected")
+                    limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violation_detected")
 
                     # flag that processing is done
                     done = objname
