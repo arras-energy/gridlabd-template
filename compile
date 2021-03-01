@@ -9,10 +9,10 @@ for ORG in $(grep -v "^#" .orgs); do
 		for TEMPLATE in $(grep -v "^#" $INDEX); do
 			if [ -f "$ROOT/$TEMPLATE.zip" ]; then
 				echo -n "Updating $ROOT/$TEMPLATE.zip..."
-				zip -u -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*
+				zip -u -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*.*
 			else
 				echo -n "Creating $ROOT/$TEMPLATE.zip..."
-				zip -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*
+				zip -q $ROOT/$TEMPLATE.zip  $ROOT/$TEMPLATE/*.*
 			fi
 			echo "done"
 		done
