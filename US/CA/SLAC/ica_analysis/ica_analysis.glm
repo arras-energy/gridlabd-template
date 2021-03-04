@@ -18,4 +18,6 @@ module powerflow
 {
 	// enable violation detection, but don't record the violation in a file
 	violation_record "/dev/null";
+	convergence_error_handling IGNORE;
+	NR_iteration_limit 100000;
 }

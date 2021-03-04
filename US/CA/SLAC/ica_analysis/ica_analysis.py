@@ -34,7 +34,7 @@ results_filename = "solar_capacity.csv" # file name to use when storing result o
 details_filename = "violation_details.csv" # file name in which to write violation details data
 
 object_list = [] # list of load of objects to consider ([] mean search for all of class "load")
-target_properties = {"load":"constant_power_{phases}$"} # target properties to consider in object list
+target_properties = {"load":{"constant_power_{phases}$":"POWER","measured_voltage_{phases}$":"VOLTAGE"}} # target properties to consider in object list
 property_list = {} # properties found to use when considering objects
 limit_list = {} # list of limits found in objects considered
 
@@ -67,7 +67,8 @@ except:
 #
 # Module utilities
 #
-def add_property(objname,propname,nonzero=True,noexception=True,onexception=gridlabd.warning):
+
+def add_property(objname,propname,limittype,nonzero=True,noexception=True,onexception=gridlabd.warning):
     """Add a property to the list of properties to consider
 
     Parameters:
@@ -93,7 +94,7 @@ def add_property(objname,propname,nonzero=True,noexception=True,onexception=grid
             if not objname in property_list.keys():
 
                 # create a new entry for the value in the property list
-                property_list[objname]={propname:[prop,value]}
+                property_list[objname]={propname:[prop,value,limittype]}
 
                 # create a new entry for the result in the limit list
                 limit_list[objname] = {}
@@ -102,7 +103,7 @@ def add_property(objname,propname,nonzero=True,noexception=True,onexception=grid
             else:
 
                 # add the property to the object's property list
-                property_list[objname][propname] = [prop,value]
+                property_list[objname][propname] = [prop,value,limittype]
     except:
 
         # if no exceptions are allowed
@@ -156,7 +157,7 @@ def on_init(t):
         classname = gridlabd.get_value(objname,"class")
 
         # if the class is listed among the targets
-        if classname in target_properties.keys():
+        for classname, target_list in target_properties.items():
 
             # get the object's data
             objdata = gridlabd.get_object(objname)
@@ -167,17 +168,20 @@ def on_init(t):
                 # get the object's class structure
                 classdata = gridlabd.get_class(classname)
 
-                # get the property pattern to use, and replace phase information pattern, if any
-                pattern = target_properties[classname].replace("{phases}",f"[{objdata['phases']}]")
+                # for each property in the class's target property list
+                for property_name, limittype in target_list.items():
 
-                # for each property in the class
-                for propname in classdata.keys():
+                    # get the property pattern to use, and replace phase information pattern, if any
+                    pattern = property_name.replace("{phases}",f"[{objdata['phases']}]")
 
-                    # if the property matches the pattern
-                    if re.match(pattern,propname):
+                    # for each property in the class
+                    for propname in classdata.keys():
 
-                        # add the property to the list of properties to consider
-                        add_property(objname,propname,nonzero=False)
+                        # if the property matches the pattern
+                        if re.match(pattern,propname):
+
+                            # add the property to the list of properties to consider
+                            add_property(objname,propname,limittype,nonzero=False)
 
     # successfully initialized
     return True
@@ -229,6 +233,7 @@ def on_sync(t):
                 # get the property name and the property's original value
                 prop = specs[0]
                 base = specs[1]
+                limit = specs[2]
 
                 # if the original value is zero
                 if base.real == 0.0:
@@ -253,7 +258,7 @@ def on_sync(t):
                     if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
                         load_limit = base - value
                         limit_list[objname][propname] = {
-                            "timestamp" : t, 
+                            "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
                             "real" : load_limit.real, 
                             "reactive" : load_limit.imag}
                     limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violation_detected")
@@ -262,7 +267,7 @@ def on_sync(t):
                     done = objname
 
                 # if the maximum solar limit is reached
-                elif power_limit and value.real < power_limit:
+                elif power_limit and value.real < power_limit and limit == "POWER":
                     gridlabd.debug(f"{dt}: power limit reach for {objname}.{propname} = {value}")
 
                     # reset the property to its original value
@@ -272,7 +277,7 @@ def on_sync(t):
                     if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
                         load_limit = base - value
                         limit_list[objname][propname] = {
-                            "timestamp" : t, 
+                            "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
                             "real" : load_limit.real, 
                             "reactive" : load_limit.imag}
                     limit_list[objname][propname]["violation"] = "POWERLIMIT"
@@ -281,7 +286,7 @@ def on_sync(t):
                     done = objname
 
                 # if the maximum solar limit is reached
-                elif voltage_limit and base.real != 0.0 and abs((value.real-base.real)/base.real) > voltage_limit:
+                elif voltage_limit and base.real != 0.0 and abs((value.real-base.real)/base.real) > voltage_limit and limit == "VOLTAGE":
                     gridlabd.debug(f"{dt}: power deviation limit reach for {objname}.{propname} = {value}")
 
                     # reset the property to its original value
@@ -291,7 +296,7 @@ def on_sync(t):
                     if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
                         load_limit = base - value
                         limit_list[objname][propname] = {
-                            "timestamp" : t, 
+                            "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
                             "real" : load_limit.real, 
                             "reactive" : load_limit.imag}
                     limit_list[objname][propname]["violation"] = "VOLTAGELIMIT"
@@ -312,7 +317,7 @@ def on_sync(t):
 
                     # record the load limit
                     limit_list[objname][propname] = {
-                        "timestamp":t, 
+                        "timestamp":str(datetime.datetime.fromtimestamp(t)), 
                         "real":load_limit.real, 
                         "reactive":load_limit.imag,
                         "violation" : "NONE"
@@ -386,9 +391,15 @@ def on_term(t):
         for objname, property_data in limit_list.items():
             
             # accumulate the total power recorded
-            power = 0.0
+            power = None
             for propname, data in property_data.items():
-                power += data["real"]/1000.0
+                try:
+                    if not power:
+                        power = 0.0
+                    power += data["real"]/1000.0
+                except:
+                    gridlabd.warning(f"no real power in data={data}")
+                    pass
 
             # write the total power
             writer.writerow([objname,round(power,1)])
