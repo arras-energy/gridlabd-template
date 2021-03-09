@@ -4,7 +4,7 @@ INSTALL=$(shell gridlabd --version=install)
 TARGET=$(shell gridlabd template config get DATADIR)
 SOURCE=$(subst $(INSTALL)/share/gridlabd/template,.,$(TARGET))
 
-TEMPLATES=ica_analysis
+TEMPLATES= anticipation ica_analysis
 FILES=$(foreach template,$(TEMPLATES),$(wildcard $(SOURCE)/$(template)/*))
 
 build:
