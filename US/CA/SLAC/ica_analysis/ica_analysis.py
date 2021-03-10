@@ -487,7 +487,12 @@ def on_term(t):
                     rowdata.extend(list(data.values()))
                     writer.writerow(rowdata)
 
-if sys.argv and sys.argv[1] == '--defaults':
-    for var, spec in config_allowed.items():
-        print(f"#\n# {spec['description']}\n#")
-        print(f"{var},{spec['default']}\n")
+if len(sys.argv) > 1:
+    if  sys.argv[1] in  ["-d","--defaults"]:
+        for var, spec in config_allowed.items():
+            print(f"#\n# {spec['description']}\n#")
+            print(f"{var},{spec['default']}\n")
+    elif sys.argv[1] in ["-h","--help"]:
+        print("Syntax: ica_analysis.py [-h|--help] [-d|--defaults]")
+    else:
+        raise Exception(f"{sys.argv[1]} is not a valid command argument")
