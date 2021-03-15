@@ -2,7 +2,7 @@
 
 // convert CSV configuration file, if any
 #ifexist "ica_config.csv"
-#exec strings <ica_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >ica_config.glm
+#exec strings <ica_config.csv | awk 'BEGIN {FS=","} /^[^#].*/ {print "#define",$1 "=" $2}' >ica_config.glm
 #endif
 
 // load configuration file, if any

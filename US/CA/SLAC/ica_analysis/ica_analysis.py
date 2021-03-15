@@ -20,7 +20,7 @@ The ICA analysis files may be downloaded from the GridLAB-D template library usi
 
 """
 
-import re, csv, datetime, gridlabd
+import sys, re, csv, datetime, gridlabd
 
 # 
 # Module globals
@@ -48,13 +48,82 @@ except:
     raise
 
 # read globals from csv config
-config_allowed = ["output_folder","delta","reactive_ratio","power_limit","voltage_limit","results_filename","details_filename"]
+config_allowed = {
+    "output_folder" : 
+    {
+        "default" : output_folder,
+        "description" : "Folder in which the output files are stored",
+        "type" : ["str"],
+        "validate" : 
+        {
+            "str": {"path not found": lambda f: sys.path.exists(f)},
+        },
+    }, 
+    "delta" : 
+    {
+        "default" : delta,
+        "description" : "Power delta to apply when considering property (unit of W)",
+        "type" : ["float"],
+        "validate" : 
+        {
+            "float": {"value is not positive" : lambda x: x>0},
+        },
+    },
+    "reactive_ratio" : 
+    {
+        "default" : reactive_ratio,
+        "description" : "Reactive power ratio to use when considering property with zero basis",
+        "type" : ["float"],
+        "validate" : 
+        {
+            "float" : { "value is not positive" : lambda x: x>0 },
+        },
+    },
+    "power_limit" : 
+    {
+        "default" : power_limit,
+        "description" : "Minimum power to attempt (W)",
+        "type" : ["float"],
+        "validate" : 
+        {
+            "float" : { "value is not negative or zero" : lambda x: x<=0 },
+        },
+    },
+    "voltage_limit" : 
+    {
+        "default" : voltage_limit,
+        "description" : "maximum power devation (pu)",
+        "type" : ["float"],
+        "validate" : 
+        {
+            "float" : { "value is not positive" : lambda x: x>0 },
+        },
+    },
+    "results_filename" : 
+    {
+        "default" : results_filename,
+        "description" : "File name to use when storing result of analysis",
+        "type" : ["str"],
+        "validate" : 
+        {
+        },
+    },
+    "details_filename" : 
+    {
+        "default" : details_filename,
+        "description" : "File name in which to write violation details data",
+        "type" : ["str"],
+        "validate" : 
+        {
+        },
+    },
+}
 try:
     with open("ica_config.csv","r") as fh:
         reader = csv.reader(fh)
         for row in reader:
             name = row[0]
-            if not name in config_allowed:
+            if not name in config_allowed.keys():
                 raise Exception(f"ica_config.csv: '{name}' is not an allowed ica_analysis configuration option")
             value = row[1]
             vtype = type(globals()[name])
@@ -417,3 +486,13 @@ def on_term(t):
                     rowdata = [objname,propname]
                     rowdata.extend(list(data.values()))
                     writer.writerow(rowdata)
+
+if len(sys.argv) > 1:
+    if  sys.argv[1] in  ["-d","--defaults"]:
+        for var, spec in config_allowed.items():
+            print(f"#\n# {spec['description']}\n#")
+            print(f"{var},{spec['default']}\n")
+    elif sys.argv[1] in ["-h","--help"]:
+        print("Syntax: ica_analysis.py [-h|--help] [-d|--defaults]")
+    else:
+        raise Exception(f"{sys.argv[1]} is not a valid command argument")
