@@ -1,0 +1,9 @@
+
+#set suppress_repeat_messages=0
+
+module powerflow
+{
+#ifdef powerflow::violation_watchset
+	violation_watchset ALL;
+#endif
+}
