@@ -2,7 +2,7 @@
 
 // convert CSV configuration file, if any
 #ifexist "ica_config.csv"
-#exec strings <ica_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >ica_config.glm
+#exec strings <ica_config.csv | awk 'BEGIN {FS=","} /^[^#].*/ {print "#define",$1 "=" $2}' >ica_config.glm
 #endif
 
 // load configuration file, if any
@@ -18,4 +18,6 @@ module powerflow
 {
 	// enable violation detection, but don't record the violation in a file
 	violation_record "/dev/null";
+	convergence_error_handling IGNORE;
+	NR_iteration_limit 100000;
 }
