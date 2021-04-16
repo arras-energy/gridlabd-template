@@ -58,7 +58,7 @@ pole_1_x = 0.0
 pole_1_y = 0.0
 pole_1_z = 0.0
 
-pole_2_x = 300.0
+pole_2_x = 350.0
 pole_2_y = 0.0
 pole_2_z = 32.0
 
