@@ -33,6 +33,9 @@ def air_material_constant(temp):
     return specific_mass_temp, thermal_conductivity_temp, dynamic_viscosity_temp
 
 def get_sag(p0, p1, orig):
+    '''
+        calculate line sag under loaded condition
+    '''
     lon_p0 = p0[0]
     lat_p0 = p0[1]
     z_p0 = p0[2]
@@ -55,25 +58,26 @@ def get_sag(p0, p1, orig):
     P_rated = 50e6 # power flow through the line
     temp_a = 30.0 # ambient temperature, unit: DegC
     wind_speed = 0.0 # unit: m/s
-    wind_angle = 180.0 # 360° for north; 0° for undefined
-    ice_thickness = 0.0; # unit: m
+    ice_thickness = 0.0 # unit: m
     ice_mass = 915 # unit: kg/m3
     g = 9.81 # Gravity of Earth, unit: m/s2
+    wind_angle = 0.0
 
     d_hori = get_distance([lat_p0,lon_p0],[lat_p1,lon_p1])
     d_vert = abs(z_p0-z_p1)
     span = sqrt(d_hori*d_hori + d_vert*d_vert)
     
+    # reference: IEC 60826:2017
     if d_hori > 400:
-        k_init = 0.35
-    elif d_hori > 350:
         k_init = 0.33
-    elif d_hori > 300:
+    elif d_hori > 350:
         k_init = 0.31
+    elif d_hori > 300:
+        k_init = 0.30
     elif d_hori > 250:
-        k_init = 0.29
+        k_init = 0.28
     elif d_hori > 200:
-        k_init = 0.27
+        k_init = 0.26
     elif d_hori > 150:
         k_init = 0.25
     elif d_hori > 100:
@@ -152,25 +156,6 @@ def get_sag(p0, p1, orig):
         sag1 = total_unit_weight*d1_hori**2 /(2*H_load)
         sag_elevation = z_p1-sag1*cos(sag_angle)
         dt = get_distance(orig,[lat_p0+d0_hori*(lat_p1-lat_p0)/d_hori,lon_p0+d0_hori*(lon_p1-lon_p0)/d_hori])
-        print("d_vert:",d_vert)
-        print("d_hori:",d_hori)
-        print("sag_load:",sag_load)
-        print("sag1:",sag1)
-        print("sag_angle:",sag_angle)
-        print("sag_elevation:",sag_elevation)
-        print("total_unit_weight:",total_unit_weight)
-        print("H_load:",H_load)
-
-        print("dt:",dt)
-        print("d0_hori:",d0_hori)
-        print("d1_hori:",d1_hori)
-        print("lon_p0:",lon_p0)
-        print("lat_p0:",lat_p0)
-        print("z_p0:",z_p0)
-        print("lon_p1:",lon_p1)
-        print("lat_p1:",lat_p1)
-        print("z_p1:",z_p1)
-        print("00000")
         return dt, sag_elevation 
     else:
         d0_hori = d_hori*(1-d_vert/(4*sag_load))/2
@@ -178,24 +163,6 @@ def get_sag(p0, p1, orig):
         sag0 = total_unit_weight*d0_hori**2 /(2*H_load)
         sag_elevation = z_p0-sag0*cos(sag_angle)
         dt = get_distance(orig,[lat_p0+d0_hori*(lat_p1-lat_p0)/d_hori,lon_p0+d0_hori*(lon_p1-lon_p0)/d_hori])
-        print("d_vert:",d_vert)
-        print("d_hori:",d_hori)
-        print("sag_load:",sag_load)
-        print("sag0:",sag0)
-        print("sag_angle:",sag_angle)
-        print("sag_elevation:",sag_elevation)
-        print("total_unit_weight:",total_unit_weight)
-        print("H_load:",H_load)
-        print("dt:",dt)
-        print("d0_hori:",d0_hori)
-        print("d1_hori:",d1_hori)
-        print("lon_p0:",lon_p0)
-        print("lat_p0:",lat_p0)
-        print("z_p0:",z_p0)
-        print("lon_p1:",lon_p1)
-        print("lat_p1:",lat_p1)
-        print("z_p1:",z_p1)
-        print("11111")
         return dt, sag_elevation
 
 def project(data,box,lat,lon):
@@ -233,19 +200,11 @@ def get_values(specs,path,res=10,box={}):
 
     xx = np.arange(left, right, 1.0/3600.0)
     yy = np.arange(top, bottom, -1.0/3600.0)
-    print(xx)
-    print(xx.max())
-    print(xx.min())
-    print(yy.max())
-    print(yy.min())
-    print("xx len:", len(xx))
-    print("yy len:", len(yy))
-    print(data.shape)
     f_data = interp2d(xx, yy, data, kind='linear')
 
     result = []
     k = 0
-    p = {"dt":[],"zz":[],"high":[],"ground":[]}
+    p = {"dt":[],"zz":[],"high":[],"ground":[],"support":[]}
     sags = {"dt": [], "sag": []}
     path_res = 10.0
     for line in path:
@@ -282,6 +241,7 @@ def get_values(specs,path,res=10,box={}):
         p["zz"].append(f_data(p0["lon"],p0["lat"]))
         p["high"].append(pole_data["Height"][k]+f_data(p0["lon"],p0["lat"]))
         p["ground"].append(pole_data["Elevation"][k])
+        p["support"].append(pole_data["support"][k])
         sags["dt"].append(sag_dt)
         sags["sag"].append(sag_elevation)
         k += 1
@@ -289,6 +249,7 @@ def get_values(specs,path,res=10,box={}):
     p["zz"].append(f_data(p1["lon"],p1["lat"]))
     p["high"].append(pole_data["Height"][k]+f_data(p1["lon"],p1["lat"]))
     p["ground"].append(pole_data["Elevation"][k])
+    p["support"].append(pole_data["support"][k])
     return result, p, sags
 
 def get_data(csv_file): # default resolution is 1 ft
@@ -303,8 +264,8 @@ def get_data(csv_file): # default resolution is 1 ft
     left = math.floor(line_data["longitude"].min())
     right = math.ceil(line_data["longitude"].max())
 
-    tif_file = f"{file_folder}/elevation_{left}_{bottom}_{right}_{top}_10m.tif"
-    # tif_file = f"ASTGTMV003_N37W123_dem.tif"
+    tif_file = f"{file_folder}/elevation_{left}_{bottom}_{right}_{top}_10m.tif" # NASA data
+    # tif_file = f"ASTGTMV003_N37W123_dem.tif" # USGS data
 
     if not os.path.exists(tif_file):
         # unfortunately the python API call to elevation.clip does not work correctly
@@ -368,6 +329,7 @@ if __name__ == '__main__':
     plt.plot(poles["dt"],poles["zz"],"or",label="pole base elevation") # elevation data for pole
     plt.plot(poles["dt"],poles["high"],"og",label="pole top elevation") # elevation data for pole highth
     plt.plot(poles["dt"],poles["ground"],"g.",label="pole ground elevation") # elevation data for pole highth
+    plt.plot(poles["dt"],poles["support"],"k.",label="pole support") # elevation data for pole highth
     plt.plot(sags["dt"],sags["sag"],"b.",label="line sag elevation") # elevation data for line sag
     plt.legend()
     plt.xlabel('Line location (m)')
