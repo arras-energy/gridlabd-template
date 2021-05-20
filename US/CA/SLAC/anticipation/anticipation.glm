@@ -2,7 +2,7 @@
 
 // convert CSV configuration file, if any
 #ifexist "anticipation_config.csv"
-#exec strings <anticipation_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >ica_config.glm
+#exec strings <anticipation_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >anticipation_config.glm
 #endif
 
 // load configuration file, if any
@@ -12,3 +12,19 @@
 
 // load the gridlabd-python module
 module anticipation;
+
+
+#if POLE_VULNERABILITY_ANALYSIS=="on"
+#debug "POLE VULNERABILITY ANALYSIS is enabled"
+// INPUT CSV POLE DATA CONVERTER
+#input "pole_vulnerability_config.csv" -f "table" -t "object" 
+//#input "pole_library_config.csv" -f table -t object -C powerflow.pole
+#endif //POLE_VULNERABILITY_ANALYSIS
+
+#if PSPS_ANALYSIS=="on"
+#debug "PSPS ANALYSIS is enabled"
+#endif //PSPS_ANALYSIS
+
+#if VEGETATION_VULNERABILITY_ANALYSIS=="on"
+#debug "VEGETATION_VULNERABILITY_ANALYSIS is enabled"
+#endif
