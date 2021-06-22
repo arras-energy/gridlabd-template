@@ -1,4 +1,13 @@
-// Integration Capacity Analysis (ICA) GridLAB-D auxiliary model file
+// Grid Resilience and Intelligence Platform (GRIP) GridLAB-D auxiliary model file
+
+
+//Set up for globals
+#set literal_if=FALSE
+
+//Set up modules
+module powerflow;
+module climate;
+
 
 // convert CSV configuration file, if any
 #ifexist "anticipation_config.csv"
@@ -17,8 +26,8 @@ module anticipation;
 #if POLE_VULNERABILITY_ANALYSIS=="on"
 #debug "POLE VULNERABILITY ANALYSIS is enabled"
 // INPUT CSV POLE DATA CONVERTER
+#input "pole_library_config.csv" -f table -t "object" -C powerflow.pole_configuration
 #input "pole_vulnerability_config.csv" -f "table" -t "object" 
-//#input "pole_library_config.csv" -f table -t object -C powerflow.pole
 #endif //POLE_VULNERABILITY_ANALYSIS
 
 #if PSPS_ANALYSIS=="on"
