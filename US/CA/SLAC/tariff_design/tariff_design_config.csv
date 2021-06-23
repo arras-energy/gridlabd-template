@@ -1,0 +1,2 @@
+name	rate_design	minimum_daily_charge	energy_charge_base	energy_charge_100	energy_charge_400	average_total_rate	minimum_average_rate_limit	discount	billing_function
+E1	Tiered Energy Charges	0.32854	0.23522	0.296	0.5186	0.35659			
