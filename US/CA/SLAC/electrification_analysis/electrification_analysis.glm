@@ -1,1 +1,30 @@
+// Electrification Analysis GridLAB-D model file
 
+
+//Set up for globals
+#set literal_if=FALSE
+
+//Set up modules
+module power;
+
+
+// convert CSV configuration file, if any
+#ifexist "electrification_analysis_config.csv"
+#exec strings <electrification_analysis_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >anticipation_config.glm
+#endif
+
+// load configuration file, if any
+#ifexist "electrification_analysis_config.glm"
+#include "electrification_analysis_config.glm"
+#endif
+
+// load the gridlabd-python module
+module electrification_analysis;
+
+
+#if ELECTRIFICATION_ANALYSIS=="on"
+#debug "ELECTRIFICATION ANALYSIS is enabled"
+// INPUT CSV ELECTRIFICATION ANALYSIS
+#input "electrification_analysis_config.csv" -f table -t "object" -C power.electrification
+#input "electrification_analysis_config.csv" -f "table" -t "object" 
+#endif //ELECTRIFICATION_ANALYSIS
