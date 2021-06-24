@@ -1,27 +1,21 @@
 // GridLAB-D tariff design model file
 
-
-//Set up for globals
-#set literal_if=FALSE
-
 //Set up modules
 module revenue;
 // load the gridlabd-python module
 module tariff_design;
 
-// convert CSV configuration file, if any
-#ifexist "tariff_design_config.csv"
-//#exec strings <tariff_design_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >tariff_design_config.glm
-#endif
+//Define classes here (inputs and outputs)
 
-// load configuration file, if any
-#ifexist "tariff_design_config.glm"
-#include "tariff_design_config.glm"
-#endif
-
-
-//#if TARIFF_ANALYSIS=="on"
-#debug "TARIFF ANALYSIS is enabled"
-// INPUT CSV TARIFF DATA
-#input "tariff_library_config.csv" -f table -t "object" -C revenue.tariff
-//#endif //TARIFF_ANALYSIS
+class pgande_residential_tou {
+	parent tariff;
+	double period1_tier1_rate [$/kWh]
+	double period1_tier2_rate [$/kWh]
+	double period2_tier1_rate [$/kWh]
+	double period2_tier2_rate [$/kWh]
+	double period3_tier1_rate [$/kWh]
+	double period3_tier2_rate [$/kWh]
+	double period4_tier1_rate [$/kWh]
+	double period4_tier2_rate [$/kWh]
+	
+}
