@@ -1,7 +1,7 @@
 #Electrification Analysis GridLAB-D Template
 
 ## Configuration 
-To configure the model use file `electrification_analayis_configuration.csv`.
+To configure the model use file `electrification_analayis_config.csv`.
 The types of variables defined in the file are: 
 - Day and time of the simulation
 - Weather and season of the simulation
