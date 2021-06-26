@@ -7,6 +7,7 @@
 //Set up modules
 module powerflow;
 module climate;
+module tape; 
 
 
 // convert CSV configuration file, if any
@@ -37,3 +38,34 @@ module anticipation;
 #if VEGETATION_VULNERABILITY_ANALYSIS=="on"
 #debug "VEGETATION_VULNERABILITY_ANALYSIS is enabled"
 #endif
+object recorder {
+  parent "pole7";
+  property "resisting_moment";
+  file "pole_outputs.csv";
+  interval -1;
+}
+
+object recorder {
+  parent "pole8";
+  property "resisting_moment";
+  file "pole_outputs1.csv";
+  interval -1;
+}
+object recorder {
+  parent "pole9";
+  property "resisting_moment";
+  file "pole_outputs2.csv";
+  interval -1;
+}
+object recorder {
+  parent "pole10";
+  property "resisting_moment";
+  file "pole_outputs3.csv";
+  interval -1;
+}
+object recorder {
+  parent "pole11";
+  property "resisting_moment";
+  file "pole_outputs4.csv";
+  interval -1;
+}

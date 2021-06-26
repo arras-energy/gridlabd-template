@@ -137,7 +137,7 @@ object powerflow.pole_configuration {
 	fiber_strength  8000 psi;
 }
 object powerflow.pole_configuration { 
-	name "SYP-110/H-3/3";
+	name "SYP-110/H-3";
 	pole_type "WOOD";
 	pole_length 110 ft;
 	pole_depth  13 ft;

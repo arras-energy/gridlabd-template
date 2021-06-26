@@ -1,0 +1,11 @@
+# file...... pole_outputs.csv
+# date...... Sat Jun 26 02:48:35 2021
+# user...... (null)
+# host...... (null)
+# target.... pole 23
+# trigger... (none)
+# interval.. -1
+# limit..... 0
+# timestamp,resisting_moment
+2000-01-01 00:00:00 UTC,+388370
+# end of tape
