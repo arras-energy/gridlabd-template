@@ -1,11 +1,81 @@
 // Electrification Analysis GridLAB-D model file
 
+#include "config/default.glm"
+#define CONFIGFILE=config/default.glm
+#ifexist config/local.glm
+#include "config/local.glm"
+#set CONFIGFILE=config/local.glm
+#endif
+#set suppress_repeat_messages=TRUE
+#ifdef TIMEZONE
+clock {
+	timezone ${TIMEZONE};
+#ifdef STARTTIME
+	starttime ${STARTTIME};
+#endif
+#ifdef STOPTIME
+	stoptime ${STOPTIME};
+#endif
+}
+#else
+#error TIMEZONE is not specified in ${CONFIGFILE}
+#endif // TIMEZONE
 
-//Set up for globals
-#set literal_if=FALSE
+#set randomseed=5 
+///////////////////////////////////////////////////////
+//
+// WEATHER
+//
+///////////////////////////////////////////////////////
+#ifexist data/${WEATHER}
+module climate;
+object climate {
+        name weather;
+        tmyfile "data/${WEATHER}";
+        interpolate QUADRATIC;
+}
+#else
+#error WEATHER is not specified in ${CONFIGFILE}
+#endif // exist WEATHER
 
-//Set up modules
-module power;
+
+#ifdef SOLAR
+module generators;
+#endif // SOLAR
+module powerflow{
+	solver_method FBS;
+}
+module tape;
+module residential{
+	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
+	paneldump_interval 3600;
+	paneldump_filename "paneldump/paneldump_${RUN_NAME}";
+	implicit_enduse_source EIA2015;
+}
+module house;
+module house{
+weather "<string>";
+    floor_area "<decimal> sf";
+ air_heat_capacity "<decimal> Btu/degF";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // convert CSV configuration file, if any
