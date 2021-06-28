@@ -57,6 +57,183 @@ module house{
 weather "<string>";
     floor_area "<decimal> sf";
  air_heat_capacity "<decimal> Btu/degF";
+}
+
+object meter {
+	name bulk_node;
+	nominal_voltage 2401 V;
+	phases ABCN;
+	bustype SWING;
+	object recorder {
+		property measured_real_power[kW], measured_reactive_power[kVAr]; 
+		file "output/feeder_power/feeder_${RUN_NAME}.csv";
+		interval 1h;
+	};
+}
+
+object meter {
+	name feeder_node;
+	nominal_voltage 2401 V;
+	phases ABCN;
+}
+
+object overhead_line {
+	name main_line;
+	phases ABCN;
+	from feeder_node;
+	to main_node;
+	length 3 mile;
+	configuration lc301;
+//	object recorder {
+//		property power_losses.real; 
+//		file "output/line_losses/line_losses_${RUN_NAME}.csv";
+//		interval 1h;
+//	};
+}
+object regulator {
+	name main_reg;
+	phases ABCN;
+	from bulk_node;
+	to feeder_node;
+	configuration rc502;
+	sense_node main_node;
+}
+
+object regulator_configuration {
+	name rc502;
+	connect_type WYE_WYE;
+	band_center 2400.000;
+	band_width 40.0;
+	time_delay 30.0;
+	raise_taps 16;
+	lower_taps 16;
+	current_transducer_ratio 50;
+	power_transducer_ratio 20;
+	compensator_r_setting_A 0.4;
+	compensator_x_setting_A 0.4;
+	CT_phase "A";
+	PT_phase "A";
+	regulation 0.10;
+	Control OUTPUT_VOLTAGE;
+	Type A;
+	tap_pos_A -1;
+	tap_pos_B 0;
+	tap_pos_C 0;
+}
+
+//Line configurations
+//ABCN
+object overhead_line_conductor {
+	name olc301c;	//336,400 26/7 ACSR
+	geometric_mean_radius 0.0244;
+	resistance 0.306;
+	diameter 0.721;
+}
+
+object overhead_line_conductor {
+	name olc301n;	//4/0 6/1 ACSR
+	geometric_mean_radius 0.00814;
+	resistance 0.592;
+	diameter 0.563;
+}
+object line_configuration {
+	name lc301;
+	conductor_A olc301c;
+	conductor_B olc301c;
+	conductor_C olc301c;
+	conductor_N olc301n;
+	spacing ls500301;
+}
+//Line spacings
+//ABCN
+object line_spacing {
+	name ls500301;
+	distance_AB 2.5;
+	distance_AC 7.0;
+	distance_BC 4.5;
+	distance_CN 5.0;
+	distance_AN 5.65685424949;
+	distance_BN 4.27200187266;
+	distance_AE 28.0;
+	distance_BE 28.0;
+	distance_CE 28.0;
+	distance_NE 24.0;
+}
+object meter {
+	name main_node;
+	nominal_voltage 2401 V;
+	phases ABCN;
+//	object recorder {
+//		property measured_real_power[kW], measured_reactive_power[kVAr]; 
+//		file "output/main_node_power/main_node_${RUN_NAME}.csv";
+//		interval 1h;
+//	};
+}
+object meter {
+	name main_node_A;
+	parent main_node;
+	nominal_voltage 2401 V;
+	phases AN;
+}
+object meter {
+	name main_node_B;
+	parent main_node;
+	nominal_voltage 2401 V;
+	phases BN;
+}
+object meter {
+	name main_node_C;
+	parent main_node;
+	nominal_voltage 2401 V;
+	phases CN;
+}
+
+object transformer_configuration {
+	name xfmr_config_A;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type POLETOP;
+	powerA_rating 1000;
+	primary_voltage 2401;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+object transformer_configuration {
+	name xfmr_config_B;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type POLETOP;
+	powerB_rating 1000;
+	primary_voltage 2401 V;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+object transformer_configuration {
+	name xfmr_config_C;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type POLETOP;
+	powerC_rating 1000;
+	primary_voltage 2401 V;
+	secondary_voltage 120.000 V;
+	impedance 0.006+0.0136j;
+}
+global int32 SEQ_CUSTID 0;
+#set allow_reinclude=true
+
+#if ELEC_COUNT!=0
+#if UPGRADE_COUNT!=0
+#include using(LOADID=1,PHASE=A,COUNT=${UPGRADE_COUNT},GAS=no,UPGRADE=yes) "house.glm"
+#include using(LOADID=1,PHASE=B,COUNT=${UPGRADE_COUNT},GAS=no,UPGRADE=yes) "house.glm"
+#include using(LOADID=1,PHASE=C,COUNT=${UPGRADE_COUNT},GAS=no,UPGRADE=yes) "house.glm"
+#endif //UPGARDECOUNT
+#include using(LOADID=1,PHASE=A,COUNT=${BASELINE_COUNT},GAS=no,UPGRADE=no) "house.glm"
+#include using(LOADID=1,PHASE=B,COUNT=${BASELINE_COUNT},GAS=no,UPGRADE=no) "house.glm"
+#include using(LOADID=1,PHASE=C,COUNT=${BASELINE_COUNT},GAS=no,UPGRADE=no) "house.glm"
+#endif //ELEC_COUNT
+
+#if GAS_COUNT!=0 
+#include using(LOADID=1,PHASE=A,COUNT=${GAS_COUNT},GAS=yes) "house.glm"
+#include using(LOADID=1,PHASE=B,COUNT=${GAS_COUNT},GAS=yes) "house.glm"
+#include using(LOADID=1,PHASE=C,COUNT=${GAS_COUNT},GAS=yes) "house.glm"
+#endif //GAS_COUNT
 
 
 
@@ -76,25 +253,3 @@ weather "<string>";
 
 
 
-
-
-// convert CSV configuration file, if any
-#ifexist "electrification_analysis_config.csv"
-#exec strings <electrification_analysis_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >electrification_analysis_config.csv
-#endif
-
-// load configuration file, if any
-#ifexist "electrification_analysis_config.glm"
-#include "electrification_analysis_config.glm"
-#endif
-
-// load the gridlabd-python module
-module electrification_analysis;
-
-
-#if ELECTRIFICATION_ANALYSIS=="on"
-#debug "ELECTRIFICATION ANALYSIS is enabled"
-// INPUT CSV ELECTRIFICATION ANALYSIS
-#input "electrification_analysis_config.csv" -f table -t "object" -C power.electrification
-#input "electrification_analysis_config.csv" -f "table" -t "object" 
-#endif //ELECTRIFICATION_ANALYSIS
