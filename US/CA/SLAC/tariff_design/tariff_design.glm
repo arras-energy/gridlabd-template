@@ -2,20 +2,34 @@
 
 //Set up modules
 module revenue;
-// load the gridlabd-python module
 module tariff_design;
 
 //Define classes here (inputs and outputs)
 
 class pgande_residential_tou {
 	parent tariff;
-	double period1_tier1_rate [$/kWh]
-	double period1_tier2_rate [$/kWh]
-	double period2_tier1_rate [$/kWh]
-	double period2_tier2_rate [$/kWh]
-	double period3_tier1_rate [$/kWh]
-	double period3_tier2_rate [$/kWh]
-	double period4_tier1_rate [$/kWh]
-	double period4_tier2_rate [$/kWh]
+
+	double period0_tier1_rate [$/kWh];
+	double period0_tier2_rate [$/kWh];
+	doulbe period0_tier1_max [kWh];
+
+	double period1_tier1_rate [$/kWh];
+	double period1_tier2_rate [$/kWh];
+	doulbe period1_tier1_max [kWh];
+
+	double period2_tier1_rate [$/kWh];
+	double period2_tier2_rate [$/kWh];
+	doulbe period2_tier1_max [kWh];
+
+	double period3_tier1_rate [$/kWh];
+	double period3_tier2_rate [$/kWh];
+	doulbe period3_tier1_max [kWh];
+
+	double period4_tier1_rate [$/kWh];
+	double period4_tier2_rate [$/kWh];
+	doulbe period4_tier1_max [kWh];
+
+	int weekday_schedule;
+	int weekend_schedule;
 	
 }
