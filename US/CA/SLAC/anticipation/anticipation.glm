@@ -3,6 +3,7 @@
 
 //Set up for globals
 #set literal_if=FALSE
+#set verbose=TRUE
 
 //Set up modules
 module powerflow;
@@ -40,32 +41,9 @@ module anticipation;
 #endif
 object recorder {
   parent "pole7";
-  property "resisting_moment";
+  property "total_moment";
   file "pole_outputs.csv";
   interval -1;
 }
 
-object recorder {
-  parent "pole8";
-  property "resisting_moment";
-  file "pole_outputs1.csv";
-  interval -1;
-}
-object recorder {
-  parent "pole9";
-  property "resisting_moment";
-  file "pole_outputs2.csv";
-  interval -1;
-}
-object recorder {
-  parent "pole10";
-  property "resisting_moment";
-  file "pole_outputs3.csv";
-  interval -1;
-}
-object recorder {
-  parent "pole11";
-  property "resisting_moment";
-  file "pole_outputs4.csv";
-  interval -1;
-}
+
