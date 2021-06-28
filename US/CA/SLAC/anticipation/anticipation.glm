@@ -3,13 +3,12 @@
 
 //Set up for globals
 #set literal_if=FALSE
-#set verbose=TRUE
+//#set verbose=TRUE
 
 //Set up modules
 module powerflow;
 module climate;
 module tape; 
-
 
 // convert CSV configuration file, if any
 #ifexist "anticipation_config.csv"
@@ -21,9 +20,16 @@ module tape;
 #include "anticipation_config.glm"
 #endif
 
+
+//Setting up the clock
+clock {
+  starttime ${STARTTIME};
+  stoptime ${STOPTIME};
+  timezone ${TIMEZONE};
+}
+
 // load the gridlabd-python module
 module anticipation;
-
 
 #if POLE_VULNERABILITY_ANALYSIS=="on"
 #debug "POLE VULNERABILITY ANALYSIS is enabled"
