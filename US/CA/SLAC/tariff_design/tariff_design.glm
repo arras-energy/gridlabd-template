@@ -32,4 +32,7 @@ class pgande_residential_tou {
 	int weekday_schedule;
 	int weekend_schedule;
 	
+	string dgr_type;
+
+	double fixed_charge_minrate [$/month]
 }
