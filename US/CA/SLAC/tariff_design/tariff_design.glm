@@ -9,30 +9,72 @@ module tariff_design;
 class pgande_residential_tou {
 	parent tariff;
 
-	double period0_tier1_rate [$/kWh];
-	double period0_tier2_rate [$/kWh];
-	doulbe period0_tier1_max [kWh];
+	//Inputs
+	double energyratestructure/period0/tier0rate [$/kWh];
+	double energyratestructure/period0/tier0max [kWh];
+	double energyratestructure/period0/tier1rate [$/kWh];
+	double energyratestructure/period0/tier1max [kWh];
+	double energyratestructure/period0/tier2rate [$/kWh];
+	double energyratestructure/period0/tier2max [kWh];
+	double energyratestructure/period0/tier3rate [$/kWh];
+	double energyratestructure/period0/tier3max [kWh];
+	double energyratestructure/period0/tier4rate [$/kWh];
 
-	double period1_tier1_rate [$/kWh];
-	double period1_tier2_rate [$/kWh];
-	doulbe period1_tier1_max [kWh];
+	double energyratestructure/period1/tier0rate [$/kWh];
+	double energyratestructure/period1/tier0max [kWh];
+	double energyratestructure/period1/tier1rate [$/kWh];
+	double energyratestructure/period1/tier1max [kWh];
+	double energyratestructure/period1/tier2rate [$/kWh];
+	double energyratestructure/period1/tier2max [kWh];
+	double energyratestructure/period1/tier3rate [$/kWh];
+	double energyratestructure/period1/tier3max [kWh];
+	double energyratestructure/period1/tier4rate [$/kWh];
 
-	double period2_tier1_rate [$/kWh];
-	double period2_tier2_rate [$/kWh];
-	doulbe period2_tier1_max [kWh];
+	double energyratestructure/period2/tier0rate [$/kWh];
+	double energyratestructure/period2/tier0max [kWh];
+	double energyratestructure/period2/tier1rate [$/kWh];
+	double energyratestructure/period2/tier1max [kWh];
+	double energyratestructure/period2/tier2rate [$/kWh];
+	double energyratestructure/period2/tier2max [kWh];
+	double energyratestructure/period2/tier3rate [$/kWh];
+	double energyratestructure/period2/tier3max [kWh];
+	double energyratestructure/period2/tier4rate [$/kWh];
 
-	double period3_tier1_rate [$/kWh];
-	double period3_tier2_rate [$/kWh];
-	doulbe period3_tier1_max [kWh];
+	double energyratestructure/period3/tier0rate [$/kWh];
+	double energyratestructure/period3/tier0max [kWh];
+	double energyratestructure/period3/tier1rate [$/kWh];
+	double energyratestructure/period3/tier1max [kWh];
+	double energyratestructure/period3/tier2rate [$/kWh];
+	double energyratestructure/period3/tier2max [kWh];
+	double energyratestructure/period3/tier3rate [$/kWh];
+	double energyratestructure/period3/tier3max [kWh];
+	double energyratestructure/period3/tier4rate [$/kWh];
 
-	double period4_tier1_rate [$/kWh];
-	double period4_tier2_rate [$/kWh];
-	doulbe period4_tier1_max [kWh];
+	double energyratestructure/period4/tier0rate [$/kWh];
+	double energyratestructure/period4/tier0max [kWh];
+	double energyratestructure/period4/tier1rate [$/kWh];
 
-	int weekday_schedule;
-	int weekend_schedule;
+	double energyratestructure/period5/tier0rate[$/kWh];
+	double energyratestructure/period6/tier0rate [$/kWh];
+	double energyratestructure/period7/tier0rate [$/kWh];
+
+	int energyweekdayschedule;
+	int energyweekendschedule;
 	
-	string dgr_type;
+	string dgrules;
 
-	double fixed_charge_minrate [$/month]
+	double fixedchargefirstmeter [$/month];
+	double mincharge [$/month];
+
+	//Outputs
+	double total_bill [$];
+	double dg_charges [$];
+	double energy_charges [$];
+	double net_revenue [$];
+
+	double peak_load [kW];
+	double avg_load [kW/day];
+	double peak_generation [kW];
+	double avg_generation [kW/day];
+
 }
