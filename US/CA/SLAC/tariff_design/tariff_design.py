@@ -95,3 +95,16 @@ def on_init(t):
         	continue
 
 	return True
+
+def tariff_billing(gridlabd,**kwargs):
+	# input data from fnc input and gridlab d
+
+	# duration using gridlabd clock
+	# need month, day, time for billing
+
+	# get meter info (energy demand and generation)
+
+	# bill calculations
+
+
+	return 
