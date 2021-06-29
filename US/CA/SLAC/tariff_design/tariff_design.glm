@@ -1,7 +1,9 @@
 // GridLAB-D tariff design model file
 
-//Set up modules
+//GridLAB-D modules
 module revenue;
+
+//py modules
 module tariff_design;
 
 //Define classes here (inputs and outputs)
@@ -65,6 +67,14 @@ class pgande_residential_tou {
 
 	double fixedchargefirstmeter [$/month];
 	double mincharge [$/month];
+	}
+
+class tariff_bill {
+	parent billing;
+
+	//Inputs
+	string tariff;
+	string meter;
 
 	//Outputs
 	double total_bill [$];
