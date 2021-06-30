@@ -68,23 +68,24 @@ def on_init(t):
 
 	# read in csv file
 	with open("tariff_library_config.csv") as fp:
-		reader = csv.reader(fp, delimiter=",")
+		reader = csv.reader(fp, skipinitialspace=True, delimiter=",")
 		next(reader)
 		tariff_input = [row for row in reader]
 	
+	# for each tariff in csv
 	for t in tariff_input:
 
 		# get inputs from csv
-		utility_name = data_read[i][0]
-		sector_type = data_read[i][1]
-		name = data_read[i][2]
-		region = data_read[i][4]
+		utility_name = tariff_input[i][0]
+		sector_type = tariff_input[i][1]
+		name = tariff_input[i][2]
+		region = tariff_input[i][4]
 		i = i + 1
 
 		# parse database
 		utility = data[data.utility==utility_name]
     	utility_active = utility[utility["enddate"].isna()]
-   		mask = utility_active["name"].str.contains(name, regex=True, case=False) && utility_active["name"].str.contains(region, regex=False)
+   		mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True)
    		tariff_data = utility_active[mask].reset_index()
 
 		# define gridlabd objects
@@ -96,8 +97,23 @@ def on_init(t):
 
 	return True
 
+def to_float(x):
+	return float(x.split(' ')[0])
+
 def tariff_billing(gridlabd,**kwargs):
+
 	# input data from fnc input and gridlab d
+	# CHECK UNDERSTANDING HERE
+	classname = kwargs['classname']
+	bill_name = f"{classname}:{id}"
+	bill = gridlabd.get_object(bill_name)
+	bill_name = bill["name"]
+	baseline = to_float(bill["baseline_demand"])
+	tariff = gridlabd.get_object(bill["tariff"])
+	meter = gridlabd.get_object(bill["meter"])
+	total_energy = to_float(meter["measured_real_energy"])/1000 #kW
+	energy_delta = to_float(meter["measured_real_energy_delta"]/1000) #kW
+	delta = to_float(meter["measured_real_energy_deltatimestep"]/3600) #hr
 
 	# duration using gridlabd clock
 	# need month, day, time for billing
