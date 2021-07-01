@@ -1,9 +1,10 @@
 import gridlabd
 import csv
 import pandas 
+import datetime
 
 # IMPROVE THIS TO REMOVE HARD CODING?
-data_list = ['dgrules', 'fixedchargefirstmeter','mincharge',
+data_list = ['name','dgrules', 'fixedchargefirstmeter','mincharge',
  'energyratestructure/period0/tier0max',
  'energyratestructure/period0/tier0rate',
  'energyratestructure/period0/tier1max',
@@ -45,9 +46,13 @@ data_list = ['dgrules', 'fixedchargefirstmeter','mincharge',
  'energyratestructure/period4/tier1rate',
  'energyratestructure/period5/tier0rate',
  'energyratestructure/period6/tier0rate',
- 'energyratestructure/period7/tier0rate',
- 'energyweekdayschedule',
- 'energyweekendschedule']
+ 'energyratestructure/period7/tier0rate']
+
+def to_float(x):
+	return float(x.split(' ')[0])
+
+def to_datetime(x,format):
+	return parser.parse(x)
 
 def on_init(t):
 	i=0
@@ -91,36 +96,94 @@ def on_init(t):
 		# define gridlabd objects
 		for column in data_list:
     		if tariff_data[column].isnull().values.any() == False:
-       			gridlabd.setvalue(name, column, tariff_data.at[0,column])
+       			gridlabd.setvalue(name, column, str(tariff_data.at[0,column]))
     	else:
         	continue
 
+        # check this syntax
+        energyweekdayschedule = tariff_data["energyweekdayschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True)
+		gridlabd.setvalue(name, "energyweekdayschedule", str(energyweekdayschedule))
+		energyweekendschedule = tariff_data["energyweekendschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True)
+		gridlabd.setvalue(name, "energyweekendschedule", str(energyweekendschedule))
+
 	return True
 
-def to_float(x):
-	return float(x.split(' ')[0])
-
-def tariff_billing(gridlabd,**kwargs):
+def tariff_billing(gridlabd, **kwargs):
 
 	# input data from fnc input and gridlab d
 	# CHECK UNDERSTANDING HERE
-	classname = kwargs['classname']
-	bill_name = f"{classname}:{id}"
+	tariff_classname = kwargs['tariff_classname']
+	tariff_name = kwargs['tariff_name']
+	bill_classname = kwargs['bill_classname']
+	bill_name = kwargs['bill_name']
+
 	bill = gridlabd.get_object(bill_name)
-	bill_name = bill["name"]
+	tariff = gridlabd.get_object(tariff_name)
+	gridlabd.setvalue(tariff,bill['energy_tariff'], tariff)
+	if tariff["dg_rules"] == "Net Metering":
+		gridlabd.setvalue(tariff,bill['generation_tariff'],tariff)
+	# else: ADD input for different generation tariff
+
 	baseline = to_float(bill["baseline_demand"])
-	tariff = gridlabd.get_object(bill["tariff"])
 	meter = gridlabd.get_object(bill["meter"])
-	total_energy = to_float(meter["measured_real_energy"])/1000 #kW
-	energy_delta = to_float(meter["measured_real_energy_delta"]/1000) #kW
-	delta = to_float(meter["measured_real_energy_deltatimestep"]/3600) #hr
+
+	monthly_fixedchargefirstmeter = to_float(tariff["fixedchargefirstmeter"])
+	monthly_mincharge = to_float(tariff["mincharge"])
+
+	# is this how you set the value to 1 hr?
+	gridlabd.setvalue(meter["measured_real_energy_delta"],"measured_real_energy_delta", 3600)
+	energy_hr = to_float(meter["measured_real_energy_delta"]/1000) #kWh
 
 	# duration using gridlabd clock
 	# need month, day, time for billing
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
+	month = clock.month
+	day = clock.weekday()
+	hour = clock.hour
 
-	# get meter info (energy demand and generation)
+	usage = 0.0
 
-	# bill calculations
+	# find correct rate schedule
+	if (day == 5) or (day == 6):
+		schedule = tariff["energyweekendschedule"]
+	else:
+		schedule = tariff["energyweekdayschedule"]
+
+	idx = 24 * (month - 1) + hour
+	period = schedule[idx]
+
+	# bill calculations per hour
+	if period == "1L":
+		if usage < to_float(tariff["energyratestructure/period0/tier0max"]):
+			usage = energy_hr + usage
+			charge = energy_hr * to_float(tariff["energyratestructure/period0/tier0rate"]) + charge
+		elif (usage > to_float(tariff["energyratestructure/period0/tier0max"])) and (usage < to_float(tariff["energyratestructure/period0/tier1max"])):
+			usage = energy_hr + usage
+			charge = energy_hr * to_float(tariff["energyratestructure/period0/tier1rate"]) + charge
+		elif (usage > to_float(tariff["energyratestructure/period0/tier1max"])) and (usage < to_float(tariff["energyratestructure/period0/tier2max"])):
+			usage = energy_hr + usage
+			charge = energy_hr * to_float(tariff["energyratestructure/period0/tier2rate"]) + charge
+		elif (usage > to_float(tariff["energyratestructure/period0/tier2max"])) and (usage < to_float(tariff["energyratestructure/period0/tier3max"])):
+			usage = energy_hr + usage
+			charge = energy_hr * to_float(tariff["energyratestructure/period0/tier3rate"]) + charge
+		else:
+			usage = energy_hr + usage
+			charge = energy_hr * to_float(tariff["energyratestructure/period0/tier4rate"]) + charge
+	
+	
+	elif period == "2L":
+	elif period == "3L":
+	elif period == "4L":
+	elif period == "5L":
+	elif period == "6L":
+	elif period == "7L":
+	else:
+
+	# Work on monthly bill implementation
+	total_bill = charge + monthly_mincharge + monthly_fixedchargefirstmeter
+
+	gridlabd.set_value(bill_name,"energy_charges", str(charge))
+	gridlabd.set_value(bill_name,"total_bill", str(total_bill))
 
 
 	return 

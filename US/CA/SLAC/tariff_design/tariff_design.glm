@@ -12,6 +12,8 @@ class pgande_residential_tou {
 	parent tariff;
 
 	//Inputs
+	string name;
+
 	double energyratestructure/period0/tier0rate [$/kWh];
 	double energyratestructure/period0/tier0max [kWh];
 	double energyratestructure/period0/tier1rate [$/kWh];
@@ -73,8 +75,11 @@ class tariff_bill {
 	parent billing;
 
 	//Inputs
-	string tariff;
+	string energy_tariff;
+	string generation_tariff;
 	string meter;
+	double baseline_demand [kWh/day];
+	string INCLINING_BLOCK_RATE;
 
 	//Outputs
 	double total_bill [$];
