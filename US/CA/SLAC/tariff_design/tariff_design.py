@@ -60,15 +60,21 @@ def on_init(t):
 
 	# CHANGE TO USE REQUEST & ZIPFILE PY LIBRARY
 	# import in tariff data from API
-	'''
+	
 	import os
+	import shutil
+	import requests
+
 	if not os.path.exists('usurdb.csv'):
-    	import os
-    	os.system('curl https://openei.org/apps/USURDB/download/usurdb.csv.gz | gunzip > usurdb.csv')
-	'''	
+    	url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
+    	filename = url.split("/")[-1]
+    	fgzip = gzip.open(filename,'rb')
+    	with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
+    		shutil.copyfileobj(f_in, f_out)
+	
 	pandas.set_option("max_rows",None)
 	pandas.set_option("max_columns",None)
-	data = pandas.read_csv("../../../../../usurdb.csv",low_memory=False)
+	data = pandas.read_csv("usurdb.csv",low_memory=False)
 
 
 	# read in csv file
