@@ -1,4 +1,5 @@
 // Electrification Analysis GridLAB-D model file
+//Jorge Higuera
 
 #include "config/default.glm"
 #define CONFIGFILE=config/default.glm
