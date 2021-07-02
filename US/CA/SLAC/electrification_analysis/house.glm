@@ -79,5 +79,4 @@ object triplex_meter:..${COUNT} {
 #endif //UPGRADE
 #endif // GAS no	
 	}; 
-//Jorge Higuera
 }
