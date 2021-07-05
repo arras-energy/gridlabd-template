@@ -11,10 +11,7 @@ module tariff_design;
 class residential_tou {
 	parent tariff;
 
-	//Inputs 
-	double peak [$/kWh];
-	double offpeak [$/kWh];
-	double shoulder [$/kWh];
+	// Add start and end times to csv file as global inputs
 
 	double peak_tier0 [kWh/day];
 	double peak_rate0 [$/kWh];

@@ -3,6 +3,7 @@ import gridlabd
 import csv
 import pandas 
 import datetime
+from dateutil import parser
 
 def to_float(x):
 	return float(x.split(' ')[0])
@@ -13,18 +14,26 @@ def to_datetime(x,format):
 def on_init(t):
 	# downloads csv file from OpenEi database if not already downloaded
 	if not os.path.exists('usurdb.csv'):
+		# needed libraries
 		import shutil
 		import requests
+		import gzip
+		# url from OpenEi database
     	url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
     	filename = url.split("/")[-1]
     	fgzip = gzip.open(filename,'rb')
+    	# gets .gz file from OpenEi database
+    	with open(filename, "wb") as f:
+            r = requests.get(url)
+            f.write(r.content) 
+        # unzips .gz file    
     	with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
     		shutil.copyfileobj(f_in, f_out)
 
 	return True
 
 def read_tariff(pathtocsv, tariff_counter):
-	# reads USA tariff csv
+	# reads USA tariff csv usurdb.csv from OpenEi
 	pandas.set_option("max_rows",None)
     pandas.set_option("max_columns",None)
     data = pandas.read_csv("usurdb.csv",low_memory=False)
@@ -65,29 +74,32 @@ def monthlyschedule_gen(tariff_data, tariff_name):
 	# check syntax 
 	if (day == 5) or (day == 6):
 		schedule = tariff_data["energyweekendschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True).str.replace('L','', regex=True)
-		schedule = schedyle.str.split(pat=",",expand=True)
-		schedule = schedule.iloc[index1:index2].reset_index()
+		schedule = schedule.str.split(pat=",",expand=True)
+		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
 	else:
 		schedule = tariff_data["energyweekdayschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True).str.replace('L','', regex=True)
-		schedule = schedyle.str.split(pat=",",expand=True)
-		schedule = schedule.iloc[index1:index2].reset_index()
+		schedule = schedule.str.split(pat=",",expand=True)
+		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
 
-	rates = schedule.unique().sort()
+	rates = list(set(schedule))
 
-	# check if this finds where time changes
-	timing = schedule.ne(schedule.shift()).apply(lambda x: x.value.tolist())
+	# gives index in schedule where rate changes
+	c = [i for i in range(1,len(schedule)) if schedule[i]!=schedule[i-1] ]
+	timing = list(range(c[0],c[1]))
 
 	pcounter = 0
 	rate_idx = 0
 	type_idx = 0
 	types = ["offpeak","peak"]
 
+	# fills in tariff obj with peak and offpeak rates
 	if len(rates) >= 3:
 		print("Implementation for >= 3 TOU rates in progress")
-
 	else:
 		for rate in rates:
-			if (int(rate) - 1) == pcounter:
+			while rate != pcounter:
+				pcounter = pcounter + 1
+			else:
 				for counter in range(5):
 					if tariff_data["energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"].isnull().values.any() == False:
 						gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
@@ -115,7 +127,7 @@ def tariff_billing(gridlabd, **kwargs):
 	bill = gridlabd.get_object(bill_name)
 	meter = gridlabd.get_object(bill["meter"])
 
-	# calculate daily energy usage
+	# calculate previous daily energy usage
 	previous_usage = kwargs['usage']
 
 	# Is this the correct time to set this value to 1hr?
@@ -125,43 +137,39 @@ def tariff_billing(gridlabd, **kwargs):
 	# this is not always the energy at the hour?
     energy_hr =(to_float(gridlabd.get_value(meter, measured_real_energy_delta)))/1000 #kWh
 
-    # get previous
+    # get previous time
     timing = kwargs['timing']
-    peak = timing[hour]
+    if hour in timing:
+    	peak = 1
 
     # ensure that only calculated if one hour has passed
 	if hr_check >= 1:
 		daily_usage = previous_usage + energy_hr
 		if peak == 1:
-			if get_value(tariff_name, 'peak_tier0') and daily_usage <= to_float(get_value(tariff_name, 'peak_tier0')):
-				rate0 = to_float(get_value(tariff_name,'peak_rate0'))
-				charges = energy_hr * rate0
-			elif get_value(tariff_name, 'peak_tier1') and daily_usage <= to_float(get_value(tariff_name, 'peak_tier1')):
-				rate0 = to_float(get_value(tariff_name,'peak_rate0'))
-				rate1 = to_float(get_value(tariff_name,'peak_rate1'))
-				tier0 = (daily_usage - to_float(get_value(tariff_name, 'peak_tier0')))
-				tier1 = energy_hr-tier0
-				charges =  tier0 * rate0 + tier1 * rate1
-			elif get_value(tariff_name, 'peak_tier2') and daily_usage <= to_float(get_value(tariff_name, 'peak_tier2')):
-				rate0 = to_float(get_value(tariff_name,'peak_rate1'))
-				rate1 = to_float(get_value(tariff_name,'peak_rate2'))
-				tier0 = (daily_usage - to_float(get_value(tariff_name, 'peak_tier1')))
-				tier1 = energy_hr-tier0
-				charges =  tier0 * rate0 + tier1 * rate1
-			elif get_value(tariff_name, 'peak_tier3') and daily_usage <= to_float(get_value(tariff_name, 'peak_tier3')) >:
-				rate0 = to_float(get_value(tariff_name,'peak_rate2'))
-				rate1 = to_float(get_value(tariff_name,'peak_rate3'))
-				tier0 = (daily_usage - to_float(get_value(tariff_name, 'peak_tier2')))
-				tier1 = energy_hr-tier0
-				charges =  tier0 * rate0 + tier1 * rate1
-			elif daily_usage > to_float(get_value(tariff_name, 'peak_tier3')):
-				rate0 = to_float(get_value(tariff_name, 'peak_rate4'))
-				charges = energy_hr * rate0
-			else:
-				rate0 = to_float(get_value(tariff_name,'peak_rate0'))
-				charges = energy_hr * rate0
+			string = 'peak'
+		else:
+			string = "offpeak"
 
+		for counter in range(5):
+			if gridlabd.get_value(tariff_name, string+'_tier'+str(counter)) not None:
+				tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
+			else:
+				tier[counter] = 0.0
+			if gridlabd.get_value(tariff_name, string+'_rate0') not None:
+				rate[counter] = to_float(get_value(tariff_name, string+'_rate'+str(counter)))
+			else:
+				rate[counter] = 0.0
+
+		tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
+		tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
+		tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
+		tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier3, 0)
+		tier4 = max(energy_hr - tier0 - tier1 - tier3, 0)
+
+		hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*(energy_hr-tier3)
 	else:
 		print("Time passed was not a complete hour. Billing unchanged")
 	
+	gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
+
 	return 
