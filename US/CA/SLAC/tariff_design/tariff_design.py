@@ -61,6 +61,9 @@ def read_tariff(pathtocsv, tariff_counter):
     utility_active = utility[utility["enddate"].isna()]
     mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True) & utility_active["sector"].str.contains(sector_type, regex=True, case=False)
     tariff_data = utility_active[mask].reset_index()
+
+    # SETS ALL NaN to 0.0
+    tariff_data.fillna(0.0, inplace=True)
  
     return tariff_data # returns df of associated tariff
 
@@ -106,13 +109,13 @@ def monthlyschedule_gen(tariff_data, tariff_name):
 			while rate != pcounter:
 				pcounter = pcounter + 1
 			else:
-				for counter in range(5):
-					if tariff_data["energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"].isnull().values.any() == False:
-						gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
-					if tariff_data["energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"].isnull().values.any() == False:
-						gridlabd.set_value(t_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
-			else:
-				pcounter = pcounter + 1
+				for counter in range(4):
+					# SETS ALL OBJ PROPERTIES FOR TIER 0-3 AND RATES 0-3
+					gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
+					gridlabd.set_value(t_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
+
+				# SETS ALL OBJ PROPERTY FOR RATE 4
+				gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
 
 		pcounter = 0
 		type_idx = type_idx + 1
@@ -163,15 +166,12 @@ def tariff_billing(gridlabd, **kwargs):
 			else:
 				string = "offpeak"
 
-			for counter in range(5):
-				if gridlabd.get_value(tariff_name, string+'_tier'+str(counter)) not None:
+			for counter in range(4):
 					tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
-				else:
-					tier[counter] = 0.0
-				if gridlabd.get_value(tariff_name, string+'_rate0') not None:
 					rate[counter] = to_float(get_value(tariff_name, string+'_rate'+str(counter)))
-				else:
-					rate[counter] = 0.0
+
+			rate[counter+1] = to_float(get_value(tariff_name, string+'_rate'+str(counter+1)))
+			
 
 			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
 			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
@@ -179,12 +179,11 @@ def tariff_billing(gridlabd, **kwargs):
 			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier3, 0)
 			tier4 = max(energy_hr - tier0 - tier1 - tier3, 0)
 
-			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*(energy_hr-tier3)
+			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
+			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 		else:
 			print("Time passed was not a complete hour. Billing unchanged")
     else:
-    	print("Implementation for non-inclining block rate in progress")
-
-    gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
+    	print("Implementation for non-inclining block rate in progress") 
 
 	return 
