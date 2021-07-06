@@ -8,11 +8,9 @@ module tariff_design;
 
 //Define classes here (inputs and outputs)
 
-class residential_tou {
-	parent tariff;
+class tariff {
 
-	// Add start and end times to csv file as global inputs
-
+	// There are more tiers and rates for some periods. Check if common and implement if needed
 	double peak_tier0 [kWh/day];
 	double peak_rate0 [$/kWh];
 	double peak_tier1 [kWh/day];
@@ -34,26 +32,11 @@ class residential_tou {
 	double offpeak_rate4 [$/kWh];
 }
 
-
-class tariff_bill {
-	parent billing;
-
-	//Inputs
-	string energy_tariff;
-	string generation_tariff;
-	string meter;
-	double baseline_demand [kWh/day];
-	string INCLINING_BLOCK_RATE;
-
-	//Outputs
-	double total_bill [$];
-	double dg_charges [$];
-	double energy_charges [$];
-	double net_revenue [$];
-
-	double peak_load [kW];
-	double avg_load [kW/day];
-	double peak_generation [kW];
-	double avg_generation [kW/day];
-
+object tariff {
+	name "tariff";
 }
+
+
+
+
+

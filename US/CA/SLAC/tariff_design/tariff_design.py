@@ -14,8 +14,10 @@ def to_datetime(x,format):
 	return parser.parse(x)
 
 def on_init(t):
+
 	# downloads csv file from OpenEi database if not already downloaded
 	if not os.path.exists('usurdb.csv'):
+		print("Downloading needed csv file to working directory")
 		# needed libraries
 		import shutil
 		import requests
@@ -31,6 +33,13 @@ def on_init(t):
         # unzips .gz file    
     	with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
     		shutil.copyfileobj(f_in, f_out)
+
+    # IS THIS CORRECT TO SET DELTA TO 1 HR
+	meter = gridlabd.get_object("meter")
+	delta = to_float(gridlabd.get_value(meter["measured_real_energy_delta"],"measured_real_energy_delta"))
+	if delta != 3600
+		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
+		gridlabd.setvalue(meter["measured_real_energy_delta"],"measured_real_energy_delta", str(3600))
 
 	return True
 
@@ -67,7 +76,7 @@ def read_tariff(pathtocsv, tariff_counter):
  
     return tariff_data # returns df of associated tariff
 
-def monthlyschedule_gen(tariff_data, tariff_name):
+def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated tariff gridlabd obj
 
 	# Finding default tariff obj name from gridlabd	
 	tariff = gridlabd.get_object("tariff")
@@ -142,10 +151,6 @@ def tariff_billing(gridlabd, **kwargs):
 
 	# calculate previous daily energy usage
 	previous_usage = kwargs['usage']
-
-	# Is this the correct time to set this value to 1hr
-	# check if this set to an hour, if not set to hour w/ print statement 
-	gridlabd.setvalue(meter["measured_real_energy_delta"],"measured_real_energy_delta", str(3600))
     
 	# getting the energy for the time that passed?
 	# this is not always the energy at the hour?
