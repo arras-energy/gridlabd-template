@@ -5,6 +5,8 @@ import pandas
 import datetime
 from dateutil import parser
 
+RATE_FLAG = TRUE 
+
 def to_float(x):
 	return float(x.split(' ')[0])
 
@@ -50,18 +52,22 @@ def read_tariff(pathtocsv, tariff_counter):
     name = tariff_input[tariff_counter][2]
     region = tariff_input[tariff_counter][4]
 
+    # Inclining rate flag
+    global RATE_FLAG 
+    RATE_FLAG = tariff_input[tariff_counter][5]
+
     # parse database
     utility = data[data.utility==utility_name]
     utility_active = utility[utility["enddate"].isna()]
-    mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True)
+    mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True) & utility_active["sector"].str.contains(sector_type, regex=True, case=False)
     tariff_data = utility_active[mask].reset_index()
  
     return tariff_data # returns df of associated tariff
 
 def monthlyschedule_gen(tariff_data, tariff_name):
 
-	# does this define an object?
-	tariff = gridlabd.get_object(tariff_name)
+	# Finding default tariff obj name from gridlabd	
+	tariff = gridlabd.get_object("tariff")
 	t_name = tariff["name"]
 
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
@@ -94,7 +100,7 @@ def monthlyschedule_gen(tariff_data, tariff_name):
 
 	# fills in tariff obj with peak and offpeak rates
 	if len(rates) >= 3:
-		print("Implementation for >= 3 TOU rates in progress")
+		print("Implementation for >= 3 TOU rates per day in progress")
 	else:
 		for rate in rates:
 			while rate != pcounter:
@@ -114,6 +120,10 @@ def monthlyschedule_gen(tariff_data, tariff_name):
 	return timing
 
 
+# add event handeler to ensure only 1 hr has passed
+# on commmit
+# call tariff_billing on commit and get duration during
+
 def tariff_billing(gridlabd, **kwargs):
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	month = clock.month
@@ -130,7 +140,8 @@ def tariff_billing(gridlabd, **kwargs):
 	# calculate previous daily energy usage
 	previous_usage = kwargs['usage']
 
-	# Is this the correct time to set this value to 1hr?
+	# Is this the correct time to set this value to 1hr
+	# check if this set to an hour, if not set to hour w/ print statement 
 	gridlabd.setvalue(meter["measured_real_energy_delta"],"measured_real_energy_delta", str(3600))
     
 	# getting the energy for the time that passed?
@@ -142,34 +153,38 @@ def tariff_billing(gridlabd, **kwargs):
     if hour in timing:
     	peak = 1
 
-    # ensure that only calculated if one hour has passed
-	if hr_check >= 1:
-		daily_usage = previous_usage + energy_hr
-		if peak == 1:
-			string = 'peak'
+    global RATE_FLAG
+
+    if RATE_FLAG = TRUE:
+    	if hr_check >= 1:
+			daily_usage = previous_usage + energy_hr
+			if peak == 1:
+				string = 'peak'
+			else:
+				string = "offpeak"
+
+			for counter in range(5):
+				if gridlabd.get_value(tariff_name, string+'_tier'+str(counter)) not None:
+					tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
+				else:
+					tier[counter] = 0.0
+				if gridlabd.get_value(tariff_name, string+'_rate0') not None:
+					rate[counter] = to_float(get_value(tariff_name, string+'_rate'+str(counter)))
+				else:
+					rate[counter] = 0.0
+
+			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
+			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
+			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
+			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier3, 0)
+			tier4 = max(energy_hr - tier0 - tier1 - tier3, 0)
+
+			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*(energy_hr-tier3)
 		else:
-			string = "offpeak"
+			print("Time passed was not a complete hour. Billing unchanged")
+    else:
+    	print("Implementation for non-inclining block rate in progress")
 
-		for counter in range(5):
-			if gridlabd.get_value(tariff_name, string+'_tier'+str(counter)) not None:
-				tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
-			else:
-				tier[counter] = 0.0
-			if gridlabd.get_value(tariff_name, string+'_rate0') not None:
-				rate[counter] = to_float(get_value(tariff_name, string+'_rate'+str(counter)))
-			else:
-				rate[counter] = 0.0
-
-		tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
-		tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
-		tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
-		tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier3, 0)
-		tier4 = max(energy_hr - tier0 - tier1 - tier3, 0)
-
-		hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*(energy_hr-tier3)
-	else:
-		print("Time passed was not a complete hour. Billing unchanged")
-	
-	gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
+    gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 
 	return 
