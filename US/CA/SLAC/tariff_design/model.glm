@@ -1,0 +1,8 @@
+// look at autotests for creating model.glm file (module->residential->autotests)
+// commerical parking lot example on github (module->commerical->test->parking)
+// add module residential, climate, climate obj, clock obj, tape module for recorder obj
+
+
+object house{
+	
+}
