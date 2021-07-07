@@ -120,6 +120,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 			else:
 				for counter in range(4):
 					# SETS ALL OBJ PROPERTIES FOR TIER 0-3 AND RATES 0-3
+					# CHECK SYNTAX
 					gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
 					gridlabd.set_value(t_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
 
@@ -136,35 +137,30 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 # on commmit
 # call tariff_billing on commit and get duration during
 
-def tariff_billing(gridlabd, **kwargs):
+def on_commit(**kwargs, t):
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
-	month = clock.month
-	day = clock.weekday()
-	hour = clock.hour
-	old_time = kwargs['clock']
-	hr_check = ((clock - old_time).total_seconds()) / 3600
-	month_check = month - old_time.month
+	time = clock.time
+	billing_days = (((kwargs['clock']).time + time) / 86400) # in days but could convert to make billing hours property
 
-	bill_name = kwargs['bill_name']
-	bill = gridlabd.get_object(bill_name)
-	meter = gridlabd.get_object(bill["meter"])
+	if time % 3600 == 0: #checks if top of the hour will this be an issue if two hours pass?
+		bill_name = kwargs['bill_name']
+		bill = gridlabd.get_object(bill_name)
+		meter = gridlabd.get_object(bill["meter"])
 
-	# calculate previous daily energy usage
-	previous_usage = kwargs['usage']
-    
-	# getting the energy for the time that passed?
-	# this is not always the energy at the hour?
-    energy_hr =(to_float(gridlabd.get_value(meter, measured_real_energy_delta)))/1000 #kWh
+		# calculate previous daily energy usage
+		previous_usage = kwargs['usage']
+	    
+	    # energy usage over the hour
+	    energy_hr =(to_float(gridlabd.get_value(meter, measured_real_energy_delta)))/1000 #kWh
 
-    # get previous time
-    timing = kwargs['timing']
-    if hour in timing:
-    	peak = 1
+	    # check if current time during peak rate
+	    timing = kwargs['timing']
+	    if hour in timing:
+	    	peak = 1
 
-    global RATE_FLAG
+	    global RATE_FLAG
 
-    if RATE_FLAG = TRUE:
-    	if hr_check >= 1:
+	    if RATE_FLAG = TRUE:
 			daily_usage = previous_usage + energy_hr
 			if peak == 1:
 				string = 'peak'
@@ -177,7 +173,6 @@ def tariff_billing(gridlabd, **kwargs):
 
 			rate[counter+1] = to_float(get_value(tariff_name, string+'_rate'+str(counter+1)))
 			
-
 			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
 			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
 			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
@@ -186,9 +181,12 @@ def tariff_billing(gridlabd, **kwargs):
 
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-		else:
-			print("Time passed was not a complete hour. Billing unchanged")
-    else:
-    	print("Implementation for non-inclining block rate in progress") 
+			gridlabd.set_value(bill_name,"billing_days",str(billing_days))
+		
+	    else:
+	    	print("Implementation for non-inclining block rate in progress") 
 
-	return 
+	else:
+		print("Time passed was not a complete hour. Billing unchanged")
+
+	return gridlabd.NEVER
