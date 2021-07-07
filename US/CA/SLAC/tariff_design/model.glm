@@ -1,8 +1,42 @@
-// look at autotests for creating model.glm file (module->residential->autotests)
-// commerical parking lot example on github (module->commerical->test->parking)
 // add module residential, climate, climate obj, clock obj, tape module for recorder obj
 
+// Model glm for testing
 
-object house{
-	
+// Clock 
+clock {
+	timezone PST+8PDT
+	starttime '2021-01-01 0:00:00 PST';
+	stoptime '2021-01-01 1:00:00 PST';
+}
+
+module tape;
+
+module climate;
+// Is this the correct way to get climate information
+#weather get WA-Yakima_Air_Terminal.tmy3
+object climate 
+{
+    name "yakima";
+    tmyfile "WA-Yakima_Air_Terminal.tmy3";
+}
+
+module powerflow;
+
+object meter {
+	name "test_meter";
+	measured_energy_delta_timestep "3600";
+}
+
+module revenue;
+
+object billing {
+	name "test_bill";
+	meter "test_meter";
+	tariff "tariff";	
+}
+
+module residential;
+
+object house {
+	name "test_house";
 }

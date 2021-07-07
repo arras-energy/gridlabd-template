@@ -36,10 +36,10 @@ def on_init(t):
 
     # IS THIS CORRECT TO SET DELTA TO 1 HR
 	meter = gridlabd.get_object("meter")
-	delta = to_float(gridlabd.get_value(meter["measured_real_energy_delta"],"measured_real_energy_delta"))
+	delta = to_float(gridlabd.get_value(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep"))
 	if delta != 3600
 		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
-		gridlabd.setvalue(meter["measured_real_energy_delta"],"measured_real_energy_delta", str(3600))
+		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
 	return True
 
@@ -132,19 +132,21 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
  
 	return timing
 
-
-# add event handeler to ensure only 1 hr has passed
-# on commmit
-# call tariff_billing on commit and get duration during
-
 def on_commit(**kwargs, t):
+	# CHECK IF THIS INPUT WORKS WITH FUNCTION
+
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	time = clock.time
 	billing_days = (((kwargs['clock']).time + time) / 86400) # in days but could convert to make billing hours property
 
 	if time % 3600 == 0: #checks if top of the hour will this be an issue if two hours pass?
-		bill_name = kwargs['bill_name']
-		bill = gridlabd.get_object(bill_name)
+
+		path = kwargs['pathtocsv']
+		t_counter = kwargs['tariff_counter']
+		tariff_df = read_tariff(path, t_counter)
+		timing = monthlyschedule_gen(tariff_df)
+
+		bill = gridlabd.get_object("test_bill")
 		meter = gridlabd.get_object(bill["meter"])
 
 		# calculate previous daily energy usage
