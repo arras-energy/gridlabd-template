@@ -5,7 +5,7 @@ import pandas
 import datetime
 from dateutil import parser
 
-RATE_FLAG = TRUE 
+global RATE_FLAG 
 
 def to_float(x):
 	return float(x.split(' ')[0])
@@ -14,7 +14,6 @@ def to_datetime(x,format):
 	return parser.parse(x)
 
 def on_init(t):
-
 	# downloads csv file from OpenEi database if not already downloaded
 	if not os.path.exists('usurdb.csv'):
 		print("Downloading needed csv file to working directory")
@@ -25,11 +24,13 @@ def on_init(t):
 		# url from OpenEi database
 		url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
 		filename = url.split("/")[-1]
-		fgzip = gzip.open(filename,'rb')
+		
 		# gets .gz file from OpenEi database
 		with open(filename, "wb") as f:
 			r = requests.get(url)
 			f.write(r.content) 
+		fgzip = gzip.open(filename,'rb')
+
 		# unzips .gz file    
 		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
 			shutil.copyfileobj(f_in, f_out)
@@ -37,7 +38,7 @@ def on_init(t):
 	# IS THIS CORRECT TO SET DELTA TO 1 HR
 	meter = gridlabd.get_object("test_meter")
 	delta = to_float(gridlabd.get_value(meter["name"],"measured_energy_delta_timestep"))
-	if delta != 3600
+	if delta != 3600:
 		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
@@ -142,13 +143,17 @@ def on_commit(t):
 	tariff = gridlabd.get_object("tariff")
 	tariff_name = tariff["name"]
 
+	# TEST THIS CODE
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
-	time = clock.time
+	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
 
-	billing_days = (time - (gridlabd.get_value(bill, 'billing_days').time) / 86400) # in days but could convert to make billing hours property
+	duration = to_float(gridlabd.get_value(bill_name, 'billing_days'))* 86400 # duration in seconds 
+	time = seconds - duration
 
-	if time % 3600 == 0: #if top of the hour will this be an issue if two hours pass?
+	gridlabd.set_value(bill_name,"billing_days",str((duration+time)/ 86400))
+	###
 
+	if seconds % 3600 == 0:
 	# can add error flag if it skips an hour just assume it works
 
 		path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
@@ -171,7 +176,7 @@ def on_commit(t):
 
 		global RATE_FLAG
 
-		if RATE_FLAG = TRUE:
+		if RATE_FLAG == TRUE:
 			daily_usage = previous_usage + energy_hr
 			if peak == 1:
 				string = "peak"
@@ -192,7 +197,6 @@ def on_commit(t):
 
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-			gridlabd.set_value(bill_name,"billing_days",str(billing_days))
 			gridlbd.set_value(bill_name, "usage", str(daily_usage))
 		
 		else:

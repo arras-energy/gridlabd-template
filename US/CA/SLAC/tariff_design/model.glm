@@ -1,5 +1,3 @@
-// add module residential, climate, climate obj, clock obj, tape module for recorder obj
-
 // Model glm for testing
 
 // Clock 
@@ -11,7 +9,7 @@ clock {
 
 module tape;
 
-// check if you need climate module
+// Climate module needed
 
 module climate;
 #weather get WA-Yakima_Air_Terminal.tmy3
@@ -23,7 +21,7 @@ object meter {
 	name "test_meter";
 	measured_energy_delta_timestep "3600";
 
-	// Added b/c errors in Docker
+	// Added b/c errors in Docker?
 	phases A;
 	nominal_voltage 7200;
 }
@@ -31,14 +29,16 @@ object meter {
 module revenue;
 
 class billing {
-	double usage; //[kWh] syntax is wrong?
+	double usage; //[kWh]
+	double duration; //
 }
 
+// fails to create object. call to default_billing.py.compute_bill() failed
 object billing {
 	name "test_bill";
 	meter "test_meter";
 	tariff "tariff";
-	billing_days "0";	
+	billing_days "0.0";	
 	usage "0.0";
 }
 
