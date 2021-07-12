@@ -23,20 +23,20 @@ def on_init(t):
 		import requests
 		import gzip
 		# url from OpenEi database
-    	url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
-    	filename = url.split("/")[-1]
-    	fgzip = gzip.open(filename,'rb')
-    	# gets .gz file from OpenEi database
-    	with open(filename, "wb") as f:
-            r = requests.get(url)
-            f.write(r.content) 
-        # unzips .gz file    
-    	with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
-    		shutil.copyfileobj(f_in, f_out)
+		url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
+		filename = url.split("/")[-1]
+		fgzip = gzip.open(filename,'rb')
+		# gets .gz file from OpenEi database
+		with open(filename, "wb") as f:
+			r = requests.get(url)
+			f.write(r.content) 
+		# unzips .gz file    
+		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
+			shutil.copyfileobj(f_in, f_out)
 
-    # IS THIS CORRECT TO SET DELTA TO 1 HR
-	meter = gridlabd.get_object("meter")
-	delta = to_float(gridlabd.get_value(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep"))
+	# IS THIS CORRECT TO SET DELTA TO 1 HR
+	meter = gridlabd.get_object("test_meter")
+	delta = to_float(gridlabd.get_value(meter["name"],"measured_energy_delta_timestep"))
 	if delta != 3600
 		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
@@ -46,41 +46,41 @@ def on_init(t):
 def read_tariff(pathtocsv, tariff_counter):
 	# reads USA tariff csv usurdb.csv from OpenEi
 	pandas.set_option("max_rows",None)
-    pandas.set_option("max_columns",None)
-    data = pandas.read_csv("usurdb.csv",low_memory=False)
+	pandas.set_option("max_columns",None)
+	data = pandas.read_csv("usurdb.csv",low_memory=False)
 
-    # read in csv file depending on tariff counter value
-    with open(pathtocsv) as fp:
-        reader = csv.reader(fp, skipinitialspace=True, delimiter=",")
-        next(reader)
-        tariff_input = [row for row in reader]
+	# read in csv file depending on tariff counter value
+	with open(pathtocsv) as fp:
+		reader = csv.reader(fp, skipinitialspace=True, delimiter=",")
+		next(reader)
+		tariff_input = [row for row in reader]
 
-    # get inputs from csv
-    utility_name = tariff_input[tariff_counter][0]
-    sector_type = tariff_input[tariff_counter][1]
-    name = tariff_input[tariff_counter][2]
-    region = tariff_input[tariff_counter][4]
+	# get inputs from csv
+	utility_name = tariff_input[tariff_counter][0]
+	sector_type = tariff_input[tariff_counter][1]
+	name = tariff_input[tariff_counter][2]
+	region = tariff_input[tariff_counter][4]
 
-    # Inclining rate flag
-    global RATE_FLAG 
-    RATE_FLAG = tariff_input[tariff_counter][5]
+	# Inclining rate flag
+	global RATE_FLAG 
+	RATE_FLAG = tariff_input[tariff_counter][5]
 
-    # parse database
-    utility = data[data.utility==utility_name]
-    utility_active = utility[utility["enddate"].isna()]
-    mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True) & utility_active["sector"].str.contains(sector_type, regex=True, case=False)
-    tariff_data = utility_active[mask].reset_index()
+	# parse database
+	utility = data[data.utility==utility_name]
+	utility_active = utility[utility["enddate"].isna()]
+	mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True) & utility_active["sector"].str.contains(sector_type, regex=True, case=False)
+	tariff_data = utility_active[mask].reset_index()
 
-    # SETS ALL NaN to 0.0
-    tariff_data.fillna(0.0, inplace=True)
- 
-    return tariff_data # returns df of associated tariff
+	# SETS ALL NaN to 0.0
+	tariff_data.fillna(0.0, inplace=True)
+
+	return tariff_data # returns df of associated tariff
 
 def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated tariff gridlabd obj
 
 	# Finding default tariff obj name from gridlabd	
 	tariff = gridlabd.get_object("tariff")
-	t_name = tariff["name"]
+	tariff_name = tariff["name"]
 
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	month = clock.month
@@ -121,59 +121,68 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 				for counter in range(4):
 					# SETS ALL OBJ PROPERTIES FOR TIER 0-3 AND RATES 0-3
 					# CHECK SYNTAX
-					gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
-					gridlabd.set_value(t_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
+					gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
+					gridlabd.set_value(tariff_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
 
 				# SETS ALL OBJ PROPERTY FOR RATE 4
-				gridlabd.set_value(t_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
+				gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
 
 		pcounter = 0
 		type_idx = type_idx + 1
- 
+
 	return timing
 
-def on_commit(**kwargs, t):
+def on_commit(t):
 	# CHECK IF THIS INPUT WORKS WITH FUNCTION
+
+	bill = gridlabd.get_object("test_bill")
+	bill_name = bill["name"]
+	meter = gridlabd.get_object("test_meter")
+	meter_name = meter["name"]
+	tariff = gridlabd.get_object("tariff")
+	tariff_name = tariff["name"]
 
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	time = clock.time
-	billing_days = (((kwargs['clock']).time + time) / 86400) # in days but could convert to make billing hours property
 
-	if time % 3600 == 0: #checks if top of the hour will this be an issue if two hours pass?
+	billing_days = (time - (gridlabd.get_value(bill, 'billing_days').time) / 86400) # in days but could convert to make billing hours property
 
-		path = kwargs['pathtocsv']
-		t_counter = kwargs['tariff_counter']
+	if time % 3600 == 0: #if top of the hour will this be an issue if two hours pass?
+
+	# can add error flag if it skips an hour just assume it works
+
+		path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
+		t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
+
 		tariff_df = read_tariff(path, t_counter)
 		timing = monthlyschedule_gen(tariff_df)
 
-		bill = gridlabd.get_object("test_bill")
-		meter = gridlabd.get_object(bill["meter"])
-
 		# calculate previous daily energy usage
-		previous_usage = kwargs['usage']
-	    
-	    # energy usage over the hour
-	    energy_hr =(to_float(gridlabd.get_value(meter, measured_real_energy_delta)))/1000 #kWh
+		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
 
-	    # check if current time during peak rate
-	    timing = kwargs['timing']
-	    if hour in timing:
-	    	peak = 1
+		# energy usage over the hour
+		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
 
-	    global RATE_FLAG
+		# check if current time during peak rate
+		if hour in timing:
+			peak = 1
+		else:
+			peak = 0
 
-	    if RATE_FLAG = TRUE:
+		global RATE_FLAG
+
+		if RATE_FLAG = TRUE:
 			daily_usage = previous_usage + energy_hr
 			if peak == 1:
-				string = 'peak'
+				string = "peak"
 			else:
 				string = "offpeak"
 
 			for counter in range(4):
 					tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
-					rate[counter] = to_float(get_value(tariff_name, string+'_rate'+str(counter)))
+					rate[counter] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter)))
 
-			rate[counter+1] = to_float(get_value(tariff_name, string+'_rate'+str(counter+1)))
+			rate[counter+1] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter+1)))
 			
 			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
 			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
@@ -184,9 +193,10 @@ def on_commit(**kwargs, t):
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 			gridlabd.set_value(bill_name,"billing_days",str(billing_days))
+			gridlbd.set_value(bill_name, "usage", str(daily_usage))
 		
-	    else:
-	    	print("Implementation for non-inclining block rate in progress") 
+		else:
+			print("Implementation for non-inclining block rate in progress") 
 
 	else:
 		print("Time passed was not a complete hour. Billing unchanged")
