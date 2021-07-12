@@ -1,0 +1,6 @@
+#weather get WA-Yakima_Air_Terminal.tmy3
+module climate;
+object climate
+{
+	tmyfile "WA-Yakima_Air_Terminal.tmy3";
+}
