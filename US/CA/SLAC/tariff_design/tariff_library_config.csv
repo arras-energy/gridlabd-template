@@ -1,3 +1,7 @@
 utility, sector, name, type, region, INCLINING_BLOCK_RATE
 Pacific Gas & Electric Co, Residential, E-TOU-C3, TOU, Region R, TRUE
 Pacific Gas & Electric Co, Residential, E-7 -Residential Time of Use Baseline, TOU, Region P, TRUE
+Pacific Gas & Electric Co, Residential, E-1, TOU, Region T, TRUE
+Pacific Gas & Electric Co, Residential, E-7, TOU, Region P, TRUE
+Pacific Gas & Electric Co, Residential, E-6, TOU, Region Q, TRUE
+Pacific Gas & Electric Co, Residential, E-TOU-C3, TOU, Region R, TRUE

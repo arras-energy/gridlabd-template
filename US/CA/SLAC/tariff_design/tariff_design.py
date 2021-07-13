@@ -70,7 +70,19 @@ def read_tariff(pathtocsv, tariff_counter):
 	utility = data[data.utility==utility_name]
 	utility_active = utility[utility["enddate"].isna()]
 	mask = utility_active["name"].str.contains(name, regex=True, case=False) & utility_active["name"].str.contains(region, regex=True) & utility_active["sector"].str.contains(sector_type, regex=True, case=False)
-	tariff_data = utility_active[mask].reset_index()
+	df = utility_active[mask].reset_index()
+
+	if df.shape[0] > 1:
+		print("Not enough information provided to define tariff: ", df.shape[0]," tariffs generated.")
+		for i in range(df.shape[0]):
+			print("Index",i,": ", df.iloc[i,3]) # print df name
+		idx = input("Enter desired tariff index: ")
+		tariff_data = pandas.DataFrame(df.iloc[[idx]])
+	elif df.shape[0] == 0:
+		print("No active tariff found in OpenEi database matching information")
+		### ADD EXIT SIMULATION?
+	else:
+		tariff_data = df
 
 	# SETS ALL NaN to 0.0
 	tariff_data.fillna(0.0, inplace=True)
@@ -134,7 +146,6 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 	return timing
 
 def on_commit(t):
-	# CHECK IF THIS INPUT WORKS WITH FUNCTION
 
 	bill = gridlabd.get_object("test_bill")
 	bill_name = bill["name"]
