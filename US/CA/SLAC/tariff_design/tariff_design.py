@@ -133,15 +133,14 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 			else:
 				for counter in range(4):
 					# SETS ALL OBJ PROPERTIES FOR TIER 0-3 AND RATES 0-3
-					# CHECK SYNTAX
 					gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
 					gridlabd.set_value(tariff_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
 
 				# SETS ALL OBJ PROPERTY FOR RATE 4
 				gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
 
-		pcounter = 0
-		type_idx = type_idx + 1
+				pcounter = 0
+				type_idx = type_idx + 1
 
 	return timing
 
