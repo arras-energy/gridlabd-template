@@ -147,12 +147,6 @@ def on_commit(t):
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
 
-	duration = to_float(gridlabd.get_value(bill_name, 'billing_days'))* 86400 # duration in seconds 
-	time = seconds - duration
-
-	gridlabd.set_value(bill_name,"billing_days",str((duration+time)/ 86400))
-	###
-
 	if seconds % 3600 == 0:
 	# can add error flag if it skips an hour just assume it works
 
@@ -162,8 +156,11 @@ def on_commit(t):
 		tariff_df = read_tariff(path, t_counter)
 		timing = monthlyschedule_gen(tariff_df)
 
-		# calculate previous daily energy usage
+		# get previous daily energy usage
 		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
+
+		# get previous billing_days
+		billing_days = to_float(gridlabd.get_values(bill_name, "billing_days"))
 
 		# energy usage over the hour
 		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
@@ -197,7 +194,13 @@ def on_commit(t):
 
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-			gridlbd.set_value(bill_name, "usage", str(daily_usage))
+			
+			if seconds == 0 and biling_days != 0.0:
+				gridlbd.set_value(bill_name, "usage", str(0.0))
+			else:
+				gridlbd.set_value(bill_name, "usage", str(daily_usage))
+
+			gridlabd.set_value(bill_name,"billing_days",str(billing_days+1/24))
 		
 		else:
 			print("Implementation for non-inclining block rate in progress") 
