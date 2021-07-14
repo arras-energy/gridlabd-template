@@ -1,0 +1,52 @@
+//Model for testing
+
+//Climate
+
+module climate;
+object climate {
+        name weather;
+        tmyfile "data/${WEATHER}";
+        interpolate QUADRATIC; //?
+}
+#else
+#error WEATHER is not specified in ${CONFIGFILE}// simulation_confi csv file?
+#endif // exist WEATHER
+
+//Clock
+
+clock {
+	timezone ${TIMEZONE};
+#ifdef STARTTIME
+	starttime ${STARTTIME};
+#endif
+#ifdef STOPTIME
+	stoptime ${STOPTIME};
+#endif
+}
+#else
+#error TIMEZONE is not specified in ${CONFIGFILE}
+#endif // TIMEZONE
+
+}
+
+module tape;
+
+module residential{
+	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
+	implicit_enduse_source EIA2015;
+}
+class house {
+     enumeration {UNKNOWN=7, VERY_GOOD=6, GOOD=5, ABOVE_NORMAL=4, NORMAL=3, B}ELOW_NORMAL=2, LITTLE=1, VERY_LITTLE=0} thermal_integrity_level;
+
+object house {
+     thermal_integrity_level ${THERMALINTEGRITYLEVEL};
+}
+class house {
+       enumeration {RESISTANCE, HEAT_PUMP, GAS, NONE} heating_system_type;
+       enumeration {HEAT_PUMP, ELECTRIC, NONE} cooling_system_type;;
+}
+object house {
+     heating_system_type ${HEATINGSYSTEMTYPE};
+    cooling_system_type ${COOLINGSYSTEMTYPE};
+}
+
