@@ -112,7 +112,11 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 		schedule = schedule.str.split(pat=",",expand=True)
 		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
 
-	rates = list(set(schedule))
+	lookup = set()
+	rates = [x for x in schedule if x not in lookup and lookup.add(x) is None]
+
+	# Changing rates definition to fix peak vs offpeak def 
+	# rates = list(set(schedule))
 
 	# gives index in schedule where rate changes
 	c = [i for i in range(1,len(schedule)) if schedule[i]!=schedule[i-1] ]
@@ -184,12 +188,15 @@ def on_commit(t):
 
 		global RATE_FLAG
 
-		if RATE_FLAG == True:
+		if RATE_FLAG == "True":
 			daily_usage = previous_usage + energy_hr
 			if peak == 1:
 				string = "peak"
 			else:
 				string = "offpeak"
+
+			tier=[0,0,0,0]
+			rate=[0,0,0,0,0]
 
 			for counter in range(4):
 					tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
@@ -200,18 +207,22 @@ def on_commit(t):
 			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
 			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
 			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
-			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier3, 0)
+			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0)
 			tier4 = max(energy_hr - tier0 - tier1 - tier3, 0)
 
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 			
-			if seconds == 0 and biling_days != 0.0:
-				gridlbd.set_value(bill_name, "usage", str(0.0))
+			if seconds == 0 and billing_days != 0.0:
+				gridlabd.set_value(bill_name, "usage", str(0.0))
 			else:
-				gridlbd.set_value(bill_name, "usage", str(daily_usage))
+				gridlabd.set_value(bill_name, "usage", str(daily_usage))
 
 			gridlabd.set_value(bill_name,"billing_days",str(billing_days+1/24))
+
+			# ADDED TO SEE RESULTS
+			print("KWh:", energy_hr," Charges:", hr_charge," Daily usage:" , daily_usage, "\n")
+			print(rate[0],rate[1],rate[2],rate[3])
 		
 		else:
 			print("Implementation for non-inclining block rate in progress") 
