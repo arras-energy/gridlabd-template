@@ -156,6 +156,7 @@ def on_commit(t):
 	# TEST THIS CODE
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
+	hour = clock.hour
 
 	if seconds % 3600 == 0:
 	# can add error flag if it skips an hour just assume it works
@@ -170,7 +171,7 @@ def on_commit(t):
 		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
 
 		# get previous billing_days
-		billing_days = to_float(gridlabd.get_values(bill_name, "billing_days"))
+		billing_days = to_float(gridlabd.get_value(bill_name, "billing_days"))
 
 		# energy usage over the hour
 		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
@@ -183,7 +184,7 @@ def on_commit(t):
 
 		global RATE_FLAG
 
-		if RATE_FLAG == TRUE:
+		if RATE_FLAG == True:
 			daily_usage = previous_usage + energy_hr
 			if peak == 1:
 				string = "peak"

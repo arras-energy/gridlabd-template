@@ -8,10 +8,10 @@ module tariff_design;
 
 //Define classes here (inputs and outputs)
 
-//#include model.glm
+//#include model.glm do I need to include this?
 
 class tariff {
-	double peak_tier0; ////[kWh/day];
+	double peak_tier0[kWh/day];
 	double peak_rate0; //[$/kWh];
 	double peak_tier1; //[kWh/day];
 	double peak_rate1; //[$/kWh];

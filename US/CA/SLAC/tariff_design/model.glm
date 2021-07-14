@@ -12,25 +12,22 @@ module tape;
 // Climate module needed
 
 module climate;
-#weather get WA-Yakima_Air_Terminal.tmy3
-#input "WA-Yakima_Air_Terminal.tmy3"
 
 module powerflow;
 
-object meter {
+object triplex_meter {
 	name "test_meter";
 	measured_energy_delta_timestep "3600";
 
 	// Added b/c errors in Docker?
-	phases A;
-	nominal_voltage 7200;
+	phases AS;
+	nominal_voltage 120;
 }
 
 module revenue;
 
 class billing {
-	double usage; //[kWh]
-	double duration; //
+	double usage[kWh];
 }
 
 // fails to create object. call to default_billing.py.compute_bill() failed
