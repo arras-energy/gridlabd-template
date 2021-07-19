@@ -1,7 +1,10 @@
 //Model for testing
 
-//Climate
+#include "electrification_analysis_config.csv" 
+#define ELECTRIFICATION_ANALYIS.CSV
 
+//Climate
+#ifexist data/${WEATHER}
 module climate;
 object climate {
         name weather;
@@ -9,7 +12,7 @@ object climate {
         interpolate QUADRATIC; 
 }
 #else
-#error WEATHER is not specified in ${CONFIGFILE}// simulation_confi csv file? 
+#error WEATHER is not specified in ${ELECTRIFICATION_ANALYIS.CSV}// simulation_confi csv file? 
 #endif // exist WEATHER
 
 //Clock

@@ -2062,6 +2062,66 @@
 			"access" : "PUBLIC",
 			"value" : "FALSE"
 		},
+		"csv_load_options" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "-f config -t config"
+		},
+		"Total" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Number of Houses per Phase=3"
+		},
+		"Weather" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "File=CA-San_Jose_Intl_Ap.tmy3"
+		},
+		"Start" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Time=2020-01-01 00:00:00 PST"
+		},
+		"Stop" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Time=2021-01-01 00:00:00 PST"
+		},
+		"Run" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "4=0.9"
+		},
+		"Baseline" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "0.5"
+		},
+		"Full" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Electric=1"
+		},
+		"Floor" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "area= 1500 sf"
+		},
+		"Thermal" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Integrity= GOOD"
+		},
+		"Solar" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "capacity="
+		},
+		"Battery" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Capacity="
+		},
 		"climate::message_flags" : {
 			"type" : "set",
 			"keywords" : {
@@ -2088,7 +2148,7 @@
 			"rank" : "0",
 			"clock" : "2000-01-01 00:00:00 UTC",
 			"rng_state" : "1804289383",
-			"guid" : "317424E84A6696D546C5C231B0D3D910",
+			"guid" : "BEE74256C3FB7C7152A7B70482D56CF",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
