@@ -5,44 +5,11 @@ import pandas
 import datetime
 from dateutil import parser
 
-global RATE_FLAG 
-
 def to_float(x):
 	return float(x.split(' ')[0])
 
 def to_datetime(x,format):
 	return parser.parse(x)
-
-def on_init(t):
-	# downloads csv file from OpenEi database if not already downloaded
-	if not os.path.exists('usurdb.csv'):
-		print("Downloading needed csv file to working directory")
-		# needed libraries
-		import shutil
-		import requests
-		import gzip
-		# url from OpenEi database
-		url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
-		filename = url.split("/")[-1]
-		
-		# gets .gz file from OpenEi database
-		with open(filename, "wb") as f:
-			r = requests.get(url)
-			f.write(r.content) 
-		fgzip = gzip.open(filename,'rb')
-
-		# unzips .gz file    
-		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
-			shutil.copyfileobj(f_in, f_out)
-
-	# IS THIS CORRECT TO SET DELTA TO 1 HR
-	meter = gridlabd.get_object("test_meter")
-	delta = to_float(gridlabd.get_value(meter["name"],"measured_energy_delta_timestep"))
-	if delta != 3600:
-		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
-		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
-
-	return True
 
 def read_tariff(pathtocsv, tariff_counter):
 	# reads USA tariff csv usurdb.csv from OpenEi
@@ -89,7 +56,7 @@ def read_tariff(pathtocsv, tariff_counter):
 
 	return tariff_data # returns df of associated tariff
 
-def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated tariff gridlabd obj
+def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates tariff gridlabd obj
 
 	# Finding default tariff obj name from gridlabd	
 	tariff = gridlabd.get_object("tariff")
@@ -148,28 +115,63 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populated t
 
 	return timing
 
-def on_commit(t):
+def on_init(t):
+	# downloads csv file from OpenEi database if not already downloaded
+	if not os.path.exists('usurdb.csv'):
+		print("Downloading needed csv file to working directory")
+		# needed libraries
+		import shutil
+		import requests
+		import gzip
+		# url from OpenEi database
+		url = "https://openei.org/apps/USURDB/download/usurdb.csv.gz"
+		filename = url.split("/")[-1]
+		
+		# gets .gz file from OpenEi database
+		with open(filename, "wb") as f:
+			r = requests.get(url)
+			f.write(r.content) 
+		fgzip = gzip.open(filename,'rb')
 
-	bill = gridlabd.get_object("test_bill")
-	bill_name = bill["name"]
+		# unzips .gz file    
+		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
+			shutil.copyfileobj(f_in, f_out)
+
+	# IS THIS CORRECT TO SET DELTA TO 1 HR
 	meter = gridlabd.get_object("test_meter")
-	meter_name = meter["name"]
-	tariff = gridlabd.get_object("tariff")
-	tariff_name = tariff["name"]
+	delta = to_float(gridlabd.get_value(meter["name"],"measured_energy_delta_timestep"))
+	if delta != 3600:
+		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
+		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
+
+	path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
+	t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
+
+	global tariff_df # reads tariff on init 
+	tariff_df = read_tariff(path, t_counter) 
+
+	return True
+
+def on_commit(t):
 
 	# TEST THIS CODE
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
 	hour = clock.hour
 
-	if seconds % 3600 == 0:
-	# can add error flag if it skips an hour just assume it works
+	if seconds % 3600 == 0: # can add error flag if it skips an hour just assume it works
 
-		path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
-		t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
+		bill = gridlabd.get_object("test_bill")
+		bill_name = bill["name"]
+		meter = gridlabd.get_object("test_meter")
+		meter_name = meter["name"]
+		tariff = gridlabd.get_object("tariff")
+		tariff_name = tariff["name"]
 
-		tariff_df = read_tariff(path, t_counter)
-		timing = monthlyschedule_gen(tariff_df)
+		# 7/19 TESTING MOVING THIS CODE TO ON_INIT TO SPEED UP RUN TIME
+		#path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
+		#t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
+		#tariff_df = read_tariff(path, t_counter)
 
 		# get previous daily energy usage
 		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
@@ -179,6 +181,15 @@ def on_commit(t):
 
 		# energy usage over the hour
 		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
+
+		# CHECK IF THIS CODE WORKS
+		# check if in same day/ if timing needs to be updated
+		day = clock.day
+		if billing_days == 0.0:
+			timing = monthlyschedule_gen(tariff_df)
+		elif day != previous_day
+			timing = monthlyschedule_gen(tariff_df)
+		previous_day = day
 
 		# check if current time during peak rate
 		if hour in timing:
