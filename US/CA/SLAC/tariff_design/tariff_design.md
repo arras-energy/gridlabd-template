@@ -1,18 +1,18 @@
 Tariff Design GridLAB-D Template
 
-#Synopsis
+# Synopsis
 
 Template for HiPAS tariff design use case. The goal of the use case is to help optimize tariff design by calculating tariffs whiel simulating different energy scenarios. The template calculates TOU tariffs using tariff rate information from the [OpenEI database](https://openei.org/wiki/Utility_Rate_Database) that is developed and maintained by NREL. Simulation is done with HiPAS GridLAB-D. 
 
-#Current Issues
+# Current Issues
 
 **The template is not completely user controlled. Currently users cannot select specifically what tariff within the tariff_library_config.csv they want to run. CHANGE THIS ASAP**
 
 Bills only have per kWh charges. Additional rates like demand charges, meter charges, DER credits, etc are not included.
 
-#Description
+# Description
 
-#Template Files
+# Template Files
 
 1. tariff_library_config.csv
 
