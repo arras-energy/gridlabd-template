@@ -25,13 +25,13 @@ object triplex_meter {
 	nominal_voltage 120;
 }
 
+// move to tariff_design.glm?
 module revenue;
 
 class billing {
 	double usage[kWh];
 }
 
-// fails to create object. call to default_billing.py.compute_bill() failed
 object billing {
 	name "test_bill";
 	meter "test_meter";
