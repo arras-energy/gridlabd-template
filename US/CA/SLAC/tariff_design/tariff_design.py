@@ -86,18 +86,34 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 	# rates = list(set(schedule))
 
 	# gives index in schedule where rate changes
-	c = [i for i in range(1,len(schedule)) if schedule[i]!=schedule[i-1] ]
-	timing = list(range(c[0],c[1]))
-
-	pcounter = 0
-	rate_idx = 0
-	type_idx = 0
-	types = ["offpeak","peak"]
+	#c = [i for i in range(1,len(schedule)) if schedule[i]!=schedule[i-1] ]
+	#timing = list(range(c[0],c[1]))
 
 	# fills in tariff obj with peak and offpeak rates
-	if len(rates) >= 3:
-		print("Implementation for >= 3 TOU rates per day in progress")
-	else:
+	if len(rates) > 3:
+		print("Implementation for > 3 TOU rates per day in progress")
+	elif len(rates) == 3: # handles 3 rates per day
+		pcounter = 0
+		type_idx = 0
+		types = ["offpeak","shoulder","peak"]
+		for rate in rates:
+			while rate != pcounter:
+				pcounter = pcounter + 1
+			else:
+				for counter in range(4):
+					# SETS ALL OBJ PROPERTIES FOR TIER 0-3 AND RATES 0-3
+					gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"rate"]))
+					gridlabd.set_value(tariff_name, types[type_idx]+"_tier"+str(counter), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter)+"max"]))
+
+				# SETS ALL OBJ PROPERTY FOR RATE 4
+				gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
+
+				pcounter = 0
+				type_idx = type_idx + 1
+	else: # handles 1-2 rates per day
+		pcounter = 0
+		type_idx = 0
+		types = ["offpeak","peak"]
 		for rate in rates:
 			while rate != pcounter:
 				pcounter = pcounter + 1
@@ -113,7 +129,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 				pcounter = 0
 				type_idx = type_idx + 1
 
-	return timing
+	return rates, schedule
 
 def on_init(t):
 	# downloads csv file from OpenEi database if not already downloaded
@@ -145,7 +161,7 @@ def on_init(t):
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
 	path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
-	t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
+	t_counter = 4 #EDIT TO ALLOW USER TO CHANGE
 
 	global tariff_df # reads tariff on init 
 	tariff_df = read_tariff(path, t_counter) 
@@ -186,25 +202,34 @@ def on_commit(t):
 		# check if in same day/ if timing needs to be updated
 		day = clock.day
 		if billing_days == 0.0:
-			timing = monthlyschedule_gen(tariff_df)
+			global rates
+			global schedule
+			rates, schedule = monthlyschedule_gen(tariff_df)
 		elif day != previous_day
-			timing = monthlyschedule_gen(tariff_df)
+			global rates
+			global schedule
+			rates, schedule = monthlyschedule_gen(tariff_df)
 		previous_day = day
 
-		# check if current time during peak rate
-		if hour in timing:
-			peak = 1
+		# check if if time is peak/shoulder/offpeak
+		type_idx = rates.index(schedule[clock.hour])
+		if len(rates) == 3:
+			if type_idx == 0:
+				string = "offpeak"
+			elif type_idx == 1:
+				string = "shoulder"
+			else:
+				string = "peak"
 		else:
-			peak = 0
+			if type_idx == 0:
+				string = "offpeak"
+			else:
+				string ="peak"   
 
 		global RATE_FLAG
 
 		if RATE_FLAG == "True":
 			daily_usage = previous_usage + energy_hr
-			if peak == 1:
-				string = "peak"
-			else:
-				string = "offpeak"
 
 			tier=[0,0,0,0]
 			rate=[0,0,0,0,0]

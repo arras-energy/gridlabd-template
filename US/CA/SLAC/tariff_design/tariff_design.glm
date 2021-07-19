@@ -29,6 +29,15 @@ class tariff {
 	double offpeak_tier3[kWh/day];
 	double offpeak_rate3[$/kWh];
 	double offpeak_rate4[$/kWh];
+	double shoulder_tier0[kWh/day];
+	double shoulder_rate0[$/kWh];
+	double shoulder_tier1[kWh/day];
+	double shoulder_rate1[$/kWh];
+	double shoulder_tier2[kWh/day];
+	double shoulder_rate2[$/kWh];
+	double shoulder_tier3[kWh/day];
+	double shoulder_rate3[$/kWh];
+	double shoulder_rate4[$/kWh];
 }
 
 object tariff {
