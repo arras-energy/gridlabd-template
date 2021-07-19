@@ -1,17 +1,18 @@
 // Model glm for testing
 
+#input "config.csv" -f config -t config
+
 // Clock 
 clock {
-	timezone PST+8PDT;
-	starttime '2021-01-01 0:00:00 PST';
-	stoptime '2021-01-01 2:00:00 PST';
+	timezone ${TIMEZONE};
+	starttime ${STARTTIME};
+	stoptime ${STOPTIME};
 }
 
 module tape;
 
 // Climate module needed
-
-module climate;
+#input "${WEATHER_STATION}.tmy3"
 
 module powerflow;
 
