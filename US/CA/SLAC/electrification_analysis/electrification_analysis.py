@@ -7,7 +7,7 @@ gas_count = 0
 elec_count = 0
 
 config_files=[]
-with open('config/simulation_configuration.csv', newline='') as csvfile : 
+with open('electrification_analysis_config.csv', newline='') as csvfile : 
 	fr = csv.reader(csvfile, delimiter=',', quotechar='|')
 	baseline_count = []
 	for row in fr : 
@@ -42,33 +42,3 @@ with open('config/simulation_configuration.csv', newline='') as csvfile :
 				fw.write('\n#print Electrification Baseline is not provided, assuming 50% electric')
 			upgrade_count=elec_count-baseline_count
 			fw.write('\n#define UPGRADE_COUNT=' + str(upgrade_count))
-
-
-for i,file_name in enumerate(config_files) : 
-	if i==0 : # resetting the folder by removing all the model files 
-		files = glob.glob('model_files/*')
-		for f in files : 
-			os.remove(f)
-		del_paneldump = glob.glob('paneldump/*')
-		for d in del_paneldump : 
-			os.remove(d)
-	copyfile('model.glm', 'model_files/model.glm')
-	new_file = "model_files/model_"+file_name
-	os.rename("model_files/model.glm",new_file)
-
-	with open(new_file, 'r+') as fm:
-			content = fm.read()
-			fm.seek(0, 0)
-			line="#include \"elec_config/" + file_name + "\"" 
-			fm.write(line+"\n"+"#define RUN_NAME="+file_name[12:-4]+"\n")
-
-del_feeder = glob.glob('output/feeder_power/*')
-for f in del_feeder : 
-	os.remove(f)
-del_line = glob.glob('output/line_losses/*')
-for f in del_line : 
-	os.remove(f)
-del_main = glob.glob('output/main_node_power/*')
-for f in del_main : 
-	os.remove(f)
-

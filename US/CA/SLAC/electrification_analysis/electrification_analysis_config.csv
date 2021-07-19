@@ -2,7 +2,14 @@ Total Number of Houses per Phase,3
 Weather File,CA-San_Jose_Intl_Ap.tmy3
 Start Time,2020-01-01 00:00:00 PST
 Stop Time,2021-01-01 00:00:00 PST
+Run Name,Electrification Fraction
+Baseline,0.5
+Run 1,0.6
+Run 2,0.7
+Run 3,0.8
+Run 4,0.9
+Full Electric,1
 Floor area, 1500 sf
-Thermal Integrity, 
+Thermal Integrity, GOOD
 Solar capacity,
 Battery Capacity,
