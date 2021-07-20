@@ -5,3 +5,13 @@ Pacific Gas & Electric Co, Residential, E-1, TOU, Region T, True
 Pacific Gas & Electric Co, Residential, E-7, TOU, Region P, True
 Pacific Gas & Electric Co, Residential, E-6, TOU, Region Z, True
 Pacific Gas & Electric Co, Residential, E-TOU-C3, TOU, Region R, True
+San Diego Gas & Electric Co, Residential, DR, TOU, NaN, True
+San Diego Gas & Electric Co, Residential, EV-TOU-2, TOU, NaN, True
+San Diego Gas & Electric Co, Residential, TOU-DR-P, TOU, NaN, True, CANNOT FIND IN CSV
+San Diego Gas & Electric Co, Residential, DR, TOU, Mountain Baseline Region, True
+Southern California Edison Co, Residential, TOU-D-B, TOU, NaN, True
+Southern California Edison Co, Residential, Domestic Service: D, NaN, Region 6, True, CANNOT FIND IN CSV
+Southern California Edison Co, Residential, TOU-D-PRIME, TOU, NaN, True, CANNOT FIND IN CSV
+Southern California Edison Co, Residential, Tiered Domestic, TOU, Region 8, True, CANNOT FIND IN CSV
+Southern California Edison Co, Residential, TOU-EV-1, TOU, NaN, True, CANNOT FIND IN CSV
+Southern California Edison Co, Residential, TOU-D-TEV, TOU, Region 15, True

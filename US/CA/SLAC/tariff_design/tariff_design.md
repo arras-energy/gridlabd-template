@@ -4,9 +4,13 @@ Tariff Design GridLAB-D Template
 
 Template for HiPAS tariff design use case. The goal of the use case is to help optimize tariff design by calculating tariffs whiel simulating different energy scenarios. The template calculates TOU tariffs using tariff rate information from the [OpenEI database](https://openei.org/wiki/Utility_Rate_Database) that is developed and maintained by NREL. Simulation is done with HiPAS GridLAB-D. 
 
+Currently the tariff billing calculations are designed for residential TOU tariffs and the OpenEI database tariff formatting. The billing fnc can currently handle TOU tariffs with peak, offpeak, and shoulder (>= 3 rates per day). It calculates the tariff bill hourly.
+
 # Current Issues
 
 **The template is not completely user controlled. Currently users cannot select specifically what tariff within the tariff_library_config.csv they want to run. CHANGE THIS ASAP**
+
+Many residential tariffs that are shown on the online OpenEi database many not be available in the csv from the database used to calculate billing.
 
 Bills only have per kWh charges. Additional rates like demand charges, meter charges, DER credits, etc are not included.
 
