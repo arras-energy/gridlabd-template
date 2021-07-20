@@ -1,52 +1,52 @@
 //Model for testing
 
-#include "electrification_analysis_config.csv" 
-#define ELECTRIFICATION_ANALYIS.CSV
+module electrification;
+
+#input "config.csv" -f config -t config
+//
 
 //Climate
-#ifexist data/${WEATHER}
-module climate;
-object climate {
-        name weather;
-        tmyfile "data/${WEATHER}";
-        interpolate QUADRATIC; 
-}
-#else
-#error WEATHER is not specified in ${ELECTRIFICATION_ANALYIS.CSV}// simulation_confi csv file? 
-#endif // exist WEATHER
+#input "${WEATHER}" 
 
 //Clock
-
-clock {
+clock 
+{
 	timezone ${TIMEZONE};
-#ifdef STARTTIME
 	starttime ${STARTTIME};
-#endif
-#ifdef STOPTIME
 	stoptime ${STOPTIME};
-#endif
-}
-#else
-#error TIMEZONE is not specified in ${CONFIGFILE}
-#endif // TIMEZONE
-
 }
 
-module tape;
+module tape
+{
+    csv_header_type NAME;
+}
 
-module residential{
+module residential
+{
 	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
 	implicit_enduse_source EIA2015;
 }
 
-object house {
-     thermal_integrity_level ${THERMALINTEGRITYLEVEL};
-}
+module powerflow;
 
-object house {
-    enumeration {RESISTANCE, HEAT_PUMP, GAS, NONE} heating_system_type;
-    enumeration {HEAT_PUMP, ELECTRIC, NONE} cooling_system_type;
-    heating_system_type ${HEATINGSYSTEMTYPE};
-    cooling_system_type ${COOLINGSYSTEMTYPE};
+#for PHASE in A B C
+object triplex_meter 
+{
+    object house:..${NHOUSES} 
+    {
+         thermal_integrity_level ${THERMALINTEGRITYLEVEL};
+         floor_area ${FLOORAREA};
+         gas_enduses WATERHEATER|RANGE|DRYER;
+    };
+    nominal_voltage 120V;
+    phases ${PHASE}S;
+    measured_energy_delta_timestep 3600s;
+    object recorder
+    {
+        property "measured_real_energy_delta";
+        file phase_${PHASE}.csv;
+        interval 3600s;
+    };
 }
+#done
 
