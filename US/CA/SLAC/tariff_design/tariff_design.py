@@ -70,7 +70,9 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 	index2 = (month * 24) - 1 
 
 	# check syntax 
+	global schedule
 	if (day == 5) or (day == 6):
+		
 		schedule = tariff_data["energyweekendschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True).str.replace('L','', regex=True)
 		schedule = schedule.str.split(pat=",",expand=True)
 		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
@@ -80,6 +82,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
 
 	lookup = set()
+	global rates
 	rates = [x for x in schedule if x not in lookup and lookup.add(x) is None]
 
 	# Changing rates definition to fix peak vs offpeak def 
@@ -201,18 +204,16 @@ def on_commit(t):
 		# CHECK IF THIS CODE WORKS
 		# check if in same day/ if timing needs to be updated
 		day = clock.day
+		global rates
+		global schedule
 		if billing_days == 0.0:
-			global rates
-			global schedule
 			rates, schedule = monthlyschedule_gen(tariff_df)
-		elif day != previous_day
-			global rates
-			global schedule
+		elif day != previous_day:
 			rates, schedule = monthlyschedule_gen(tariff_df)
 		previous_day = day
 
 		# check if if time is peak/shoulder/offpeak
-		type_idx = rates.index(schedule[clock.hour])
+		type_idx = rates.index(schedule[hour])
 		if len(rates) == 3:
 			if type_idx == 0:
 				string = "offpeak"
