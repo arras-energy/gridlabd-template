@@ -49,11 +49,15 @@ object powerflow.pole_configuration {
 object powerflow.pole_configuration { 
 	name "SYP-35/5";
 	pole_type "WOOD";
+	overload_factor_transverse_general 1.75;
+	strength_factor_250b_wood 0.75;
+	strength_factor_250b_support 1;
 	pole_length 35 ft;
 	pole_depth  5.5 ft;
 	ground_diameter  (29/3.14);
 	top_diameter  (19/3.14);
 	fiber_strength  8000 psi;
+	repair_time 50;
 }
 object powerflow.pole_configuration { 
 	name "SYP-40/3";
@@ -76,6 +80,8 @@ object powerflow.pole_configuration {
 object powerflow.pole_configuration { 
 	name "SYP-50/3";
 	pole_type "WOOD";
+	overload_factor_transverse_general 1.75;
+	strength_factor_250b_wood 0.75;
 	pole_length 50 ft;
 	pole_depth  7 ft;
 	ground_diameter  (39/3.14);
@@ -112,11 +118,23 @@ object powerflow.pole_configuration {
 object powerflow.pole_configuration { 
 	name "SYP-80/H-2";
 	pole_type "WOOD";
-	pole_length 80 ft;
+	design_ice_thickness 70;
+	design_wind_loading 40;
+	design_temperature 70;
+	overload_factor_vertical 70;
+	overload_factor_transverse_general  1.75;
+	overload_factor_transverse_crossing 70;
+	overload_factor_transverse_wire 70;
+	overload_factor_longitudinal_general 70;
+	overload_factor_longitudinal_deadend 70;
+	strength_factor_250b_wood  0.75;
+	strength_factor_250b_support  1;
+	pole_length  80 ft;
 	pole_depth  10 ft;
 	ground_diameter  (60/3.14);
 	top_diameter  (31/3.14);
 	fiber_strength  8000 psi;
+	repair_time 50;
 }
 object powerflow.pole_configuration { 
 	name "SYP-90/H-2";

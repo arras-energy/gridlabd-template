@@ -3,7 +3,8 @@
 
 //Set up for globals
 #set literal_if=FALSE
-//#set verbose=TRUE
+#set verbose=TRUE
+#set output_message_context=NONE
 
 //Set up modules
 module powerflow;
@@ -28,9 +29,14 @@ clock {
   timezone ${TIMEZONE};
 }
 
+
+
 // load the gridlabd-python module
 module anticipation;
-
+module powerflow { 
+      stop_on_pole_failure TRUE;
+      message_flags VERBOSE;
+}
 #if POLE_VULNERABILITY_ANALYSIS=="on"
 #debug "POLE VULNERABILITY ANALYSIS is enabled"
 // INPUT CSV POLE DATA CONVERTER
@@ -46,10 +52,20 @@ module anticipation;
 #debug "VEGETATION_VULNERABILITY_ANALYSIS is enabled"
 #endif
 object recorder {
-  parent "pole7";
+  parent "pole6";
+  property "equipment_moment_nowind";
+  property "equipment_moment";
+  property "pole_moment_nowind";
+  property "pole_moment";
+  property "wire_tension";
+  property "tilt_angle";
   property "total_moment";
+  property "resisting_moment";
+  property "critical_wind_speed";
+  property "pole_status";
   file "pole_outputs.csv";
   interval -1;
 }
+
 
 
