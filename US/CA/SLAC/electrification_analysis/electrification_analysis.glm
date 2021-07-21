@@ -1,4 +1,3 @@
-
 #define TIMEZONE=${TIMEZONE:-US/CA/Los Angeles}
 #define WEATHER=${WEATHER:-CA-San_Jose_Intl_Ap.tmy3}
 
