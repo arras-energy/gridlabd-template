@@ -7,14 +7,4 @@
 #define COOLINGSYSTEMTYPE=HEAT_PUMP
 #define THERMALINTEGRITYLEVEL=GOOD
 #define FLOORAREA=2500sf
-#define Run Name=Electrification Fraction
-#define Baseline=0.5
-#define Run 1=0.6
-#define Run 2=0.7
-#define Run 3=0.8
-#define Run 4=0.9
-#define Full Electric=1
-#define Floor area= 1500 sf
-#define Thermal Integrity= GOOD
-#define Solar capacity=
-#define Battery Capacity=
+#define GASENDUSES=NONE

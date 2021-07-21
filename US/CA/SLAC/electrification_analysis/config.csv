@@ -7,14 +7,4 @@ HEATINGSYSTEMTYPE,HEAT_PUMP
 COOLINGSYSTEMTYPE,HEAT_PUMP
 THERMALINTEGRITYLEVEL,GOOD
 FLOORAREA,2500sf
-Run Name,Electrification Fraction
-Baseline,0.5
-Run 1,0.6
-Run 2,0.7
-Run 3,0.8
-Run 4,0.9
-Full Electric,1
-Floor area, 1500 sf
-Thermal Integrity, GOOD
-Solar capacity,
-Battery Capacity,
+GASENDUSES,DRYER

@@ -36,7 +36,7 @@ object triplex_meter
     {
          thermal_integrity_level ${THERMALINTEGRITYLEVEL};
          floor_area ${FLOORAREA};
-         gas_enduses WATERHEATER|RANGE|DRYER;
+         gas_enduses ${GASENDUSES};
     };
     nominal_voltage 120V;
     phases ${PHASE}S;

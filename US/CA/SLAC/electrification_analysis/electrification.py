@@ -1,1 +1,0 @@
-print("electrification load ok")
