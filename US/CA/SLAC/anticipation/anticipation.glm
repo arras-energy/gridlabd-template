@@ -62,7 +62,7 @@ object recorder {
   property "total_moment";
   property "resisting_moment";
   property "critical_wind_speed";
-  property "pole_status";
+  property "pole_stress";
   file "pole_outputs.csv";
   interval -1;
 }

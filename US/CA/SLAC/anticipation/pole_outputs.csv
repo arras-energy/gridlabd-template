@@ -1,5 +1,5 @@
 # file...... pole_outputs.csv
-# date...... Thu Jul  8 22:54:43 2021
+# date...... Wed Jul 21 19:52:41 2021
 # user...... (null)
 # host...... (null)
 # target.... pole 22
@@ -7,5 +7,5 @@
 # interval.. -1
 # limit..... 0
 # timestamp,equipment_moment_nowind,equipment_moment,pole_moment_nowind,pole_moment,wire_tension,tilt_angle,total_moment,resisting_moment,critical_wind_speed,pole_stress
-2021-06-27 17:00:00 PDT,+0,+0,+451.331,+0,+0,+1,+0,+38692.6,+0,+0
+2021-06-27 17:00:00 PDT,+0,+0,+451.331,+0,+0,+57.2958,+0,+38692.6,+0,+0
 # end of tape

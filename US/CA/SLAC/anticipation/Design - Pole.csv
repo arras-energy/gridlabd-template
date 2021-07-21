@@ -1,2 +1,4 @@
-,,Species,Length,Class,AGL,GLC,Lean Angle,Lean Direction,Allowable Stress Adjustment,Effective Stress Adjustment
-1,XXXXXXE,Western Red Cedar,75',1,"66' 0""","75""",0 °,0 °,100%,6000 lb/in²
+,,Species,Length,Class,AGL,GLC,tilt_angle,tilt_direction,Allowable Stress Adjustment,fiber_strength,latitude,longitude
+1,XXXXXXE,Western Red Cedar,75',1,"66' 0""","75""",0 deg,0 deg,100%,6000 lb/in²,00.0000 , -000.0000
+2,,Western Red Cedar,75',2,"66' 0""","75""",8,0,100%,6000 lb/in²,00.0000 , -000.0000
+3,,Western Red Cedar,75',3,"66' 0""","75""",5 °,5 rad,100%,6000 lb/in²,00.0000 , -000.0000
