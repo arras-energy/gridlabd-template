@@ -47,7 +47,9 @@ def read_tariff(pathtocsv, tariff_counter):
 		tariff_data = pandas.DataFrame(df.iloc[[idx]])
 	elif df.shape[0] == 0:
 		print("No active tariff found in OpenEi database matching information")
-		### ADD EXIT SIMULATION?
+		### ADD EXIT SIMULATION? 
+		raise Exception("Add something here that makes sense") # there are other methods
+		# load py module warnings or use gridlabd warning handler
 	else:
 		tariff_data = df
 

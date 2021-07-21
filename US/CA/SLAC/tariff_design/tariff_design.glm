@@ -44,17 +44,5 @@ object tariff {
 	name "tariff";
 }
 
-class billing {
-	double usage[kWh];
-}
-
-object billing {
-	name "test_bill";
-	meter "test_meter";
-	tariff "tariff";
-	billing_days "0.0";	
-	usage "0.0";
-}
-
 
 
