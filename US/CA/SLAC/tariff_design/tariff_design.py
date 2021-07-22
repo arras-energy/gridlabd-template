@@ -68,7 +68,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 	day = clock.weekday()
 
 	index1 = (month-1) * 24
-	index2 = (month * 24) - 1 
+	index2 = (month * 24)
 
 	# check syntax 
 	global schedule
@@ -214,7 +214,9 @@ def on_commit(t):
 		previous_day = day
 
 		# check if if time is peak/shoulder/offpeak
+		print(schedule,hour) # for testing fatal error
 		type_idx = rates.index(schedule[hour])
+
 		if len(rates) == 3:
 			if type_idx == 0:
 				string = "offpeak"
