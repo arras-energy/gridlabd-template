@@ -37,6 +37,7 @@ object billing {
 	meter "test_meter";
 	tariff "tariff";
 	billing_days "0.0";	
+	total_charges "0.0";
 	usage "0.0";
 }
 
@@ -45,5 +46,7 @@ module residential;
 object house {
 	parent "test_meter";
 	name "test_house";
-	floorarea "1000"
+	floor_area "2000.0";
+	thermal_integrity_level "0"; // Significantly impacts house efficency? 
+	gas_enduses "";
 }

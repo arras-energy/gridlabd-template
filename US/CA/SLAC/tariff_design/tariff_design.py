@@ -43,13 +43,12 @@ def read_tariff(pathtocsv, tariff_counter):
 		print("Not enough information provided to define tariff: ", df.shape[0]," tariffs generated.")
 		for i in range(df.shape[0]):
 			print("Index",i,": ", df.iloc[i,3]) # print df name
-		idx = input("Enter desired tariff index: ")
-		tariff_data = pandas.DataFrame(df.iloc[[idx]])
+		idx = int(input("Enter desired tariff index: "))
+		tariff_data = pandas.DataFrame(data=df.iloc[[idx]]).reset_index(drop=True)
+		# This is currently rasiing errors in docker?
 	elif df.shape[0] == 0:
-		print("No active tariff found in OpenEi database matching information")
-		### ADD EXIT SIMULATION? 
-		raise Exception("Add something here that makes sense") # there are other methods
-		# load py module warnings or use gridlabd warning handler
+		raise Exception("No active tariff found in OpenEi database matching information. Simulation ending") 
+		# there are other methods to exit simulation but this makes sense
 	else:
 		tariff_data = df
 
@@ -89,7 +88,6 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 
 	# Changing rates definition to fix peak vs offpeak def 
 	# rates = list(set(schedule))
-
 	# gives index in schedule where rate changes
 	#c = [i for i in range(1,len(schedule)) if schedule[i]!=schedule[i-1] ]
 	#timing = list(range(c[0],c[1]))
@@ -165,11 +163,10 @@ def on_init(t):
 		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
-	path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
-	t_counter = 4 #EDIT TO ALLOW USER TO CHANGE
-
+	t_counter = int(input("Enter desired tariff index from tariff_libray_csv. (Note csv is 0 indexed):"))
+	
 	global tariff_df # reads tariff on init 
-	tariff_df = read_tariff(path, t_counter) 
+	tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
 
 	return True
 
@@ -181,6 +178,7 @@ def on_commit(t):
 	hour = clock.hour
 
 	if seconds % 3600 == 0: # can add error flag if it skips an hour just assume it works
+		print(clock)
 
 		bill = gridlabd.get_object("test_bill")
 		bill_name = bill["name"]
@@ -208,6 +206,7 @@ def on_commit(t):
 		day = clock.day
 		global rates
 		global schedule
+		global tariff_df
 		if billing_days == 0.0:
 			rates, schedule = monthlyschedule_gen(tariff_df)
 		elif day != previous_day:
@@ -234,6 +233,7 @@ def on_commit(t):
 		if RATE_FLAG == "True":
 			daily_usage = previous_usage + energy_hr
 
+
 			tier=[0,0,0,0]
 			rate=[0,0,0,0,0]
 
@@ -243,16 +243,17 @@ def on_commit(t):
 
 			rate[counter+1] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter+1)))
 			
+			# THIS IS FAILING 
 			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
-			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
-			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
-			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0)
-			tier4 = max(energy_hr - tier0 - tier1 - tier3, 0)
+			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0, energy_hr-tier0)
+			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0, energy_hr-tier0-tier1)
+			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0, energy_hr-tier0-tier1-tier2)
+			tier4 = max(energy_hr - tier0 - tier1 - tier2 - tier3, 0)
 
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 			
-			if seconds == 0 and billing_days != 0.0:
+			if day != previous_day:
 				gridlabd.set_value(bill_name, "usage", str(0.0))
 			else:
 				gridlabd.set_value(bill_name, "usage", str(daily_usage))
@@ -260,13 +261,16 @@ def on_commit(t):
 			gridlabd.set_value(bill_name,"billing_days",str(billing_days+1/24))
 
 			# ADDED TO SEE RESULTS
-			print("KWh:", energy_hr," Charges:", hr_charge," Daily usage:" , daily_usage, "\n")
-			print(rate[0],rate[1],rate[2],rate[3])
+			print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage)
+			print(rate[0],rate[1],rate[2],rate[3],rate[4])
+			print(tier0,tier1,tier2,tier3,tier4, "\n")
 		
 		else:
 			print("Implementation for non-inclining block rate in progress") 
 
 	else:
-		print("Time passed was not a complete hour. Billing unchanged")
+		# Removing this print out for clarity
+		d=0
+		#print("Time passed was not a complete hour. Billing unchanged")
 
 	return gridlabd.NEVER
