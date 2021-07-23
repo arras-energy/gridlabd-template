@@ -73,7 +73,6 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 	# check syntax 
 	global schedule
 	if (day == 5) or (day == 6):
-		
 		schedule = tariff_data["energyweekendschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True).str.replace('L','', regex=True)
 		schedule = schedule.str.split(pat=",",expand=True)
 		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
@@ -192,11 +191,8 @@ def on_commit(t):
 		#t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
 		#tariff_df = read_tariff(path, t_counter)
 
-		# get previous daily energy usage
-		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
-
-		# get previous billing_days
-		billing_days = to_float(gridlabd.get_value(bill_name, "billing_days"))
+		# get previous billing_hrs
+		billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
 
 		# energy usage over the hour
 		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
@@ -207,14 +203,22 @@ def on_commit(t):
 		global rates
 		global schedule
 		global tariff_df
-		if billing_days == 0.0:
+		global previous_day
+		if billing_hrs == 0.0:
 			rates, schedule = monthlyschedule_gen(tariff_df)
+			previous_day = day
 		elif day != previous_day:
 			rates, schedule = monthlyschedule_gen(tariff_df)
+			gridlabd.set_value(bill_name, "usage", str(0.0))
+		
 		previous_day = day
 
+		# get previous daily energy usage
+		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
+
+		print(day,previous_day,billing_hrs,previous_usage)
+
 		# check if if time is peak/shoulder/offpeak
-		print(schedule,hour) # for testing fatal error
 		type_idx = rates.index(schedule[hour])
 
 		if len(rates) == 3:
@@ -235,7 +239,6 @@ def on_commit(t):
 		if RATE_FLAG == "True":
 			daily_usage = previous_usage + energy_hr
 
-
 			tier=[0,0,0,0]
 			rate=[0,0,0,0,0]
 
@@ -245,31 +248,25 @@ def on_commit(t):
 
 			rate[counter+1] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter+1)))
 			
-			# THIS IS FAILING 
+			# Fixed
 			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
 			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0, energy_hr-tier0)
 			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0, energy_hr-tier0-tier1)
 			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0, energy_hr-tier0-tier1-tier2)
 			tier4 = max(energy_hr - tier0 - tier1 - tier2 - tier3, 0)
-
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
-			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-			
-			if day != previous_day:
-				gridlabd.set_value(bill_name, "usage", str(0.0))
-			else:
-				gridlabd.set_value(bill_name, "usage", str(daily_usage))
 
-			gridlabd.set_value(bill_name,"billing_days",str(billing_days+1/24))
+			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
+			gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
+			gridlabd.set_value(bill_name, "usage", str(daily_usage))
 
 			# ADDED TO SEE RESULTS
 			print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage)
 			print(rate[0],rate[1],rate[2],rate[3],rate[4])
 			print(tier0,tier1,tier2,tier3,tier4, "\n")
-		
+
 		else:
 			print("Implementation for non-inclining block rate in progress") 
-
 	else:
 		# Removing this print out for clarity
 		d=0
