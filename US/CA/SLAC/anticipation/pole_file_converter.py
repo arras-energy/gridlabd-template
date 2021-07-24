@@ -2,7 +2,7 @@ import pandas as pd
 import string
 import math
 import numpy as np
-
+import re
 excel = 'Pole_Output_Sample.xls'
 sheet1 = 'Design - Pole'
 radians_to_degrees = 57.3
@@ -25,54 +25,146 @@ df_current_sheet.drop(['Owner', 'Foundation',
 	'Ground Water Level',], 
 	axis=1, 
 	inplace=True)
+
+def parse_angle(cell_string, current_column, current_row):
+	"""Parse a string to get a string with angle in degrees
+
+	Additional acceptable units can be added to angle_units with its corresponding conversion value to degrees. 
+
+    Keyword arguments:
+    cell_string -- the string to be parsed (presumably from a cell)
+    current_column -- the column of the cell it is parsing. For more descriptive ValueErrors
+    current_row -- the row of the cell it is parsing. For more descriptive ValueErrors
+    """
+	angle_units = {	
+    "°" : "deg",
+    "deg" : "deg",
+    "rad" : "rad",
+    "grad" : "grad",
+    "quad" : "quad",
+    "sr" : "sr"
+	}
+	if cell_string == "nan":
+		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
+	output_unit = ""
+	for unit in angle_units.keys():
+		if unit in cell_string:
+			output_unit = angle_units[unit]
+			break
+	if output_unit == "": 
+		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+	else:
+		return str(int(''.join(filter(str.isdigit, cell_string)))) + " " + output_unit
+	
+
+def parse_length(cell_string, current_column, current_row):
+	INCH_TO_FEET = 0.0833
+	UNIT_TO_UNIT = 1.0 
+	YARD_TO_FEET = 3.0
+	MILE_TO_FT = 5280.0 
+	FEET_TO_INCH = 12.0
+	YARD_TO_INCH = 36.0
+	MILE_TO_INCH = 6360.0
+	MILE_TO_YARD = 1760.0
+	#handle values and units in different orders
+	length_units = {	
+	"'" : "ft",
+    '"' : "in",
+    "in" : "in",
+    "inch" : "in",
+    "feet" : "ft",
+    "ft" : "ft",
+    "foot" : "ft",
+    "yd" : "yd",
+    "yard" : "yd",
+    "mile" : "mile",
+    "mi" : "mile"
+    }
+    #maps to a dictionary of conversion rates of different units to the key of length_conversions
+	length_conversions = {	
+	"ft" : {"in" : INCH_TO_FEET, "ft" :  UNIT_TO_UNIT, "yd" : YARD_TO_FEET, "mile" : MILE_TO_FT},
+    "in" : {"in" : UNIT_TO_UNIT,"ft": FEET_TO_INCH,  "yd": YARD_TO_INCH, "mile" : MILE_TO_INCH},
+    "yd" : {"in": 1/YARD_TO_INCH, "ft": 1/YARD_TO_FEET, "yd": UNIT_TO_UNIT, "mile" : MILE_TO_YARD},
+    "mile" : {"in": 1/MILE_TO_INCH, "ft": 1/MILE_TO_FT, "yd": 1/MILE_TO_YARD, "mile" : UNIT_TO_UNIT}
+    }
+	if cell_string == "nan":
+		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
+	#tries to identify the units out of all the non-numbers in the string. Very lenient. 
+
+
+	cell_units = re.findall('\D+', cell_string) 
+	for counter, cell_unit in enumerate(cell_units):
+		for key in length_units.keys():
+			if key in cell_unit:
+				cell_units[counter] = length_units[key]
+
+	cell_numbers = re.findall('\d+', cell_string)
+
+	if len(cell_numbers) != len(cell_units):
+		raise ValueError(f'Please make sure there are the same number of numbers and units for value {cell_string} in column: {current_column}, row {current_row}')
+
+	if len(cell_units) == 0: 
+		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+
+
+	#converts all the units and values in the cell to one unit and value 
+	total_cell_value = 0
+	for i in range(0,len(cell_numbers)):
+		convert_to = length_conversions[cell_units[0]]
+		total_cell_value += int(cell_numbers[i]) * convert_to[cell_units[i]]
+		print(convert_to[cell_units[i]])
+
+	return str(total_cell_value) + " " + cell_units[0]
+
+def parse_pressure(cell_string, current_column, current_row):
+	pressure_units = {
+	"psi" : "psi",
+	"lb/in²" : "psi",
+	"bar" : "bar",
+	"atm" : "atm", 
+	}
+	if cell_string == "nan":
+		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
+	output_unit = ""
+	for unit in pressure_units.keys():
+		if unit in cell_string:
+			cell_string = cell_string.replace(unit,pressure_units[unit])
+			print(cell_string)
+			output_unit = pressure_units[unit]
+			break
+	if output_unit == "": 
+		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+	else:
+		return str(int(''.join(filter(str.isdigit, cell_string)))) + " " + output_unit
+	
+def parse_column(current_column, parsing_function):
+	for row in range(1,len(df_current_sheet[current_column])+1):
+		try: 
+			df_current_sheet.at[row,current_column] = parsing_function(str(df_current_sheet.at[row,current_column]),current_column,row)
+		except ValueError as e: 
+			df_current_sheet.at[row,current_column] = "NaN"
+			print(e)
+
+#	handles row values for tilt_angle and tilt_direction including if its empty, if units are not specified, and if the value is out of bounds.
+#	All values are converted to deg. 
+
+
+parse_column('Lean Angle', parse_angle)
+parse_column('Lean Direction', parse_angle)
+parse_column('Length', parse_length)
+parse_column('GLC', parse_length)
+parse_column('AGL', parse_length)
+parse_column('Effective Stress Adjustment', parse_pressure)
+
+
+
+
+#handles row values for length including if its empty, if units are not specified, and if the value is out of bounds. 
+#All values are converted to in. 
+
 #renaming. Is effective stress adjustment = fiber_strength?
 df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
-	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength'}, inplace=True)
-
-#filtered out any non-numbers in tilt angle and tilt direction, but in tilt_angle should be between 0 and 90 and tilt direction should be between 0 and 360 
-#default unit is degrees, so stand-alone numbers will have ' deg' appended to it. If 'rad' is contained in the string, then converts the number in the string to degrees. 
-#todo - handle empty cells 
-
-current_column = 'tilt_angle'
-try: 
-	for i in range(1,len(df_current_sheet[current_column])+1):
-		cell_value = str(df_current_sheet.at[i,current_column])
-		df_current_sheet.at[i,current_column] = cell_value
-		if 'rad' in cell_value:
-		  df_current_sheet.at[i,current_column]= str(int(''.join(filter(str.isdigit, cell_value)))* radians_to_degrees)
-		elif '°' not in cell_value and 'deg' not in cell_value: 
-		  raise ValueError('Please specify units of Lean Angle to contain rad, °, or deg')
-		parsed_int = int(''.join(filter(str.isdigit, cell_value)))
-		if parsed_int >= 0 and parsed_int <= 90:
-			df_current_sheet.at[i,current_column] = str(parsed_int) + ' deg'
-		else: 
-			raise ValueError('Value of Lean Angle must be between 0 and 90 degrees or 0 to 1.57 radians')
-except ValueError as e: 
-	print(e)
-
-
-#todo - handle empty cells 
-current_column = 'tilt_direction'
-try: 
-	for i in range(1,len(df_current_sheet[current_column])+1):
-		cell_value = str(df_current_sheet.at[i,current_column])
-		df_current_sheet.at[i,current_column] = cell_value
-		if 'rad' in cell_value:
-		  df_current_sheet.at[i,current_column]= str(int(''.join(filter(str.isdigit, cell_value)))* radians_to_degrees)
-		elif '°' not in cell_value and 'deg' not in cell_value: 
-		  raise ValueError('Please specify units of Lean Direction to contain rad, °, or deg')
-		parsed_int = int(''.join(filter(str.isdigit, cell_value)))
-		if parsed_int >= 0 and parsed_int <= 90:
-			df_current_sheet.at[i,current_column] = str(parsed_int) + ' deg'
-		else: 
-			raise ValueError('Value of Lean Angle must be between 0 and 360 degrees or 0 to 6.28 radians')
-except ValueError as e: 
-	print(e)
-	 
-
-
-
-
+	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter'}, inplace=True)
 #split GPS Point into longitude and latitude 
 df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.split(',', expand=True)
 #remove original GPS Point column
@@ -92,4 +184,7 @@ for key in df:
 	df[key].to_csv('%s.csv' %key)
 
 print(df[sheet1])
+
+
+
 

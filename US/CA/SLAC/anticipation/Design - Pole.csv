@@ -1,4 +1,4 @@
-,,Species,Length,Class,AGL,GLC,tilt_angle,tilt_direction,Allowable Stress Adjustment,fiber_strength,latitude,longitude
-1,XXXXXXE,Western Red Cedar,75',1,"66' 0""","75""",0 deg,0 deg,100%,6000 lb/in²,00.0000 , -000.0000
-2,,Western Red Cedar,75',2,"66' 0""","75""",8,0,100%,6000 lb/in²,00.0000 , -000.0000
-3,,Western Red Cedar,75',3,"66' 0""","75""",5 °,5 rad,100%,6000 lb/in²,00.0000 , -000.0000
+,,Species,length,Class,AGL,ground_diameter,tilt_angle,tilt_direction,Allowable Stress Adjustment,fiber_strength,latitude,longitude
+1,XXXXXXE,Western Red Cedar,75.0 ft,1,5.001450829045169 mile,75.0 in,NaN,0 deg,100%,6000 psi,00.0000 , -000.0000
+2,,Western Red Cedar,75.0 ft,2,66.0 ft,75.0 in,8 deg,NaN,100%,6000 psi,00.0000 , -000.0000
+3,,Western Red Cedar,75.0 ft,3,66.0 ft,75.0 in,5 deg,5 rad,100%,6000 atm,00.0000 , -000.0000

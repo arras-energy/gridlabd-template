@@ -133,7 +133,7 @@ object powerflow.pole_configuration {
 	pole_depth  10 ft;
 	ground_diameter  (60/3.14);
 	top_diameter  (31/3.14);
-	fiber_strength  8000 psi;
+	fiber_strength  8000 lb/in^2;
 	repair_time 50;
 }
 object powerflow.pole_configuration { 
