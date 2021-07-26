@@ -91,16 +91,14 @@ def parse_length(cell_string, current_column, current_row):
 	#tries to identify the units out of all the non-numbers in the string. Very lenient. 
 
 
-	cell_units = re.findall('[^\d. ]', cell_string) 
-	print(cell_units)
-	print(f'units {cell_units}')
-	for counter, cell_unit in enumerate(cell_units):
-		for key in length_units.keys():
-			if key in cell_unit:
-				cell_units[counter] = length_units[key]
+
+	cell_units = []
+	
+	for key in length_units.keys():
+		if key in cell_string:
+			cell_units.append(length_units[key]) 
 
 	cell_numbers = re.findall('\d+[\.]?[\d+]*', cell_string)
-	print(f'hi {cell_numbers}')
 
 	if len(cell_numbers) != len(cell_units):
 		raise ValueError(f'Please make sure there are the same number of numbers and units for value {cell_string} in column: {current_column}, row {current_row}')
@@ -131,7 +129,6 @@ def parse_pressure(cell_string, current_column, current_row):
 	for unit in pressure_units.keys():
 		if unit in cell_string:
 			cell_string = cell_string.replace(unit,pressure_units[unit])
-			print(cell_string)
 			output_unit = pressure_units[unit]
 			break
 	if output_unit == "": 
@@ -190,7 +187,7 @@ for row in range(1,len(df_current_sheet['AGL'])+1):
 		df_current_sheet.at[row,'AGL'] = subtract_length_columns(str(df_current_sheet.at[row,'Length']), str(df_current_sheet.at[row,'AGL']), 'Length', 'AGL', row)
 
 	except ValueError as e: 
-		df_current_sheet.at[row,'AGL'] = "NaN"
+		df_current_sheet.at[row,'AGL'] = "nan"
 		print(e) 
 
 
