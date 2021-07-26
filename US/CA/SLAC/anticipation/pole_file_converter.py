@@ -5,7 +5,6 @@ import numpy as np
 import re
 excel = 'Pole_Output_Sample.xls'
 sheet1 = 'Design - Pole'
-radians_to_degrees = 57.3
 
 #read all the sheets in the .xls file 
 df = pd.read_excel(excel, sheet_name=None)  
@@ -54,7 +53,7 @@ def parse_angle(cell_string, current_column, current_row):
 	if output_unit == "": 
 		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
 	else:
-		return str(int(''.join(filter(str.isdigit, cell_string)))) + " " + output_unit
+		return re.search("\d+[\.]?[\d+]*", cell_string).group() + " " + output_unit
 	
 
 def parse_length(cell_string, current_column, current_row):
@@ -92,13 +91,16 @@ def parse_length(cell_string, current_column, current_row):
 	#tries to identify the units out of all the non-numbers in the string. Very lenient. 
 
 
-	cell_units = re.findall('\D+', cell_string) 
+	cell_units = re.findall('[^\d. ]', cell_string) 
+	print(cell_units)
+	print(f'units {cell_units}')
 	for counter, cell_unit in enumerate(cell_units):
 		for key in length_units.keys():
 			if key in cell_unit:
 				cell_units[counter] = length_units[key]
 
-	cell_numbers = re.findall('\d+', cell_string)
+	cell_numbers = re.findall('\d+[\.]?[\d+]*', cell_string)
+	print(f'hi {cell_numbers}')
 
 	if len(cell_numbers) != len(cell_units):
 		raise ValueError(f'Please make sure there are the same number of numbers and units for value {cell_string} in column: {current_column}, row {current_row}')
@@ -111,7 +113,7 @@ def parse_length(cell_string, current_column, current_row):
 	total_cell_value = 0
 	for i in range(0,len(cell_numbers)):
 		convert_to = length_conversions[cell_units[0]]
-		total_cell_value += int(cell_numbers[i]) * convert_to[cell_units[i]]
+		total_cell_value += float(cell_numbers[i]) * convert_to[cell_units[i]]
 		print(convert_to[cell_units[i]])
 
 	return str(total_cell_value) + " " + cell_units[0]
@@ -135,18 +137,45 @@ def parse_pressure(cell_string, current_column, current_row):
 	if output_unit == "": 
 		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
 	else:
-		return str(int(''.join(filter(str.isdigit, cell_string)))) + " " + output_unit
+		return  re.search("\d+[\.]?[\d+]*", cell_string).group() + " " + output_unit
 	
 def parse_column(current_column, parsing_function):
 	for row in range(1,len(df_current_sheet[current_column])+1):
 		try: 
 			df_current_sheet.at[row,current_column] = parsing_function(str(df_current_sheet.at[row,current_column]),current_column,row)
 		except ValueError as e: 
-			df_current_sheet.at[row,current_column] = "NaN"
+			df_current_sheet.at[row,current_column] = "nan"
 			print(e)
 
-#	handles row values for tilt_angle and tilt_direction including if its empty, if units are not specified, and if the value is out of bounds.
-#	All values are converted to deg. 
+#assuming subtraction is done on columns with the same units
+def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, subtrahend_column,current_row):
+	length_units = {	
+	"'" : "ft",
+    '"' : "in",
+    "in" : "in",
+    "inch" : "in",
+    "feet" : "ft",
+    "ft" : "ft",
+    "foot" : "ft",
+    "yd" : "yd",
+    "yard" : "yd",
+    "mile" : "mile",
+    "mi" : "mile"
+    }
+	if minuend_string == "nan":
+		raise ValueError(f'The cell column: {minuend_column}, row {current_row} is empty. Please enter a value.')
+	elif subtrahend_string == "nan": 
+		raise ValueError(f'The cell column: {subtrahend_column}, row {current_row} is empty. Please enter a value.')
+	output_unit = ""
+	for unit in length_units.keys():
+		if unit in minuend_string and subtrahend_string:
+			output_unit = length_units[unit]
+			break
+	if output_unit == "": 
+		raise ValueError(f'Please provide {minuend_column} and {subtrahend_column}, row {current_row} with the same units.')
+	else:
+		return str(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group())) + " " + output_unit
+
 
 
 parse_column('Lean Angle', parse_angle)
@@ -156,6 +185,14 @@ parse_column('GLC', parse_length)
 parse_column('AGL', parse_length)
 parse_column('Effective Stress Adjustment', parse_pressure)
 
+for row in range(1,len(df_current_sheet['AGL'])+1):
+	try: 
+		df_current_sheet.at[row,'AGL'] = subtract_length_columns(str(df_current_sheet.at[row,'Length']), str(df_current_sheet.at[row,'AGL']), 'Length', 'AGL', row)
+
+	except ValueError as e: 
+		df_current_sheet.at[row,'AGL'] = "NaN"
+		print(e) 
+
 
 
 
@@ -164,11 +201,11 @@ parse_column('Effective Stress Adjustment', parse_pressure)
 
 #renaming. Is effective stress adjustment = fiber_strength?
 df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
-	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter'}, inplace=True)
+	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter', 'AGL' : 'depth'}, inplace=True)
 #split GPS Point into longitude and latitude 
 df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.split(',', expand=True)
 #remove original GPS Point column
-df_current_sheet.drop('GPS Point',axis=1,inplace=True)
+df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axis=1,inplace=True)
 
 #Todo 
 #Handle Species column. It is a property in pole_library_config rather than pole_vulnerability_config 
