@@ -30,7 +30,7 @@ df_current_sheet.drop(['Owner', 'Foundation',
 def parse_angle(cell_string, current_column, current_row):
 	"""Parse a string to get a string with angle in a unit that is supported by Gridlabd
 
-	Additional acceptable units can be added to angle_units
+	Additional acceptable units can be added to angle_units. Invalid inputs raise a ValueError. 
 
     Keyword arguments:
     cell_string -- the string to be parsed (presumably from a cell)
@@ -45,6 +45,7 @@ def parse_angle(cell_string, current_column, current_row):
     "quad" : "quad",
     "sr" : "sr"
 	}
+	value = re.search("\d+[\.]?[\d+]*", cell_string)
 	if cell_string == "nan":
 		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
 	output_unit = ""
@@ -54,15 +55,17 @@ def parse_angle(cell_string, current_column, current_row):
 			break
 	if output_unit == "": 
 		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+	elif value == None: 
+		raise ValueError(f'Please specify valid value for {cell_string} in column: {current_column}, row {current_row}.')
 	else:
-		return re.search("\d+[\.]?[\d+]*", cell_string).group() + " " + output_unit
+		return value.group() + " " + output_unit
 	
 
 def parse_length(cell_string, current_column, current_row):
 	"""Parse a string to get a string with length in a unit that is supported by Gridlabd
 
 	Additional acceptable units can be added to length_units and length_conversion with its corresponding conversion value to degrees. 
-	Supports multiple units in one string. 
+	Supports multiple units in one string. Invalid inputs raise a ValueError. 
 
     Keyword arguments:
     cell_string -- the string to be parsed (presumably from a cell)
@@ -121,7 +124,7 @@ def parse_length(cell_string, current_column, current_row):
 	total_cell_value = 0
 	for i in range(0,len(cell_numbers)):
 		convert_to = length_conversions[cell_units[0]]
-		total_cell_value += float(cell_numbers[i]) * convert_to[cell_units[i]]
+		total_cell_value += math.trunc(float(cell_numbers[i])) * convert_to[cell_units[i]]
 		print(convert_to[cell_units[i]])
 
 	return str(total_cell_value) + " " + cell_units[0]
@@ -129,7 +132,7 @@ def parse_length(cell_string, current_column, current_row):
 def parse_pressure(cell_string, current_column, current_row):
 	"""Parse a string to get a string with pressure in a unit that is supported by Gridlabd
 
-	Additional acceptable units can be added to pressure_units. 
+	Additional acceptable units can be added to pressure_units. Invalid inputs raise a ValueError. 
 
     Keyword arguments:
     cell_string -- the string to be parsed (presumably from a cell)
@@ -142,6 +145,7 @@ def parse_pressure(cell_string, current_column, current_row):
 	"bar" : "bar",
 	"atm" : "atm", 
 	}
+	value = re.search("\d+[\.]?[\d+]*", cell_string)
 	if cell_string == "nan":
 		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
 	output_unit = ""
@@ -152,12 +156,14 @@ def parse_pressure(cell_string, current_column, current_row):
 			break
 	if output_unit == "": 
 		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+	elif value == None: 
+		raise ValueError(f'Please specify valid value for {cell_string} in column: {current_column}, row {current_row}.')
 	else:
-		return  re.search("\d+[\.]?[\d+]*", cell_string).group() + " " + output_unit
+		return  value.group() + " " + output_unit
 	
 def parse_column(current_column, parsing_function):
 	"""Parse each cell in the column with a function 
-
+	For invalid inputs, resulting cell will be "nan".
     Keyword arguments:
     current_column -- the string to be parsed (presumably from a cell)
     parsing_function -- the function to be called for each cell
@@ -204,7 +210,7 @@ def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, s
 	if output_unit == "": 
 		raise ValueError(f'Please provide {minuend_column} and {subtrahend_column}, row {current_row} with the same units.')
 	else:
-		return str(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group())) + " " + output_unit
+		return str(math.trunc(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group()))) + " " + output_unit
 
 
 #parse necessary columns into a format supported by Gridlabd 
