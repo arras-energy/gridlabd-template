@@ -162,7 +162,7 @@ def on_init(t):
 		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
-	t_counter = int(input("Enter desired tariff index from tariff_libray_csv. (Note csv is 0 indexed):"))
+	t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
 	
 	global tariff_df # reads tariff on init 
 	tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
@@ -177,7 +177,6 @@ def on_commit(t):
 	hour = clock.hour
 
 	if seconds % 3600 == 0: # can add error flag if it skips an hour just assume it works
-		print(clock)
 
 		bill = gridlabd.get_object("test_bill")
 		bill_name = bill["name"]
@@ -197,7 +196,6 @@ def on_commit(t):
 		# energy usage over the hour
 		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
 
-		# CHECK IF THIS CODE WORKS
 		# check if in same day/ if timing needs to be updated
 		day = clock.day
 		global rates
@@ -215,8 +213,6 @@ def on_commit(t):
 
 		# get previous daily energy usage
 		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
-
-		print(day,previous_day,billing_hrs,previous_usage)
 
 		# check if if time is peak/shoulder/offpeak
 		type_idx = rates.index(schedule[hour])
@@ -259,11 +255,15 @@ def on_commit(t):
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 			gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
 			gridlabd.set_value(bill_name, "usage", str(daily_usage))
+			gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
 
 			# ADDED TO SEE RESULTS
-			print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage)
-			print(rate[0],rate[1],rate[2],rate[3],rate[4])
-			print(tier0,tier1,tier2,tier3,tier4, "\n")
+			print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
+			print()
+
+			# Removing this print for less clutter
+			#print(rate[0],rate[1],rate[2],rate[3],rate[4])
+			#print(tier0,tier1,tier2,tier3,tier4, "\n")
 
 		else:
 			print("Implementation for non-inclining block rate in progress") 
