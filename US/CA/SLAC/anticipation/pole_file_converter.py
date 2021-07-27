@@ -4,28 +4,27 @@ import math
 import numpy as np
 import re
 
-#
+
 excel = 'Pole_Output_Sample.xls'
 
-#read all the sheets in the .xls file 
+# Read all the sheets in the .xls file 
 df = pd.read_excel(excel, sheet_name=None)  
 
 
-#the first row of each xls file is the header so we convert it to header.  
+# The first row of each xls file is the header so we convert it to header.  
 for key in df: 
-	new_header = df[key].iloc[0] #grab the first row for the header
-	df[key] = df[key][1:] #grab  just the row after the first rows
-	df[key].columns = new_header #set the header row as the df header
+	new_header = df[key].iloc[0] 
+	df[key] = df[key][1:]
+	df[key].columns = new_header 
 
 
 
-#extract necessary information from each sheet 
+# First do operations on the sheet 'Design - Pole.'
 df_current_sheet = df['Design - Pole'] 
-#droping uneeded columns 
-df_current_sheet.drop(['Owner', 'Foundation', 
-	'Ground Water Level',], 
-	axis=1, 
-	inplace=True)
+# Drop unneeded columns 
+df_current_sheet.drop(['Owner', 'Foundation', 'Ground Water Level',], 
+					  axis=1, 
+					  inplace=True)
 
 def parse_angle(cell_string, current_column, current_row):
 	"""Parse a string to get a string with angle in a unit that is supported by Gridlabd
@@ -80,7 +79,7 @@ def parse_length(cell_string, current_column, current_row):
 	YARD_TO_INCH = 36.0
 	MILE_TO_INCH = 6360.0
 	MILE_TO_YARD = 1760.0
-	#handle values and units in different orders
+	# Handle values and units in different orders.
 	length_units = {	
 	"'" : "ft",
     '"' : "in",
@@ -94,7 +93,7 @@ def parse_length(cell_string, current_column, current_row):
     "mile" : "mile",
     "mi" : "mile"
     }
-    #maps to a dictionary of conversion rates of different units to the key of length_conversions
+    # Map to a dictionary of conversion rates of different units to the key of length_conversions.
 	length_conversions = {	
 	"ft" : {"in" : INCH_TO_FEET, "ft" :  UNIT_TO_UNIT, "yd" : YARD_TO_FEET, "mile" : MILE_TO_FT},
     "in" : {"in" : UNIT_TO_UNIT,"ft": FEET_TO_INCH,  "yd": YARD_TO_INCH, "mile" : MILE_TO_INCH},
@@ -104,7 +103,7 @@ def parse_length(cell_string, current_column, current_row):
 	if cell_string == "nan":
 		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
 
-	#keeps track of the units that are in the cell. Whichever unit is listed first in length_units AND is present in the string is the unit that will be used as the output.
+	# Keeps track of the units that are in the cell. Whichever unit is listed first in length_units AND is present in the string is the unit that will be used as the output.
 	cell_units = []
 	
 	for key in length_units.keys():
@@ -120,14 +119,14 @@ def parse_length(cell_string, current_column, current_row):
 		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
 
 
-	#converts all the units and values in the cell to one unit and value 
+	# Convert all the units and values in the cell to one unit and value.
 	total_cell_value = 0
 	for i in range(0,len(cell_numbers)):
 		convert_to = length_conversions[cell_units[0]]
-		total_cell_value += math.trunc(float(cell_numbers[i])) * convert_to[cell_units[i]]
-		print(convert_to[cell_units[i]])
+		total_cell_value += float(cell_numbers[i]) * convert_to[cell_units[i]]
+		
 
-	return str(total_cell_value) + " " + cell_units[0]
+	return str(round(total_cell_value)) + " " + cell_units[0]
 
 def parse_pressure(cell_string, current_column, current_row):
 	"""Parse a string to get a string with pressure in a unit that is supported by Gridlabd
@@ -161,7 +160,7 @@ def parse_pressure(cell_string, current_column, current_row):
 	else:
 		return  value.group() + " " + output_unit
 	
-def parse_column(current_column, parsing_function):
+def parse_column(df_current_sheet, current_column, parsing_function):
 	"""Parse each cell in the column with a function 
 	For invalid inputs, resulting cell will be "nan".
     Keyword arguments:
@@ -210,18 +209,18 @@ def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, s
 	if output_unit == "": 
 		raise ValueError(f'Please provide {minuend_column} and {subtrahend_column}, row {current_row} with the same units.')
 	else:
-		return str(math.trunc(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group()))) + " " + output_unit
+		return str(round(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group()))) + " " + output_unit
 
 
-#parse necessary columns into a format supported by Gridlabd 
-parse_column('Lean Angle', parse_angle)
-parse_column('Lean Direction', parse_angle)
-parse_column('Length', parse_length)
-parse_column('GLC', parse_length)
-parse_column('AGL', parse_length)
-parse_column('Effective Stress Adjustment', parse_pressure)
+# Parse necessary columns into a format supported by Gridlabd.
+parse_column(df_current_sheet, 'Lean Angle', parse_angle)
+parse_column(df_current_sheet, 'Lean Direction', parse_angle)
+parse_column(df_current_sheet, 'Length', parse_length)
+parse_column(df_current_sheet, 'GLC', parse_length)
+parse_column(df_current_sheet, 'AGL', parse_length)
+parse_column(df_current_sheet, 'Effective Stress Adjustment', parse_pressure)
 
-#subtract agl from length to get depth 
+# Subtract agl from length to get depth. 
 for row in range(1,len(df_current_sheet['AGL'])+1):
 	try: 
 		df_current_sheet.at[row,'AGL'] = subtract_length_columns(str(df_current_sheet.at[row,'Length']), str(df_current_sheet.at[row,'AGL']), 'Length', 'AGL', row)
@@ -235,21 +234,29 @@ for row in range(1,len(df_current_sheet['AGL'])+1):
 
 
 
-#rename columns to its corresponding column name in Gridlabd
+# Rename columns to its corresponding column name in Gridlabd.
 df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
 	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter', 'AGL' : 'depth'}, inplace=True)
-#split GPS Point into longitude and latitude 
-df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.split(',', expand=True)
-#remove original GPS Point column
+# Split GPS Point into longitude and latitude 
+df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.split(' , ', expand=True)
+# Remove original GPS Point column
 df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axis=1,inplace=True)
 
 #Todo 
-#Handle Species column. It is a property in pole_library_config rather than pole_vulnerability_config 
+#Handle Species column. It is a property in pole_library_config rather than pole_vulnerability_config. 
 
 #last column called class based on what your converting. If it's pole object, powerflow.pole. If it's config, powerflow.pole_configuration. 
 #don't split the csv files. Have it all in one place and differentiate it with a new column 
 
-#finally create the csv files 
+# Secondly, do operations on the sheet 'Design - Structure.'
+df_current_sheet = df['Design - Structure'] 
+
+parse_column(df_current_sheet, 'Height', parse_length)
+parse_column(df_current_sheet, 'Direction', parse_angle)
+
+
+
+# Finally create the csv files. 
 
 for key in df: 
 	df[key].to_csv('%s.csv' %key)

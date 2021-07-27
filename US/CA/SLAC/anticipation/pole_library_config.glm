@@ -31,7 +31,7 @@ object powerflow.pole_configuration {
 object powerflow.pole_configuration { 
 	name "SYP-25/3";
 	pole_type "WOOD";
-	pole_length 25 ft;
+	pole_length 25 ft ;
 	pole_depth  5.5 ft;
 	ground_diameter  (29.5/3.14);
 	top_diameter  (23/3.14);
@@ -130,10 +130,10 @@ object powerflow.pole_configuration {
 	strength_factor_250b_wood  0.75;
 	strength_factor_250b_support  1;
 	pole_length  80 ft;
-	pole_depth  10 ft;
+	pole_depth  10 ft ;
 	ground_diameter  (60/3.14);
 	top_diameter  (31/3.14);
-	fiber_strength  8000 lb/in^2;
+	fiber_strength  8000 psi;
 	repair_time 50;
 }
 object powerflow.pole_configuration { 
