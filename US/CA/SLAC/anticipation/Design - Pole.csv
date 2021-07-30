@@ -1,11 +1,11 @@
 ,,Species,length,Class,depth,ground_diameter,tilt_angle,tilt_direction,fiber_strength,latitude,longitude
-1,XXXXXXE,Western Red Cedar,76 ft,1,10 ft,75 in,12 deg,0 deg,6000.5 psi,00.0000,-000.0000
-2,,Western Red Cedar,75 ft,2,9 ft,75 in,8 deg,nan,6000 psi,00.0000,-000.0000
-3,,Western Red Cedar,400 in,3,334 in,75 in,5 deg,5.56 rad,6000 atm,00.0000,-000.0000
-4,,Western Red Cedar,76 ft,1,10 ft,75 in,8.5 deg,0 deg,6000.5 psi,00.0000,-000.0000
-5,,Western Red Cedar,76 ft,1,70 ft,75 in,3 deg,0 deg,6000.5 psi,00.0000,-000.0000
-6,,Western Red Cedar,76 ft,1,10 ft,75 in,55 deg,0 deg,6000.5 psi,00.0000,-000.0000
-7,,Western Red Cedar,76 ft,1,10 ft,75 in,123 deg,0 deg,6000.5 psi,00.0000,-000.0000
-8,,Western Red Cedar,76 ft,1,10 ft,75 in,nan,0 deg,nan,00.0000,-000.0000
-9,,Western Red Cedar,nan,1,nan,75 in,nan,0 deg,5 psi,00.0000,-000.0000
-10,,Western Red Cedar,nan,1,nan,75 in,nan,0 deg,nan,00.0000,-000.0000
+1,XXXXXXE,Western Red Cedar,75.5 ft,1,9.5 ft,75.0 in,12 deg,0 deg,6000.5 psi,00.0000,-000.0000
+2,,Western Red Cedar,75.5 ft,2,9.5 ft,75.0 in,8 deg,nan,6000 psi,00.0000,-000.0000
+3,,Western Red Cedar,400.0 in,3,334.0 in,75.0 in,5 deg,5.56 rad,6000 atm,00.0000,-000.0000
+4,,Western Red Cedar,75.5 ft,1,9.08 ft,75.0 in,8.5 deg,0 deg,6000.5 psi,00.0000,-000.0000
+5,,Western Red Cedar,75.5 ft,1,69.5 ft,75.0 in,3 deg,0 deg,6000.5 psi,00.0000,-000.0000
+6,,Western Red Cedar,75.5 ft,1,9.5 ft,75.0 in,55 deg,0 deg,6000.5 psi,00.0000,-000.0000
+7,,Western Red Cedar,75.5 ft,1,9.5 ft,75.0 in,123 deg,0 deg,6000.5 psi,00.0000,-000.0000
+8,,Western Red Cedar,75.5 ft,1,9.5 ft,75.0 in,nan,0 deg,nan,00.0000,-000.0000
+9,,Western Red Cedar,nan,1,nan,75.0 in,nan,0 deg,5 psi,00.0000,-000.0000
+10,,Western Red Cedar,nan,1,nan,75.0 in,nan,0 deg,nan,00.0000,-000.0000

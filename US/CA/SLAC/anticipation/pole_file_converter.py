@@ -1,11 +1,13 @@
 import pandas as pd 
 import string
 import math
-import numpy as np
 import re
 
 
 excel = 'Pole_Output_Sample.xls'
+
+# Round to nearest hundreth decimal place if value has more decimal places than that. 
+decimal_rounding = 2 
 
 # Read all the sheets in the .xls file 
 df = pd.read_excel(excel, sheet_name=None)  
@@ -126,7 +128,7 @@ def parse_length(cell_string, current_column, current_row):
 		total_cell_value += float(cell_numbers[i]) * convert_to[cell_units[i]]
 		
 
-	return str(round(total_cell_value)) + " " + cell_units[0]
+	return str(round(total_cell_value,decimal_rounding)) + " " + cell_units[0]
 
 def parse_pressure(cell_string, current_column, current_row):
 	"""Parse a string to get a string with pressure in a unit that is supported by Gridlabd
@@ -209,7 +211,7 @@ def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, s
 	if output_unit == "": 
 		raise ValueError(f'Please provide {minuend_column} and {subtrahend_column}, row {current_row} with the same units.')
 	else:
-		return str(round(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group()))) + " " + output_unit
+		return str(round(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group()),decimal_rounding)) + " " + output_unit
 
 
 # Parse necessary columns into a format supported by Gridlabd.
@@ -252,7 +254,16 @@ df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axi
 df_current_sheet = df['Design - Structure'] 
 
 parse_column(df_current_sheet, 'Height', parse_length)
+parse_column(df_current_sheet, 'Offset/Lead', parse_length)
+# There's a direction for the previous and next poles, but I don't see anything in pole_mount.cpp. It only has pole_spacing, 
+# and it is only the mean of next and previous when xls file specifies different distances. 
+# Do I handle the weight and 
 parse_column(df_current_sheet, 'Direction', parse_angle)
+
+# Comment out some columns
+df_current_sheet.rename(columns = {'ID#': '//ID#', 
+	'Owner': '//Owner', 'Type': '//Type', 'Related' : '//Related'}, inplace=True)
+
 
 
 
@@ -262,6 +273,8 @@ for key in df:
 	df[key].to_csv('%s.csv' %key)
 
 print(df_current_sheet)
+
+
 
 
 
