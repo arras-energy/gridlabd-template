@@ -25,7 +25,6 @@ object triplex_meter {
 }
 
 module revenue;
-
 class billing {
 	double usage[kWh];
 	double total_usage[kWh];
@@ -42,12 +41,15 @@ object billing {
 	total_usage "0.0";
 }
 
+
 module residential;
 
 object house {
 	parent "test_meter";
 	name "test_house";
-	floor_area "2000.0";
-	thermal_integrity_level "VERY_LITTLE"; // Values allowed UNKNOWN,VERY_GOOD,GOOD,ABOVE_NORMAL,NORMAL,BELOW_NORMAL,LITTLE,VERY_LITTLE
-	gas_enduses "DISHWASHER"; // Values allowed "LIGHTS|PLUGS|REFRIGERATOR|FREEZER|WATERHEATER|CLOTHESWASHER|DRYER|RANGE|MICROWAVE|DISHWASHER"
+	floor_area "2000.0 sf";
+	thermal_integrity_level "NORMAL"; // Values allowed UNKNOWN,VERY_GOOD,GOOD,ABOVE_NORMAL,NORMAL,BELOW_NORMAL,LITTLE,VERY_LITTLE
+	gas_enduses ""; // Values allowed "LIGHTS|PLUGS|REFRIGERATOR|FREEZER|WATERHEATER|CLOTHESWASHER|DRYER|RANGE|MICROWAVE|DISHWASHER" 
+	heating_system_type "0"; //"{RESISTANCE,HEAT_PUMP,GAS,NONE}"
+	//switching both heating and cooling to electric/gas should give biggest change. cooling_system_type 
 }

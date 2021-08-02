@@ -9483,7 +9483,7 @@
 			}
 		},
 		"billing" : {
-			"object_size" : "176",
+			"object_size" : "184",
 			"trl" : "9",
 			"module" : "revenue",
 			"profiler.numobjs" : "1",
@@ -9608,6 +9608,12 @@
 				"description" : "daily demand of baseline tier"
 			},
 			"usage" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh"
+			},
+			"total_usage" : {
 				"type" : "double",
 				"access" : "PUBLIC",
 				"flags" : "EXTENDED",
@@ -14372,7 +14378,7 @@
 		"WEATHER_STATION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "CA-SAN_FRANCISCO_INTL_AP"
+			"value" : "CA-SAN_Francisco_Intl_Ap"
 		},
 		"STARTTIME" : {
 			"type" : "char1024",
@@ -15044,13 +15050,13 @@
 			"rank" : "0",
 			"clock" : "2021-01-01 00:00:00 PST",
 			"rng_state" : "16597",
-			"guid" : "242A41BBF81816F62ECED65A2F75D3C6",
+			"guid" : "3D2445561324E2467257D025943DF6E4",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
 			"solar_zenith": "0 rad",
 			"city": "",
-			"tmyfile": "CA-SAN_FRANCISCO_INTL_AP.tmy3",
+			"tmyfile": "CA-SAN_Francisco_Intl_Ap.tmy3",
 			"temperature": "59 degF",
 			"humidity": "0.75 pu",
 			"solar_flux": "0 W/sf",
@@ -15102,7 +15108,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "7A2C29E2FB36FC26261CD42AEBD2985B",
+			"guid" : "5BDB7FA0BEC2DD617D41818C38679E26",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15236,7 +15242,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "1C63CB9EDC482AE866C079204AFB6B1A",
+			"guid" : "4586CFE06EAE50BD48A8A0360D5CF53C",
 			"flags" : "0x0",
 			"tariff": "",
 			"meter": "test_meter",
@@ -15257,6 +15263,7 @@
 			"metering_interval": "0 s",
 			"baseline_demand": "0 kWh/day",
 			"usage": "0 kWh",
+			"total_usage": "0 kWh",
 			"billing_hrs": "0"
 		},
 		"test_house" : {
@@ -15266,7 +15273,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "20603",
-			"guid" : "6AEDECF82CAE5D1970FCBD4855E4E1D0",
+			"guid" : "2CAA989BBAEB79F65BEF70AA49BF9C01",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "2000 sf",
@@ -15376,7 +15383,7 @@
 			"cooling_system_type": "UNKNOWN",
 			"auxiliary_system_type": "UNKNOWN",
 			"fan_type": "UNKNOWN",
-			"thermal_integrity_level": "UNKNOWN",
+			"thermal_integrity_level": "VERY_LITTLE",
 			"glass_type": "LOW_E_GLASS",
 			"window_frame": "THERMAL_BREAK",
 			"glazing_treatment": "CLEAR",
@@ -15422,7 +15429,7 @@
 			"hvac_period_length": "0 s",
 			"hvac_duty_cycle": "0",
 			"thermostat_control": "FULL",
-			"gas_enduses": "",
+			"gas_enduses": "LIGHTS",
 			"load_power_fraction": "0.8",
 			"load_impedance_fraction": "0.2",
 			"load_current_fraction": "0",
@@ -15452,7 +15459,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "68B34E1F97B13C812A3DD8BB25A2CC34",
+			"guid" : "1468E974C3332744758A8302A246427",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",

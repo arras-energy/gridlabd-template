@@ -244,12 +244,26 @@ def on_commit(t):
 
 			rate[counter+1] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter+1)))
 			
-			# Fixed
-			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
-			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0, energy_hr-tier0)
-			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0, energy_hr-tier0-tier1)
-			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0, energy_hr-tier0-tier1-tier2)
+			# Fixed?
+			if tier[0] != 0.0:
+				tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
+			else:
+				tier0 = energy_hr
+			if tier[1] != 0.0:
+				tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
+			else:
+				tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0, energy_hr-tier0)
+			if tier[2] != 0.0:
+				tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
+			else:
+				tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0, energy_hr-tier0-tier1)
+			if tier[3] != 0.0:
+				tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0)
+			else:
+				tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0, energy_hr-tier0-tier1-tier2)
+			
 			tier4 = max(energy_hr - tier0 - tier1 - tier2 - tier3, 0)
+
 			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
 
 			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
@@ -258,11 +272,12 @@ def on_commit(t):
 			gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
 
 			# ADDED TO SEE RESULTS
-			print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
-			print()
+			#print(clock)
+			#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
+			#print()
 
 			# Removing this print for less clutter
-			#print(rate[0],rate[1],rate[2],rate[3],rate[4])
+			#print(rate[0],rate[1],rate[2],rate[3],rate[4], tier[0],tier[1],tier[2],tier[3])
 			#print(tier0,tier1,tier2,tier3,tier4, "\n")
 
 		else:
@@ -273,3 +288,9 @@ def on_commit(t):
 		#print("Time passed was not a complete hour. Billing unchanged")
 
 	return gridlabd.NEVER
+
+def on_term(t):
+	bill = gridlabd.get_object("test_bill")
+	bill_name = bill["name"]
+	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"))
+	return None

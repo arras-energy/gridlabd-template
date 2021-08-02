@@ -1,5 +1,7 @@
 // GridLAB-D tariff design model file
 
+#set randomseed=1234
+
 //GridLAB-D modules
 module revenue;
 
@@ -43,6 +45,8 @@ class tariff {
 object tariff {
 	name "tariff";
 }
+
+//module revenue;
 
 
 
