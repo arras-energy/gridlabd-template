@@ -237,12 +237,21 @@ for row in range(1,len(df_current_sheet['AGL'])+1):
 
 
 # Rename columns to its corresponding column name in Gridlabd.
+# I believe class in the file is referring to grade, so it is renamed. 
 df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
-	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter', 'AGL' : 'depth'}, inplace=True)
+	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter', 'AGL' : 'depth', 'Class': "grade"}, inplace=True)
 # Split GPS Point into longitude and latitude 
 df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.split(' , ', expand=True)
 # Remove original GPS Point column
 df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axis=1,inplace=True)
+
+# Split the dataframe based on properties of pole_library and pole_config and recombine. 
+df_pole_library = df_current_sheet[['length', 'depth', 'ground_diameter', 'fiber_strength']]
+df_pole_config = df_current_sheet[['tilt_angle', 'tilt_direction', 'latitude', 'longitude']]
+df_pole_library['class'] = ['poleflow.pole'] * len(df_pole_library)
+df_pole_config['class'] = ['poleflow.pole_configuration'] * len(df_pole_config)
+df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore_index=True)
+
 
 #Todo 
 #Handle Species column. It is a property in pole_library_config rather than pole_vulnerability_config. 
@@ -260,19 +269,27 @@ parse_column(df_current_sheet, 'Offset/Lead', parse_length)
 # Do I handle the weight and 
 parse_column(df_current_sheet, 'Direction', parse_angle)
 
+# Add 'class' column to 'Design - Strucuture'. 
+df_current_sheet['class'] = ['powerflow.pole_mount'] * len(df_current_sheet)
+
+# Keep track of final df to output at the end. 
+df_final = pd.concat([df['Design - Pole'], df_current_sheet], axis=0, ignore_index=True)
+
 # Comment out some columns
-df_current_sheet.rename(columns = {'ID#': '//ID#', 
-	'Owner': '//Owner', 'Type': '//Type', 'Related' : '//Related'}, inplace=True)
 
+# get cable information from GLM
+# cable_info = gridlabd.get_object(cable_type)
 
-
-
-# Finally create the csv files. 
+# Create the intermediate csv files. May not be necessary. 
 
 for key in df: 
 	df[key].to_csv('%s.csv' %key)
 
-print(df_current_sheet)
+
+#c Create final csv file. 
+df_final.to_csv('Sample_Output.csv')
+
+print(df_final)
 
 
 

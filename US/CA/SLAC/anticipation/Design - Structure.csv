@@ -1,51 +1,51 @@
-,//ID#,Size,Height,Direction,Offset/Lead,//Owner,//Type,//Related
-1,Insulator#7,66 kV Horizontal Line Post ,64.0 ft,0 deg,nan,Utility,Bracket,"Wire#1, Wire#15"
-2,Wire#15,653.9 ACSR,63.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-3,Wire#1,653.9 ACSR,63.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-4,Insulator#8,66 kV Horizontal Line Post ,59.0 ft,0 deg,nan,Utility,Bracket,"Wire#2, Wire#16"
-5,Wire#16,653.9 ACSR,58.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-6,Wire#2,653.9 ACSR,58.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-7,Insulator#9,66 kV Horizontal Line Post ,54.0 ft,0 deg,nan,Utility,Bracket,"Wire#3, Wire#17"
-8,Wire#17,653.9 ACSR,53.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-9,Wire#3,653.9 ACSR,53.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-10,Wire#26,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-11,Wire#11,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-12,Wire#25,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-13,Wire#10,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-14,Wire#24,336.4 ACSR Merlin,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-15,Wire#9,336.4 ACSR Merlin,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-16,Wire#23,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-17,Wire#8,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-18,CrossArm#1,10 Foot Cross Arm,40.5 ft,180 deg,5.0 ft,Utility,,"Insulator#1, Insulator#2, Insulator#3, Insulator#4"
-19,Equip#2,Fuse Arm with 2 Cutouts,40.5 ft,180 deg,nan,Utility,Cutout Arrestor,
-20,Insulator#4,12 kV Pin (Cross Arm),40.5 ft,180 deg,9.67 ft,Utility,Pin,"Wire#11, Wire#26"
-21,Insulator#3,12 kV Pin (Cross Arm),40.5 ft,180 deg,6.67 ft,Utility,Pin,"Wire#10, Wire#25"
-22,Insulator#2,12 kV Pin (Cross Arm),40.5 ft,180 deg,3.33 ft,Utility,Pin,"Wire#9, Wire#24"
-23,Insulator#1,12 kV Pin (Cross Arm),40.5 ft,180 deg,0.33 ft,Utility,Pin,"Wire#8, Wire#23"
-24,Equip#3,25 kVA Transformer,37.5 ft,90 deg,nan,Utility,Transformer,
-25,Insulator#15,"3"" Clevis Insulator",33.0 ft,90 deg,nan,Utility,Clamp,Wire#12
-26,Insulator#10,"3"" Clevis Insulator",33.0 ft,0 deg,nan,Utility,Clamp,Wire#18
-27,Wire#12,6 Al. Triplex,33.0 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1
-28,Wire#18,6 Al. Duplex,33.0 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2
-29,Equip#1,Roadway - 6 ft,27.0 ft,0 deg,nan,Utility,Street Light,
-30,Wire#28,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,270 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#2
-31,Wire#14,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,90 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#1
-32,Wire#27,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,270 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#2
-33,Wire#13,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,90 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#1
-34,CrossArm#2,10 Foot Cross Arm,26.0 ft,180 deg,5.0 ft,Utility,,"Insulator#5, Insulator#6"
-35,Insulator#6,3 Bolt Suspension Clamp,26.0 ft,180 deg,0.33 ft,Utility,Clamp,"Wire#14, Wire#28"
-36,Insulator#5,3 Bolt Suspension Clamp,26.0 ft,180 deg,9.67 ft,Utility,Clamp,"Wire#13, Wire#27"
-37,Insulator#11,3 Bolt Suspension Clamp,25.0 ft,0 deg,nan,Unknown,Clamp,"Wire#4, Wire#19"
-38,Wire#19,"1.5"" TELCO 5/16"" Messenger",25.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2
-39,Wire#4,"1.5"" TELCO 5/16"" Messenger",25.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1
-40,Insulator#12,3 Bolt Suspension Clamp,24.0 ft,0 deg,nan,Unknown,Clamp,"Wire#5, Wire#20"
-41,Wire#20,"1"" TELCO 5/16"" Messenger",24.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2
-42,Wire#5,"1"" TELCO 5/16"" Messenger",24.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1
-43,Insulator#13,3 Bolt Suspension Clamp,23.0 ft,0 deg,nan,Unknown,Clamp,"Wire#6, Wire#21"
-44,Wire#21,"2"" CATV 1/4"" Messenger",23.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2
-45,Wire#6,"2"" CATV 1/4"" Messenger",23.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1
-46,Insulator#14,3 Bolt Suspension Clamp,21.5 ft,0 deg,nan,Unknown,Clamp,"Wire#7, Wire#22"
-47,Wire#22,"1.5"" TELCO 5/16"" Messenger",21.5 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2
-48,Wire#7,"1.5"" TELCO 5/16"" Messenger",21.5 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1
-49,WEP#2,,nan,270 deg,204.0 ft,,Previous Pole,
-50,WEP#1,,nan,90 deg,180.0 ft,,Next Pole,
+,ID#,Size,Height,Direction,Offset/Lead,Owner,Type,Related,class
+1,Insulator#7,66 kV Horizontal Line Post ,64.0 ft,0 deg,nan,Utility,Bracket,"Wire#1, Wire#15",powerflow.pole_mount
+2,Wire#15,653.9 ACSR,63.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+3,Wire#1,653.9 ACSR,63.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+4,Insulator#8,66 kV Horizontal Line Post ,59.0 ft,0 deg,nan,Utility,Bracket,"Wire#2, Wire#16",powerflow.pole_mount
+5,Wire#16,653.9 ACSR,58.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+6,Wire#2,653.9 ACSR,58.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+7,Insulator#9,66 kV Horizontal Line Post ,54.0 ft,0 deg,nan,Utility,Bracket,"Wire#3, Wire#17",powerflow.pole_mount
+8,Wire#17,653.9 ACSR,53.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+9,Wire#3,653.9 ACSR,53.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+10,Wire#26,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+11,Wire#11,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+12,Wire#25,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+13,Wire#10,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+14,Wire#24,336.4 ACSR Merlin,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+15,Wire#9,336.4 ACSR Merlin,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+16,Wire#23,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+17,Wire#8,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+18,CrossArm#1,10 Foot Cross Arm,40.5 ft,180 deg,5.0 ft,Utility,,"Insulator#1, Insulator#2, Insulator#3, Insulator#4",powerflow.pole_mount
+19,Equip#2,Fuse Arm with 2 Cutouts,40.5 ft,180 deg,nan,Utility,Cutout Arrestor,,powerflow.pole_mount
+20,Insulator#4,12 kV Pin (Cross Arm),40.5 ft,180 deg,9.67 ft,Utility,Pin,"Wire#11, Wire#26",powerflow.pole_mount
+21,Insulator#3,12 kV Pin (Cross Arm),40.5 ft,180 deg,6.67 ft,Utility,Pin,"Wire#10, Wire#25",powerflow.pole_mount
+22,Insulator#2,12 kV Pin (Cross Arm),40.5 ft,180 deg,3.33 ft,Utility,Pin,"Wire#9, Wire#24",powerflow.pole_mount
+23,Insulator#1,12 kV Pin (Cross Arm),40.5 ft,180 deg,0.33 ft,Utility,Pin,"Wire#8, Wire#23",powerflow.pole_mount
+24,Equip#3,25 kVA Transformer,37.5 ft,90 deg,nan,Utility,Transformer,,powerflow.pole_mount
+25,Insulator#15,"3"" Clevis Insulator",33.0 ft,90 deg,nan,Utility,Clamp,Wire#12,powerflow.pole_mount
+26,Insulator#10,"3"" Clevis Insulator",33.0 ft,0 deg,nan,Utility,Clamp,Wire#18,powerflow.pole_mount
+27,Wire#12,6 Al. Triplex,33.0 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
+28,Wire#18,6 Al. Duplex,33.0 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
+29,Equip#1,Roadway - 6 ft,27.0 ft,0 deg,nan,Utility,Street Light,,powerflow.pole_mount
+30,Wire#28,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,270 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#2,powerflow.pole_mount
+31,Wire#14,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,90 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#1,powerflow.pole_mount
+32,Wire#27,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,270 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#2,powerflow.pole_mount
+33,Wire#13,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,90 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#1,powerflow.pole_mount
+34,CrossArm#2,10 Foot Cross Arm,26.0 ft,180 deg,5.0 ft,Utility,,"Insulator#5, Insulator#6",powerflow.pole_mount
+35,Insulator#6,3 Bolt Suspension Clamp,26.0 ft,180 deg,0.33 ft,Utility,Clamp,"Wire#14, Wire#28",powerflow.pole_mount
+36,Insulator#5,3 Bolt Suspension Clamp,26.0 ft,180 deg,9.67 ft,Utility,Clamp,"Wire#13, Wire#27",powerflow.pole_mount
+37,Insulator#11,3 Bolt Suspension Clamp,25.0 ft,0 deg,nan,Unknown,Clamp,"Wire#4, Wire#19",powerflow.pole_mount
+38,Wire#19,"1.5"" TELCO 5/16"" Messenger",25.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
+39,Wire#4,"1.5"" TELCO 5/16"" Messenger",25.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
+40,Insulator#12,3 Bolt Suspension Clamp,24.0 ft,0 deg,nan,Unknown,Clamp,"Wire#5, Wire#20",powerflow.pole_mount
+41,Wire#20,"1"" TELCO 5/16"" Messenger",24.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
+42,Wire#5,"1"" TELCO 5/16"" Messenger",24.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
+43,Insulator#13,3 Bolt Suspension Clamp,23.0 ft,0 deg,nan,Unknown,Clamp,"Wire#6, Wire#21",powerflow.pole_mount
+44,Wire#21,"2"" CATV 1/4"" Messenger",23.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
+45,Wire#6,"2"" CATV 1/4"" Messenger",23.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
+46,Insulator#14,3 Bolt Suspension Clamp,21.5 ft,0 deg,nan,Unknown,Clamp,"Wire#7, Wire#22",powerflow.pole_mount
+47,Wire#22,"1.5"" TELCO 5/16"" Messenger",21.5 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
+48,Wire#7,"1.5"" TELCO 5/16"" Messenger",21.5 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
+49,WEP#2,,nan,270 deg,204.0 ft,,Previous Pole,,powerflow.pole_mount
+50,WEP#1,,nan,90 deg,180.0 ft,,Next Pole,,powerflow.pole_mount
