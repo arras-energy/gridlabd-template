@@ -35,7 +35,6 @@ class pole_mount
 	char32 type;
 	char1024 related;
 	char32 id; 
-	char32 offset/lead; 
 }
 
 // load the gridlabd-python module
