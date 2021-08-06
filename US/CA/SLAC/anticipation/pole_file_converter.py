@@ -2,8 +2,9 @@ import pandas as pd
 import string
 import math
 import re
+import gridlabd
 
-
+# The excel file to read. 
 excel = 'Pole_Output_Sample.xls'
 
 # Round to nearest hundreth decimal place if value has more decimal places than that. 
@@ -27,6 +28,7 @@ df_current_sheet = df['Design - Pole']
 df_current_sheet.drop(['Owner', 'Foundation', 'Ground Water Level',], 
 					  axis=1, 
 					  inplace=True)
+
 
 def parse_angle(cell_string, current_column, current_row):
 	"""Parse a string to get a string with angle in a unit that is supported by Gridlabd
@@ -114,11 +116,13 @@ def parse_length(cell_string, current_column, current_row):
 
 	cell_numbers = re.findall('\d+[\.]?[\d+]*', cell_string)
 
+	if len(cell_units) == 0: 
+		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+
 	if len(cell_numbers) != len(cell_units):
 		raise ValueError(f'Please make sure there are the same number of numbers and units for value {cell_string} in column: {current_column}, row {current_row}')
 
-	if len(cell_units) == 0: 
-		raise ValueError(f'Please specify valid units for {cell_string} in column: {current_column}, row {current_row}.')
+
 
 
 	# Convert all the units and values in the cell to one unit and value.
@@ -178,6 +182,8 @@ def parse_column(df_current_sheet, current_column, parsing_function):
 
 def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, subtrahend_column,current_row):
 	"""Subtract the lengths of strings contained in two cells 
+	
+	Assumes the units are the same for the two columns. 
 
     Keyword arguments:
     minuend_string -- the string containing the minuend 
@@ -205,7 +211,7 @@ def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, s
 		raise ValueError(f'The cell column: {subtrahend_column}, row {current_row} is empty. Please enter a value.')
 	output_unit = ""
 	for unit in length_units.keys():
-		if unit in minuend_string and subtrahend_string:
+		if unit in minuend_string and unit in subtrahend_string:
 			output_unit = length_units[unit]
 			break
 	if output_unit == "": 
@@ -213,14 +219,46 @@ def subtract_length_columns(minuend_string, subtrahend_string, minuend_column, s
 	else:
 		return str(round(float(re.search("^[1-9]\d*(\.\d+)?", minuend_string).group()) - float(re.search("^[1-9]\d*(\.\d+)?", subtrahend_string).group()),decimal_rounding)) + " " + output_unit
 
+def parse_lat_long(cell_string, current_column, current_row):
+	"""Parse the lat/long value 
+	
+	Latitude and longitude should be separated. 
+
+    Keyword arguments:
+    cell_string -- the string to be parsed (presumably from a cell)
+    current_column -- the column number containing the cell_string. For more descriptive ValueErrors
+    current_row -- the row number containing the cell_string. For more descriptive ValueErrors
+    """
+	if cell_string == "nan":
+		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
+	else:
+		return float(cell_string)
+
+def parse_circumference_to_diamater(cell_string, current_column, current_row):
+	"""Parse the circumference value into its diameter value 
+
+    Keyword arguments:
+    cell_string --  the string to be parsed (presumably from a cell)
+    current_column -- the column number containing the cell_string. For more descriptive ValueErrors
+    current_row -- the row number containing the cell_string. For more descriptive ValueErrors
+    """
+	try: 
+		string_value = parse_length(cell_string, current_column, current_row).split(" ")
+		return str(round(float(string_value[0])/math.pi, decimal_rounding)) + " " + string_value[1]
+	except ValueError as e: 
+		raise e
 
 # Parse necessary columns into a format supported by Gridlabd.
 parse_column(df_current_sheet, 'Lean Angle', parse_angle)
 parse_column(df_current_sheet, 'Lean Direction', parse_angle)
 parse_column(df_current_sheet, 'Length', parse_length)
-parse_column(df_current_sheet, 'GLC', parse_length)
+parse_column(df_current_sheet, 'GLC', parse_circumference_to_diamater)
 parse_column(df_current_sheet, 'AGL', parse_length)
 parse_column(df_current_sheet, 'Effective Stress Adjustment', parse_pressure)
+print(df_current_sheet)
+
+
+
 
 # Subtract agl from length to get depth. 
 for row in range(1,len(df_current_sheet['AGL'])+1):
@@ -240,17 +278,22 @@ for row in range(1,len(df_current_sheet['AGL'])+1):
 # I believe class in the file is referring to grade, so it is renamed. 
 df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
 	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'length', 'GLC' : 'ground_diameter', 'AGL' : 'depth', 'Class': "grade"}, inplace=True)
-# Split GPS Point into longitude and latitude 
+
+# Split GPS Point into longitude and latitude, then parse.
 df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.split(' , ', expand=True)
+parse_column(df_current_sheet, 'latitude', parse_lat_long)
+parse_column(df_current_sheet, 'longitude', parse_lat_long)
+
 # Remove original GPS Point column
 df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axis=1,inplace=True)
+print(df_current_sheet)
 
 # Split the dataframe based on properties of pole_library and pole_config and recombine. 
 df_pole_library = df_current_sheet[['length', 'depth', 'ground_diameter', 'fiber_strength']]
 df_pole_config = df_current_sheet[['tilt_angle', 'tilt_direction', 'latitude', 'longitude']]
-df_pole_library['class'] = ['poleflow.pole'] * len(df_pole_library)
-df_pole_config['class'] = ['poleflow.pole_configuration'] * len(df_pole_config)
-df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore_index=True)
+df_pole_library['class'] = ['powerflow.pole'] * len(df_pole_library)
+df_pole_config['class'] = ['powerflow.pole_configuration'] * len(df_pole_config)
+df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore_index=True)	
 
 
 #Todo 
@@ -266,19 +309,29 @@ parse_column(df_current_sheet, 'Height', parse_length)
 parse_column(df_current_sheet, 'Offset/Lead', parse_length)
 # There's a direction for the previous and next poles, but I don't see anything in pole_mount.cpp. It only has pole_spacing, 
 # and it is only the mean of next and previous when xls file specifies different distances. 
-# Do I handle the weight and 
 parse_column(df_current_sheet, 'Direction', parse_angle)
+
+# Rename some columns
+df_current_sheet.rename(str.lower, axis='columns', inplace=True)
+df_current_sheet.rename(columns = {'id#' : 'id'}, inplace=True)
 
 # Add 'class' column to 'Design - Strucuture'. 
 df_current_sheet['class'] = ['powerflow.pole_mount'] * len(df_current_sheet)
 
+
+
+
 # Keep track of final df to output at the end. 
 df_final = pd.concat([df['Design - Pole'], df_current_sheet], axis=0, ignore_index=True)
 
-# Comment out some columns
+# Move class column to the first column. May not be necessary. 
+class_column = df_final.pop('class')
+df_final.insert(0, 'class', class_column)
+
+
 
 # get cable information from GLM
-# cable_info = gridlabd.get_object(cable_type)
+# cable_info = gridlabd.get_object('653.9 ACSR')
 
 # Create the intermediate csv files. May not be necessary. 
 
@@ -289,7 +342,7 @@ for key in df:
 #c Create final csv file. 
 df_final.to_csv('Sample_Output.csv')
 
-print(df_final)
+
 
 
 

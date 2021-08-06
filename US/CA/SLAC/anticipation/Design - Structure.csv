@@ -1,4 +1,4 @@
-,ID#,Size,Height,Direction,Offset/Lead,Owner,Type,Related,class
+,id,size,height,direction,offset/lead,owner,type,related,class
 1,Insulator#7,66 kV Horizontal Line Post ,64.0 ft,0 deg,nan,Utility,Bracket,"Wire#1, Wire#15",powerflow.pole_mount
 2,Wire#15,653.9 ACSR,63.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
 3,Wire#1,653.9 ACSR,63.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
