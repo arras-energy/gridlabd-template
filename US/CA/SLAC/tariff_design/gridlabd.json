@@ -13,15 +13,15 @@
 			"major" : "4",
 			"minor" : "2"
 		},
-		"revenue" : {
-			"major" : "4",
-			"minor" : "2"
-		},
 		"residential" : {
 			"major" : "4",
 			"minor" : "2"
 		},
-		"tariff_design" : {
+		"revenue" : {
+			"major" : "4",
+			"minor" : "2"
+		},
+		"tariff_design_testing" : {
 			"major" : "4",
 			"minor" : "2"
 		}
@@ -9307,324 +9307,6 @@
 				"description" : "Mean spacing between poles adjacent"
 			}
 		},
-		"tariff" : {
-			"object_size" : "312",
-			"trl" : "9",
-			"module" : "revenue",
-			"profiler.numobjs" : "1",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"rate_design" : {
-				"type" : "char256",
-				"access" : "PUBLIC",
-				"description" : "Rate identifier"
-			},
-			"peak_tier0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"peak_rate0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"peak_tier1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"peak_rate1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"peak_tier2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"peak_rate2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"peak_tier3" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"peak_rate3" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"peak_rate4" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"offpeak_tier0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"offpeak_rate0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"offpeak_tier1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"offpeak_rate1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"offpeak_tier2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"offpeak_rate2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"offpeak_tier3" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"offpeak_rate3" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"offpeak_rate4" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"shoulder_tier0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"shoulder_rate0" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"shoulder_tier1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"shoulder_rate1" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"shoulder_tier2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"shoulder_rate2" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"shoulder_tier3" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh/day"
-			},
-			"shoulder_rate3" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			},
-			"shoulder_rate4" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "$/kWh"
-			}
-		},
-		"billing" : {
-			"object_size" : "184",
-			"trl" : "9",
-			"module" : "revenue",
-			"profiler.numobjs" : "1",
-			"profiler.clocks" : "0",
-			"profiler.count" : "0",
-			"tariff" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "reference to the tariff object used for this bill"
-			},
-			"meter" : {
-				"type" : "object",
-				"access" : "PUBLIC",
-				"flags" : "REQUIRED",
-				"description" : "reference to the meter object use for this bill"
-			},
-			"bill_day" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"description" : "day of month when the bill is generated"
-			},
-			"bill_date" : {
-				"type" : "timestamp",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"description" : "date of the last bill generated"
-			},
-			"billing_days" : {
-				"type" : "int32",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"description" : "number of day of last bill"
-			},
-			"total_bill" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill total"
-			},
-			"total_charges" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill total charges"
-			},
-			"energy_charges" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill energy charges"
-			},
-			"capacity_charges" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill capacity charges"
-			},
-			"ramping_charges" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill ramping charges"
-			},
-			"fixed_charges" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill fixed charges"
-			},
-			"total_credits" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill total credits"
-			},
-			"energy_credits" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill energy credits"
-			},
-			"capacity_credits" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill capacity credits"
-			},
-			"ramping_credits" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill ramping credits"
-			},
-			"fixed_credits" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "OUTPUT",
-				"unit" : "$",
-				"description" : "last bill fixed credits"
-			},
-			"metering_interval" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "s",
-				"description" : "interval at which meter is observed"
-			},
-			"baseline_demand" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "kWh/day",
-				"description" : "daily demand of baseline tier"
-			},
-			"usage" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh"
-			},
-			"total_usage" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED",
-				"unit" : "kWh"
-			},
-			"billing_hrs" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"flags" : "EXTENDED"
-			}
-		},
 		"residential_enduse" : {
 			"object_size" : "944",
 			"trl" : "0",
@@ -13467,6 +13149,330 @@
 				"access" : "PUBLIC",
 				"description" : "tariff object for energy price sensitivity"
 			}
+		},
+		"tariff" : {
+			"object_size" : "312",
+			"trl" : "9",
+			"module" : "revenue",
+			"profiler.numobjs" : "1",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"rate_design" : {
+				"type" : "char256",
+				"access" : "PUBLIC",
+				"description" : "Rate identifier"
+			},
+			"peak_tier0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"peak_rate0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"peak_tier1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"peak_rate1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"peak_tier2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"peak_rate2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"peak_tier3" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"peak_rate3" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"peak_rate4" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"offpeak_tier0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"offpeak_rate0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"offpeak_tier1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"offpeak_rate1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"offpeak_tier2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"offpeak_rate2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"offpeak_tier3" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"offpeak_rate3" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"offpeak_rate4" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"shoulder_tier0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"shoulder_rate0" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"shoulder_tier1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"shoulder_rate1" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"shoulder_tier2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"shoulder_rate2" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"shoulder_tier3" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh/day"
+			},
+			"shoulder_rate3" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			},
+			"shoulder_rate4" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "$/kWh"
+			}
+		},
+		"billing" : {
+			"object_size" : "192",
+			"trl" : "9",
+			"module" : "revenue",
+			"profiler.numobjs" : "1",
+			"profiler.clocks" : "0",
+			"profiler.count" : "0",
+			"tariff" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "reference to the tariff object used for this bill"
+			},
+			"meter" : {
+				"type" : "object",
+				"access" : "PUBLIC",
+				"flags" : "REQUIRED",
+				"description" : "reference to the meter object use for this bill"
+			},
+			"bill_day" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"description" : "day of month when the bill is generated"
+			},
+			"bill_date" : {
+				"type" : "timestamp",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"description" : "date of the last bill generated"
+			},
+			"billing_days" : {
+				"type" : "int32",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"description" : "number of day of last bill"
+			},
+			"total_bill" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill total"
+			},
+			"total_charges" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill total charges"
+			},
+			"energy_charges" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill energy charges"
+			},
+			"capacity_charges" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill capacity charges"
+			},
+			"ramping_charges" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill ramping charges"
+			},
+			"fixed_charges" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill fixed charges"
+			},
+			"total_credits" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill total credits"
+			},
+			"energy_credits" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill energy credits"
+			},
+			"capacity_credits" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill capacity credits"
+			},
+			"ramping_credits" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill ramping credits"
+			},
+			"fixed_credits" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "OUTPUT",
+				"unit" : "$",
+				"description" : "last bill fixed credits"
+			},
+			"metering_interval" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "s",
+				"description" : "interval at which meter is observed"
+			},
+			"baseline_demand" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "kWh/day",
+				"description" : "daily demand of baseline tier"
+			},
+			"usage" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh"
+			},
+			"total_usage" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "kWh"
+			},
+			"billing_hrs" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED"
+			},
+			"total_power" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "EXTENDED",
+				"unit" : "W"
+			}
 		}
 	},
 	"globals" : {
@@ -13488,22 +13494,22 @@
 		"version.build" : {
 			"type" : "int32",
 			"access" : "REFERENCE",
-			"value" : "210719"
+			"value" : "210801"
 		},
 		"version.branch" : {
 			"type" : "char256",
 			"access" : "REFERENCE",
-			"value" : "use_case_tariff_design"
+			"value" : "master"
 		},
 		"version" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "4.2.25-210719-use_case_tariff_design"
+			"value" : "4.2.25-210801-master"
 		},
 		"command_line" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210719-use_case_tariff_design/bin/gridlabd.bin model.glm tariff_design.glm"
+			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/bin/gridlabd.bin model.glm tariff_design.glm"
 		},
 		"environment" : {
 			"type" : "char1024",
@@ -13603,17 +13609,17 @@
 		"clock" : {
 			"type" : "timestamp",
 			"access" : "PUBLIC",
-			"value" : "2021-01-01 00:00:00 PST"
+			"value" : "2020-01-01 00:00:00 PST"
 		},
 		"starttime" : {
 			"type" : "timestamp",
 			"access" : "PUBLIC",
-			"value" : "2021-01-01 00:00:00 PST"
+			"value" : "2020-01-01 00:00:00 PST"
 		},
 		"stoptime" : {
 			"type" : "timestamp",
 			"access" : "PUBLIC",
-			"value" : "2021-01-02 00:00:00 PST"
+			"value" : "2021-01-01 00:00:00 PST"
 		},
 		"double_format" : {
 			"type" : "char32",
@@ -13669,7 +13675,7 @@
 		"execdir" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210719-use_case_tariff_design/bin"
+			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/bin"
 		},
 		"strictnames" : {
 			"type" : "bool",
@@ -14130,7 +14136,7 @@
 		"exename" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210719-use_case_tariff_design/bin/gridlabd.bin"
+			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/bin/gridlabd.bin"
 		},
 		"wget_options" : {
 			"type" : "char1024",
@@ -14378,17 +14384,17 @@
 		"WEATHER_STATION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "CA-SAN_Francisco_Intl_Ap"
+			"value" : "CA-San_Francisco_Intl_Ap"
 		},
 		"STARTTIME" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "2021-01-01 00:00:00 PST"
+			"value" : "2020-01-01 00:00:00 PST"
 		},
 		"STOPTIME" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "2021-01-02 00:00:00 PST"
+			"value" : "2021-01-01 00:00:00 PST"
 		},
 		"TIMEZONE" : {
 			"type" : "char1024",
@@ -14444,7 +14450,7 @@
 		"climate::library_path" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210719-use_case_tariff_design/share/gridlabd/weather/US"
+			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/share/gridlabd/weather/US"
 		},
 		"powerflow::message_flags" : {
 			"type" : "set",
@@ -14761,32 +14767,6 @@
 			"access" : "PUBLIC",
 			"value" : "NONE"
 		},
-		"revenue::message_flags" : {
-			"type" : "set",
-			"keywords" : {
-				"QUIET" : "0x10000",
-				"WARNING" : "0x20000",
-				"DEBUG" : "0x40000",
-				"VERBOSE" : "0x80000"
-			},
-			"access" : "PUBLIC",
-			"value" : ""
-		},
-		"revenue::billing_module" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "default_billing.py"
-		},
-		"revenue::billing_library" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "/usr/local/opt/gridlabd/current/share"
-		},
-		"revenue::billing_function" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "compute_bill"
-		},
 		"residential::message_flags" : {
 			"type" : "set",
 			"keywords" : {
@@ -15039,6 +15019,32 @@
 			"type" : "char1024",
 			"access" : "PUBLIC",
 			"value" : "occupancy_fraction"
+		},
+		"revenue::message_flags" : {
+			"type" : "set",
+			"keywords" : {
+				"QUIET" : "0x10000",
+				"WARNING" : "0x20000",
+				"DEBUG" : "0x40000",
+				"VERBOSE" : "0x80000"
+			},
+			"access" : "PUBLIC",
+			"value" : ""
+		},
+		"revenue::billing_module" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "default_billing.py"
+		},
+		"revenue::billing_library" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "/usr/local/opt/gridlabd/current/share"
+		},
+		"revenue::billing_function" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "compute_bill"
 		}
 	},
 	"schedules" : {
@@ -15048,15 +15054,15 @@
 			"id" : "0",
 			"class" : "climate",
 			"rank" : "0",
-			"clock" : "2021-01-01 00:00:00 PST",
+			"clock" : "INIT",
 			"rng_state" : "16597",
-			"guid" : "3D2445561324E2467257D025943DF6E4",
+			"guid" : "52DCEF13C0495E5042882813300AD572",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
 			"solar_zenith": "0 rad",
 			"city": "",
-			"tmyfile": "CA-SAN_Francisco_Intl_Ap.tmy3",
+			"tmyfile": "CA-San_Francisco_Intl_Ap.tmy3",
 			"temperature": "59 degF",
 			"humidity": "0.75 pu",
 			"solar_flux": "0 W/sf",
@@ -15108,7 +15114,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "5BDB7FA0BEC2DD617D41818C38679E26",
+			"guid" : "7600E7F72E61822F67D867426913B204",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15236,47 +15242,17 @@
 			"nominal_voltage": "120 V",
 			"violation_detected": "NONE"
 		},
-		"test_bill" : {
-			"id" : "2",
-			"class" : "billing",
-			"rank" : "0",
-			"clock" : "INIT",
-			"rng_state" : "17537",
-			"guid" : "4586CFE06EAE50BD48A8A0360D5CF53C",
-			"flags" : "0x0",
-			"tariff": "",
-			"meter": "test_meter",
-			"bill_day": "0",
-			"bill_date": "INIT",
-			"billing_days": "0",
-			"total_bill": "0 $",
-			"total_charges": "0 $",
-			"energy_charges": "0 $",
-			"capacity_charges": "0 $",
-			"ramping_charges": "0 $",
-			"fixed_charges": "0 $",
-			"total_credits": "0 $",
-			"energy_credits": "0 $",
-			"capacity_credits": "0 $",
-			"ramping_credits": "0 $",
-			"fixed_credits": "0 $",
-			"metering_interval": "0 s",
-			"baseline_demand": "0 kWh/day",
-			"usage": "0 kWh",
-			"total_usage": "0 kWh",
-			"billing_hrs": "0"
-		},
 		"test_house" : {
-			"id" : "3",
+			"id" : "2",
 			"class" : "house",
 			"parent" : "test_meter",
 			"rank" : "0",
 			"clock" : "INIT",
-			"rng_state" : "20603",
-			"guid" : "2CAA989BBAEB79F65BEF70AA49BF9C01",
+			"rng_state" : "17537",
+			"guid" : "59CB4BE7AE0938307DF281927786A01",
 			"flags" : "0x0",
 			"weather": "",
-			"floor_area": "2000 sf",
+			"floor_area": "1500 sf",
 			"gross_wall_area": "0 sf",
 			"ceiling_height": "0 ft",
 			"aspect_ratio": "0",
@@ -15383,7 +15359,7 @@
 			"cooling_system_type": "UNKNOWN",
 			"auxiliary_system_type": "UNKNOWN",
 			"fan_type": "UNKNOWN",
-			"thermal_integrity_level": "VERY_LITTLE",
+			"thermal_integrity_level": "VERY_GOOD",
 			"glass_type": "LOW_E_GLASS",
 			"window_frame": "THERMAL_BREAK",
 			"glazing_treatment": "CLEAR",
@@ -15429,7 +15405,7 @@
 			"hvac_period_length": "0 s",
 			"hvac_duty_cycle": "0",
 			"thermostat_control": "FULL",
-			"gas_enduses": "LIGHTS",
+			"gas_enduses": "WATERHEATER|DRYER|RANGE",
 			"load_power_fraction": "0.8",
 			"load_impedance_fraction": "0.2",
 			"load_current_fraction": "0",
@@ -15454,12 +15430,12 @@
 			"power_state": "OFF"
 		},
 		"tariff" : {
-			"id" : "4",
+			"id" : "3",
 			"class" : "tariff",
 			"rank" : "0",
 			"clock" : "INIT",
-			"rng_state" : "118",
-			"guid" : "1468E974C3332744758A8302A246427",
+			"rng_state" : "32738",
+			"guid" : "20109B9FEECF92A4C714AC95791EBB6",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15489,6 +15465,37 @@
 			"shoulder_tier3": "0 kWh/day",
 			"shoulder_rate3": "0 $/kWh",
 			"shoulder_rate4": "0 $/kWh"
+		},
+		"test_bill" : {
+			"id" : "4",
+			"class" : "billing",
+			"rank" : "0",
+			"clock" : "INIT",
+			"rng_state" : "118",
+			"guid" : "D8F7E21B60C3E6C5271A309F23197FB",
+			"flags" : "0x0",
+			"tariff": "tariff",
+			"meter": "test_meter",
+			"bill_day": "0",
+			"bill_date": "INIT",
+			"billing_days": "0",
+			"total_bill": "0 $",
+			"total_charges": "0 $",
+			"energy_charges": "0 $",
+			"capacity_charges": "0 $",
+			"ramping_charges": "0 $",
+			"fixed_charges": "0 $",
+			"total_credits": "0 $",
+			"energy_credits": "0 $",
+			"capacity_credits": "0 $",
+			"ramping_credits": "0 $",
+			"fixed_credits": "0 $",
+			"metering_interval": "0 s",
+			"baseline_demand": "0 kWh/day",
+			"usage": "0 kWh",
+			"total_usage": "0 kWh",
+			"billing_hrs": "0",
+			"total_power": "0 W"
 		}
 	}
 }

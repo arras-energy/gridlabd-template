@@ -93,7 +93,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 
 	# fills in tariff obj with peak and offpeak rates
 	if len(rates) > 3:
-		print("Implementation for > 3 TOU rates per day in progress")
+		raise Exception("Implementation for > 3 TOU rates per day in progress") 
 	elif len(rates) == 3: # handles 3 rates per day
 		pcounter = 0
 		type_idx = 0
@@ -271,9 +271,14 @@ def on_commit(t):
 			gridlabd.set_value(bill_name, "usage", str(daily_usage))
 			gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
 
+			triplex_meter = gridlabd.get_object("test_meter")
+			meter_name = triplex_meter["name"]
+			gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
+
 			# ADDED TO SEE RESULTS
 			#print(clock)
 			#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
+			
 			#print()
 
 			# Removing this print for less clutter
@@ -292,5 +297,11 @@ def on_commit(t):
 def on_term(t):
 	bill = gridlabd.get_object("test_bill")
 	bill_name = bill["name"]
-	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"))
+	triplex_meter = gridlabd.get_object("test_meter")
+	meter_name = triplex_meter["name"]
+
+	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"), "Total power:", gridlabd.get_value(bill_name,"total_power"))
+	
+	# Add writing to own csv here?
+	# Could use on exit in terminal and look at json file maybe?
 	return None

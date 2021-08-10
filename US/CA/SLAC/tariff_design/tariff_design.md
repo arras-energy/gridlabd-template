@@ -8,8 +8,6 @@ Currently the tariff billing calculations are designed for residential TOU tarif
 
 # Current Issues
 
-**The template is not completely user controlled. Currently users cannot select specifically what tariff within the tariff_library_config.csv they want to run. CHANGE THIS ASAP**
-
 Many residential tariffs that are shown on the online OpenEi database many not be available in the csv from the database used to calculate billing.
 
 Bills only have per kWh charges. Additional rates like demand charges, meter charges, DER credits, etc are not included.

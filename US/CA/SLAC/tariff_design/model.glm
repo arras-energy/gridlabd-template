@@ -21,35 +21,16 @@ object triplex_meter {
 	name "test_meter";
 	measured_energy_delta_timestep "3600";
 	phases AS;
-	nominal_voltage 120;
+	nominal_voltage 120 V;
 }
-
-module revenue;
-class billing {
-	double usage[kWh];
-	double total_usage[kWh];
-	double billing_hrs;
-}
-
-object billing {
-	name "test_bill";
-	meter "test_meter";
-	tariff "tariff";
-	billing_hrs "0.0";	
-	total_charges "0.0";
-	usage "0.0";
-	total_usage "0.0";
-}
-
 
 module residential;
 
 object house {
 	parent "test_meter";
 	name "test_house";
-	floor_area "2000.0 sf";
-	thermal_integrity_level "NORMAL"; // Values allowed UNKNOWN,VERY_GOOD,GOOD,ABOVE_NORMAL,NORMAL,BELOW_NORMAL,LITTLE,VERY_LITTLE
-	gas_enduses ""; // Values allowed "LIGHTS|PLUGS|REFRIGERATOR|FREEZER|WATERHEATER|CLOTHESWASHER|DRYER|RANGE|MICROWAVE|DISHWASHER" 
-	heating_system_type "0"; //"{RESISTANCE,HEAT_PUMP,GAS,NONE}"
-	//switching both heating and cooling to electric/gas should give biggest change. cooling_system_type 
+	floor_area "1500.0 sf";
+	thermal_integrity_level "VERY_GOOD"; // Values allowed UNKNOWN,VERY_GOOD,GOOD,ABOVE_NORMAL,NORMAL,BELOW_NORMAL,LITTLE,VERY_LITTLE
+	gas_enduses "WATERHEATER|DRYER|RANGE"; // Values allowed "LIGHTS|PLUGS|REFRIGERATOR|FREEZER|WATERHEATER|CLOTHESWASHER|DRYER|RANGE|MICROWAVE|DISHWASHER" 
+	heating_system_type "HEAT_PUMP"; //"{RESISTANCE,HEAT_PUMP,GAS,NONE}"
 }

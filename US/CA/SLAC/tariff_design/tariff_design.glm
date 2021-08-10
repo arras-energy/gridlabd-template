@@ -1,16 +1,12 @@
 // GridLAB-D tariff design model file
 
-#set randomseed=1234
-
 //GridLAB-D modules
 module revenue;
 
 //py modules
-module tariff_design;
+module tariff_design_testing;
 
 //Define classes here (inputs and outputs)
-
-//#include model.glm do I need to include this?
 
 class tariff {
 	double peak_tier0[kWh/day];
@@ -46,7 +42,21 @@ object tariff {
 	name "tariff";
 }
 
-//module revenue;
+class billing {
+	double usage[kWh];
+	double total_usage[kWh];
+	double billing_hrs;
+	double total_power[W];
+}
 
-
+object billing {
+	name "test_bill";
+	meter "test_meter";
+	tariff "tariff";
+	billing_hrs "0.0";	
+	total_charges "0.0";
+	usage "0.0";
+	total_usage "0.0";
+	total_power "0.0";
+}
 
