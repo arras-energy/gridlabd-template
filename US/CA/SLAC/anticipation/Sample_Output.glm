@@ -1,680 +1,472 @@
 // Objects 
-object 0 { 
-	class "powerflow.pole_configuration";
+object powerflow.pole_configuration { 
+	pole_length 75.5 ft;
+	pole_depth 9.5 ft;
+	ground_diameter 23.87 in;
+	fiber_strength 6000.5 psi;
+	name "test_name";
+}
+object powerflow.pole { 
+	name "pole_1";
 	tilt_angle 12 deg;
 	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 1 { 
-	class "powerflow.pole_configuration";
-	tilt_angle 8 deg;
-	tilt_direction "nan";
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 2 { 
-	class "powerflow.pole_configuration";
-	tilt_angle 5 deg;
-	tilt_direction 5.56 rad;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 3 { 
-	class "powerflow.pole_configuration";
-	tilt_angle 8.5 deg;
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 4 { 
-	class "powerflow.pole_configuration";
-	tilt_angle 3 deg;
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 5 { 
-	class "powerflow.pole_configuration";
-	tilt_angle 55 deg;
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 6 { 
-	class "powerflow.pole_configuration";
-	tilt_angle 123 deg;
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 7 { 
-	class "powerflow.pole_configuration";
-	tilt_angle "nan";
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 8 { 
-	class "powerflow.pole_configuration";
-	tilt_angle "nan";
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 9 { 
-	class "powerflow.pole_configuration";
-	tilt_angle "nan";
-	tilt_direction 0 deg;
-	latitude 00.0000;
-	longitude "-000.0000";
-}
-object 10 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 9.5 ft;
-	ground_diameter 75.0 in;
-	fiber_strength 6000.5 psi;
-}
-object 11 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 9.5 ft;
-	ground_diameter 75.0 in;
-	fiber_strength 6000 psi;
-}
-object 12 { 
-	class "powerflow.pole";
-	length 400.0 in;
-	depth 334.0 in;
-	ground_diameter 75.0 in;
-	fiber_strength 6000 atm;
-}
-object 13 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 9.08 ft;
-	ground_diameter 75.0 in;
-	fiber_strength 6000.5 psi;
-}
-object 14 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 69.5 ft;
-	ground_diameter 75.0 in;
-	fiber_strength 6000.5 psi;
-}
-object 15 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 9.5 ft;
-	ground_diameter 75.0 in;
-	fiber_strength 6000.5 psi;
-}
-object 16 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 9.5 ft;
-	ground_diameter 75.0 in;
-	fiber_strength 6000.5 psi;
-}
-object 17 { 
-	class "powerflow.pole";
-	length 75.5 ft;
-	depth 9.5 ft;
-	ground_diameter 75.0 in;
-	fiber_strength "nan";
-}
-object 18 { 
-	class "powerflow.pole";
-	length "nan";
-	depth "nan";
-	ground_diameter 75.0 in;
-	fiber_strength 5 psi;
-}
-object 19 { 
-	class "powerflow.pole";
-	length "nan";
-	depth "nan";
-	ground_diameter 75.0 in;
-	fiber_strength "nan";
-}
-object 20 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#7";
-	Size 66 kV Horizontal Line Post ;
-	Height 64.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type "Bracket";
-	Related Wire#1, Wire#15;
-}
-object 21 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#15";
-	Size 653.9 ACSR;
-	Height 63.92 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 22 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#1";
-	Size 653.9 ACSR;
-	Height 63.92 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 23 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#8";
-	Size 66 kV Horizontal Line Post ;
-	Height 59.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type "Bracket";
-	Related Wire#2, Wire#16;
-}
-object 24 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#16";
-	Size 653.9 ACSR;
-	Height 58.92 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 25 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#2";
-	Size 653.9 ACSR;
-	Height 58.92 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 26 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#9";
-	Size 66 kV Horizontal Line Post ;
-	Height 54.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type "Bracket";
-	Related Wire#3, Wire#17;
-}
-object 27 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#17";
-	Size 653.9 ACSR;
-	Height 53.92 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 28 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#3";
-	Size 653.9 ACSR;
-	Height 53.92 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 29 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#26";
-	Size 653.9 ACSR;
-	Height 41.25 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 30 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#11";
-	Size 653.9 ACSR;
-	Height 41.25 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 31 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#25";
-	Size 653.9 ACSR;
-	Height 41.25 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 32 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#10";
-	Size 653.9 ACSR;
-	Height 41.25 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 33 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#24";
-	Size 336.4 ACSR Merlin;
-	Height 41.25 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 34 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#9";
-	Size 336.4 ACSR Merlin;
-	Height 41.25 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 35 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#23";
-	Size 653.9 ACSR;
-	Height 41.25 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 36 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#8";
-	Size 653.9 ACSR;
-	Height 41.25 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 37 { 
-	class "powerflow.pole_mount";
-	ID# "CrossArm#1";
-	Size 10 Foot Cross Arm;
-	Height 40.5 ft;
-	Direction 180 deg;
-	Offset/Lead 5.0 ft;
-	Owner "Utility";
-	Related Insulator#1, Insulator#2, Insulator#3, Insulator#4;
-}
-object 38 { 
-	class "powerflow.pole_mount";
-	ID# "Equip#2";
-	Size Fuse Arm with 2 Cutouts;
-	Height 40.5 ft;
-	Direction 180 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Cutout Arrestor;
-}
-object 39 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#4";
-	Size 12 kV Pin (Cross Arm);
-	Height 40.5 ft;
-	Direction 180 deg;
-	Offset/Lead 9.67 ft;
-	Owner "Utility";
-	Type "Pin";
-	Related Wire#11, Wire#26;
-}
-object 40 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#3";
-	Size 12 kV Pin (Cross Arm);
-	Height 40.5 ft;
-	Direction 180 deg;
-	Offset/Lead 6.67 ft;
-	Owner "Utility";
-	Type "Pin";
-	Related Wire#10, Wire#25;
-}
-object 41 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#2";
-	Size 12 kV Pin (Cross Arm);
-	Height 40.5 ft;
-	Direction 180 deg;
-	Offset/Lead 3.33 ft;
-	Owner "Utility";
-	Type "Pin";
-	Related Wire#9, Wire#24;
-}
-object 42 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#1";
-	Size 12 kV Pin (Cross Arm);
-	Height 40.5 ft;
-	Direction 180 deg;
-	Offset/Lead 0.33 ft;
-	Owner "Utility";
-	Type "Pin";
-	Related Wire#8, Wire#23;
-}
-object 43 { 
-	class "powerflow.pole_mount";
-	ID# "Equip#3";
-	Size 25 kVA Transformer;
-	Height 37.5 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type "Transformer";
-}
-object 44 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#15";
-	Size 3" Clevis Insulator;
-	Height 33.0 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type "Clamp";
-	Related "Wire#12";
-}
-object 45 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#10";
-	Size 3" Clevis Insulator;
-	Height 33.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type "Clamp";
-	Related "Wire#18";
-}
-object 46 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#12";
-	Size 6 Al. Triplex;
-	Height 33.0 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 47 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#18";
-	Size 6 Al. Duplex;
-	Height 33.0 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 48 { 
-	class "powerflow.pole_mount";
-	ID# "Equip#1";
-	Size Roadway - 6 ft;
-	Height 27.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Utility";
-	Type Street Light;
-}
-object 49 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#28";
-	Size Car. Sol. - A.C. - Mult.Fib. ;
-	Height 26.17 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner Utility Carrier Solution;
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 50 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#14";
-	Size Car. Sol. - A.C. - Mult.Fib. ;
-	Height 26.17 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner Utility Carrier Solution;
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 51 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#27";
-	Size Car. Sol. - A.C. - Mult.Fib. ;
-	Height 26.17 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner Utility Carrier Solution;
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 52 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#13";
-	Size Car. Sol. - A.C. - Mult.Fib. ;
-	Height 26.17 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner Utility Carrier Solution;
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 53 { 
-	class "powerflow.pole_mount";
-	ID# "CrossArm#2";
-	Size 10 Foot Cross Arm;
-	Height 26.0 ft;
-	Direction 180 deg;
-	Offset/Lead 5.0 ft;
-	Owner "Utility";
-	Related Insulator#5, Insulator#6;
-}
-object 54 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#6";
-	Size 3 Bolt Suspension Clamp;
-	Height 26.0 ft;
-	Direction 180 deg;
-	Offset/Lead 0.33 ft;
-	Owner "Utility";
-	Type "Clamp";
-	Related Wire#14, Wire#28;
-}
-object 55 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#5";
-	Size 3 Bolt Suspension Clamp;
-	Height 26.0 ft;
-	Direction 180 deg;
-	Offset/Lead 9.67 ft;
-	Owner "Utility";
-	Type "Clamp";
-	Related Wire#13, Wire#27;
-}
-object 56 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#11";
-	Size 3 Bolt Suspension Clamp;
-	Height 25.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type "Clamp";
-	Related Wire#4, Wire#19;
-}
-object 57 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#19";
-	Size 1.5" TELCO 5/16" Messenger;
-	Height 25.0 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 58 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#4";
-	Size 1.5" TELCO 5/16" Messenger;
-	Height 25.0 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 59 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#12";
-	Size 3 Bolt Suspension Clamp;
-	Height 24.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type "Clamp";
-	Related Wire#5, Wire#20;
-}
-object 60 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#20";
-	Size 1" TELCO 5/16" Messenger;
-	Height 24.0 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 61 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#5";
-	Size 1" TELCO 5/16" Messenger;
-	Height 24.0 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 62 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#13";
-	Size 3 Bolt Suspension Clamp;
-	Height 23.0 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type "Clamp";
-	Related Wire#6, Wire#21;
-}
-object 63 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#21";
-	Size 2" CATV 1/4" Messenger;
-	Height 23.0 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 64 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#6";
-	Size 2" CATV 1/4" Messenger;
-	Height 23.0 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 65 { 
-	class "powerflow.pole_mount";
-	ID# "Insulator#14";
-	Size 3 Bolt Suspension Clamp;
-	Height 21.5 ft;
-	Direction 0 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type "Clamp";
-	Related Wire#7, Wire#22;
-}
-object 66 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#22";
-	Size 1.5" TELCO 5/16" Messenger;
-	Height 21.5 ft;
-	Direction 270 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#2";
-}
-object 67 { 
-	class "powerflow.pole_mount";
-	ID# "Wire#7";
-	Size 1.5" TELCO 5/16" Messenger;
-	Height 21.5 ft;
-	Direction 90 deg;
-	Offset/Lead "nan";
-	Owner "Unknown";
-	Type Light Full (Tension);
-	Related "WEP#1";
-}
-object 68 { 
-	class "powerflow.pole_mount";
-	ID# "WEP#2";
-	Height "nan";
-	Direction 270 deg;
-	Offset/Lead 204.0 ft;
-	Type Previous Pole;
-}
-object 69 { 
-	class "powerflow.pole_mount";
-	ID# "WEP#1";
-	Height "nan";
-	Direction 90 deg;
-	Offset/Lead 180.0 ft;
-	Type Next Pole;
+	latitude 30.0;
+	longitude "-70.0";
+	configuration "test_name";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_0";
+	id "Insulator_7";
+	height 64.0 ft;
+	direction 0 deg;
+	type "Bracket";
+	related "Wire_1,Wire_15";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_1";
+	id "Wire_15";
+	height 63.92 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_2";
+	id "Wire_1";
+	height 63.92 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_3";
+	id "Insulator_8";
+	height 59.0 ft;
+	direction 0 deg;
+	type "Bracket";
+	related "Wire_2,Wire_16";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_4";
+	id "Wire_16";
+	height 58.92 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_5";
+	id "Wire_2";
+	height 58.92 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_6";
+	id "Insulator_9";
+	height 54.0 ft;
+	direction 0 deg;
+	type "Bracket";
+	related "Wire_3,Wire_17";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_7";
+	id "Wire_17";
+	height 53.92 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_8";
+	id "Wire_3";
+	height 53.92 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_9";
+	id "Wire_26";
+	height 41.25 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_10";
+	id "Wire_11";
+	height 41.25 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_11";
+	id "Wire_25";
+	height 41.25 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_12";
+	id "Wire_10";
+	height 41.25 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_13";
+	id "Wire_24";
+	height 41.25 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_14";
+	id "Wire_9";
+	height 41.25 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_15";
+	id "Wire_23";
+	height 41.25 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_16";
+	id "Wire_8";
+	height 41.25 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_17";
+	id "CrossArm_1";
+	height 40.5 ft;
+	direction 180 deg;
+	offset 5.0 ft;
+	related "Insulator_1,Insulator_2,Insulator_3,Insulator_4";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_18";
+	id "Equip_2";
+	height 40.5 ft;
+	direction 180 deg;
+	type "Cutout_Arrestor";
+	related "nan";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_19";
+	id "Insulator_4";
+	height 40.5 ft;
+	direction 180 deg;
+	offset 9.67 ft;
+	type "Pin";
+	related "Wire_11,Wire_26";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_20";
+	id "Insulator_3";
+	height 40.5 ft;
+	direction 180 deg;
+	offset 6.67 ft;
+	type "Pin";
+	related "Wire_10,Wire_25";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_21";
+	id "Insulator_2";
+	height 40.5 ft;
+	direction 180 deg;
+	offset 3.33 ft;
+	type "Pin";
+	related "Wire_9,Wire_24";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_22";
+	id "Insulator_1";
+	height 40.5 ft;
+	direction 180 deg;
+	offset 0.33 ft;
+	type "Pin";
+	related "Wire_8,Wire_23";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_23";
+	id "Equip_3";
+	height 37.5 ft;
+	direction 90 deg;
+	type "Transformer";
+	related "nan";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_24";
+	id "Insulator_15";
+	height 33.0 ft;
+	direction 90 deg;
+	type "Clamp";
+	related "Wire_12";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_25";
+	id "Insulator_10";
+	height 33.0 ft;
+	direction 0 deg;
+	type "Clamp";
+	related "Wire_18";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_26";
+	id "Wire_12";
+	height 33.0 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_27";
+	id "Wire_18";
+	height 33.0 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_28";
+	id "Equip_1";
+	height 27.0 ft;
+	direction 0 deg;
+	type "Street_Light";
+	related "nan";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_29";
+	id "Wire_28";
+	height 26.17 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_30";
+	id "Wire_14";
+	height 26.17 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_31";
+	id "Wire_27";
+	height 26.17 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_32";
+	id "Wire_13";
+	height 26.17 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_33";
+	id "CrossArm_2";
+	height 26.0 ft;
+	direction 180 deg;
+	offset 5.0 ft;
+	related "Insulator_5,Insulator_6";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_34";
+	id "Insulator_6";
+	height 26.0 ft;
+	direction 180 deg;
+	offset 0.33 ft;
+	type "Clamp";
+	related "Wire_14,Wire_28";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_35";
+	id "Insulator_5";
+	height 26.0 ft;
+	direction 180 deg;
+	offset 9.67 ft;
+	type "Clamp";
+	related "Wire_13,Wire_27";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_36";
+	id "Insulator_11";
+	height 25.0 ft;
+	direction 0 deg;
+	type "Clamp";
+	related "Wire_4,Wire_19";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_37";
+	id "Wire_19";
+	height 25.0 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_38";
+	id "Wire_4";
+	height 25.0 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_39";
+	id "Insulator_12";
+	height 24.0 ft;
+	direction 0 deg;
+	type "Clamp";
+	related "Wire_5,Wire_20";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_40";
+	id "Wire_20";
+	height 24.0 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_41";
+	id "Wire_5";
+	height 24.0 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_42";
+	id "Insulator_13";
+	height 23.0 ft;
+	direction 0 deg;
+	type "Clamp";
+	related "Wire_6,Wire_21";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_43";
+	id "Wire_21";
+	height 23.0 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_44";
+	id "Wire_6";
+	height 23.0 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_45";
+	id "Insulator_14";
+	height 21.5 ft;
+	direction 0 deg;
+	type "Clamp";
+	related "Wire_7,Wire_22";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_46";
+	id "Wire_22";
+	height 21.5 ft;
+	direction 270 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_2";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_47";
+	id "Wire_7";
+	height 21.5 ft;
+	direction 90 deg;
+	type "Light_Full_(Tension)";
+	related "WEP_1";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_48";
+	id "WEP_2";
+	direction 270 deg;
+	offset 204.0 ft;
+	type "Previous_Pole";
+	related "nan";
+	parent "pole_1";
+}
+object powerflow.pole_mount { 
+	name "pole_mount_49";
+	id "WEP_1";
+	direction 90 deg;
+	offset 180.0 ft;
+	type "Next_Pole";
+	related "nan";
+	parent "pole_1";
 }

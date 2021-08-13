@@ -1,51 +1,51 @@
-,id,size,height,direction,offset/lead,owner,type,related,class
-1,Insulator#7,66 kV Horizontal Line Post ,64.0 ft,0 deg,nan,Utility,Bracket,"Wire#1, Wire#15",powerflow.pole_mount
-2,Wire#15,653.9 ACSR,63.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-3,Wire#1,653.9 ACSR,63.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-4,Insulator#8,66 kV Horizontal Line Post ,59.0 ft,0 deg,nan,Utility,Bracket,"Wire#2, Wire#16",powerflow.pole_mount
-5,Wire#16,653.9 ACSR,58.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-6,Wire#2,653.9 ACSR,58.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-7,Insulator#9,66 kV Horizontal Line Post ,54.0 ft,0 deg,nan,Utility,Bracket,"Wire#3, Wire#17",powerflow.pole_mount
-8,Wire#17,653.9 ACSR,53.92 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-9,Wire#3,653.9 ACSR,53.92 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-10,Wire#26,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-11,Wire#11,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-12,Wire#25,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-13,Wire#10,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-14,Wire#24,336.4 ACSR Merlin,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-15,Wire#9,336.4 ACSR Merlin,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-16,Wire#23,653.9 ACSR,41.25 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-17,Wire#8,653.9 ACSR,41.25 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-18,CrossArm#1,10 Foot Cross Arm,40.5 ft,180 deg,5.0 ft,Utility,,"Insulator#1, Insulator#2, Insulator#3, Insulator#4",powerflow.pole_mount
-19,Equip#2,Fuse Arm with 2 Cutouts,40.5 ft,180 deg,nan,Utility,Cutout Arrestor,,powerflow.pole_mount
-20,Insulator#4,12 kV Pin (Cross Arm),40.5 ft,180 deg,9.67 ft,Utility,Pin,"Wire#11, Wire#26",powerflow.pole_mount
-21,Insulator#3,12 kV Pin (Cross Arm),40.5 ft,180 deg,6.67 ft,Utility,Pin,"Wire#10, Wire#25",powerflow.pole_mount
-22,Insulator#2,12 kV Pin (Cross Arm),40.5 ft,180 deg,3.33 ft,Utility,Pin,"Wire#9, Wire#24",powerflow.pole_mount
-23,Insulator#1,12 kV Pin (Cross Arm),40.5 ft,180 deg,0.33 ft,Utility,Pin,"Wire#8, Wire#23",powerflow.pole_mount
-24,Equip#3,25 kVA Transformer,37.5 ft,90 deg,nan,Utility,Transformer,,powerflow.pole_mount
-25,Insulator#15,"3"" Clevis Insulator",33.0 ft,90 deg,nan,Utility,Clamp,Wire#12,powerflow.pole_mount
-26,Insulator#10,"3"" Clevis Insulator",33.0 ft,0 deg,nan,Utility,Clamp,Wire#18,powerflow.pole_mount
-27,Wire#12,6 Al. Triplex,33.0 ft,90 deg,nan,Utility,Light Full (Tension),WEP#1,powerflow.pole_mount
-28,Wire#18,6 Al. Duplex,33.0 ft,270 deg,nan,Utility,Light Full (Tension),WEP#2,powerflow.pole_mount
-29,Equip#1,Roadway - 6 ft,27.0 ft,0 deg,nan,Utility,Street Light,,powerflow.pole_mount
-30,Wire#28,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,270 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#2,powerflow.pole_mount
-31,Wire#14,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,90 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#1,powerflow.pole_mount
-32,Wire#27,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,270 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#2,powerflow.pole_mount
-33,Wire#13,Car. Sol. - A.C. - Mult.Fib. ,26.17 ft,90 deg,nan,Utility Carrier Solution,Light Full (Tension),WEP#1,powerflow.pole_mount
-34,CrossArm#2,10 Foot Cross Arm,26.0 ft,180 deg,5.0 ft,Utility,,"Insulator#5, Insulator#6",powerflow.pole_mount
-35,Insulator#6,3 Bolt Suspension Clamp,26.0 ft,180 deg,0.33 ft,Utility,Clamp,"Wire#14, Wire#28",powerflow.pole_mount
-36,Insulator#5,3 Bolt Suspension Clamp,26.0 ft,180 deg,9.67 ft,Utility,Clamp,"Wire#13, Wire#27",powerflow.pole_mount
-37,Insulator#11,3 Bolt Suspension Clamp,25.0 ft,0 deg,nan,Unknown,Clamp,"Wire#4, Wire#19",powerflow.pole_mount
-38,Wire#19,"1.5"" TELCO 5/16"" Messenger",25.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
-39,Wire#4,"1.5"" TELCO 5/16"" Messenger",25.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
-40,Insulator#12,3 Bolt Suspension Clamp,24.0 ft,0 deg,nan,Unknown,Clamp,"Wire#5, Wire#20",powerflow.pole_mount
-41,Wire#20,"1"" TELCO 5/16"" Messenger",24.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
-42,Wire#5,"1"" TELCO 5/16"" Messenger",24.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
-43,Insulator#13,3 Bolt Suspension Clamp,23.0 ft,0 deg,nan,Unknown,Clamp,"Wire#6, Wire#21",powerflow.pole_mount
-44,Wire#21,"2"" CATV 1/4"" Messenger",23.0 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
-45,Wire#6,"2"" CATV 1/4"" Messenger",23.0 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
-46,Insulator#14,3 Bolt Suspension Clamp,21.5 ft,0 deg,nan,Unknown,Clamp,"Wire#7, Wire#22",powerflow.pole_mount
-47,Wire#22,"1.5"" TELCO 5/16"" Messenger",21.5 ft,270 deg,nan,Unknown,Light Full (Tension),WEP#2,powerflow.pole_mount
-48,Wire#7,"1.5"" TELCO 5/16"" Messenger",21.5 ft,90 deg,nan,Unknown,Light Full (Tension),WEP#1,powerflow.pole_mount
-49,WEP#2,,nan,270 deg,204.0 ft,,Previous Pole,,powerflow.pole_mount
-50,WEP#1,,nan,90 deg,180.0 ft,,Next Pole,,powerflow.pole_mount
+,id,height,direction,offset,type,related,parent,class,name
+1,Insulator_7,64.0 ft,0 deg,,Bracket,"Wire_1,Wire_15",pole_1,powerflow.pole_mount,pole_mount_0
+2,Wire_15,63.92 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_1
+3,Wire_1,63.92 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_2
+4,Insulator_8,59.0 ft,0 deg,,Bracket,"Wire_2,Wire_16",pole_1,powerflow.pole_mount,pole_mount_3
+5,Wire_16,58.92 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_4
+6,Wire_2,58.92 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_5
+7,Insulator_9,54.0 ft,0 deg,,Bracket,"Wire_3,Wire_17",pole_1,powerflow.pole_mount,pole_mount_6
+8,Wire_17,53.92 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_7
+9,Wire_3,53.92 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_8
+10,Wire_26,41.25 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_9
+11,Wire_11,41.25 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_10
+12,Wire_25,41.25 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_11
+13,Wire_10,41.25 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_12
+14,Wire_24,41.25 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_13
+15,Wire_9,41.25 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_14
+16,Wire_23,41.25 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_15
+17,Wire_8,41.25 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_16
+18,CrossArm_1,40.5 ft,180 deg,5.0 ft,,"Insulator_1,Insulator_2,Insulator_3,Insulator_4",pole_1,powerflow.pole_mount,pole_mount_17
+19,Equip_2,40.5 ft,180 deg,,Cutout_Arrestor,nan,pole_1,powerflow.pole_mount,pole_mount_18
+20,Insulator_4,40.5 ft,180 deg,9.67 ft,Pin,"Wire_11,Wire_26",pole_1,powerflow.pole_mount,pole_mount_19
+21,Insulator_3,40.5 ft,180 deg,6.67 ft,Pin,"Wire_10,Wire_25",pole_1,powerflow.pole_mount,pole_mount_20
+22,Insulator_2,40.5 ft,180 deg,3.33 ft,Pin,"Wire_9,Wire_24",pole_1,powerflow.pole_mount,pole_mount_21
+23,Insulator_1,40.5 ft,180 deg,0.33 ft,Pin,"Wire_8,Wire_23",pole_1,powerflow.pole_mount,pole_mount_22
+24,Equip_3,37.5 ft,90 deg,,Transformer,nan,pole_1,powerflow.pole_mount,pole_mount_23
+25,Insulator_15,33.0 ft,90 deg,,Clamp,Wire_12,pole_1,powerflow.pole_mount,pole_mount_24
+26,Insulator_10,33.0 ft,0 deg,,Clamp,Wire_18,pole_1,powerflow.pole_mount,pole_mount_25
+27,Wire_12,33.0 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_26
+28,Wire_18,33.0 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_27
+29,Equip_1,27.0 ft,0 deg,,Street_Light,nan,pole_1,powerflow.pole_mount,pole_mount_28
+30,Wire_28,26.17 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_29
+31,Wire_14,26.17 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_30
+32,Wire_27,26.17 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_31
+33,Wire_13,26.17 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_32
+34,CrossArm_2,26.0 ft,180 deg,5.0 ft,,"Insulator_5,Insulator_6",pole_1,powerflow.pole_mount,pole_mount_33
+35,Insulator_6,26.0 ft,180 deg,0.33 ft,Clamp,"Wire_14,Wire_28",pole_1,powerflow.pole_mount,pole_mount_34
+36,Insulator_5,26.0 ft,180 deg,9.67 ft,Clamp,"Wire_13,Wire_27",pole_1,powerflow.pole_mount,pole_mount_35
+37,Insulator_11,25.0 ft,0 deg,,Clamp,"Wire_4,Wire_19",pole_1,powerflow.pole_mount,pole_mount_36
+38,Wire_19,25.0 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_37
+39,Wire_4,25.0 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_38
+40,Insulator_12,24.0 ft,0 deg,,Clamp,"Wire_5,Wire_20",pole_1,powerflow.pole_mount,pole_mount_39
+41,Wire_20,24.0 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_40
+42,Wire_5,24.0 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_41
+43,Insulator_13,23.0 ft,0 deg,,Clamp,"Wire_6,Wire_21",pole_1,powerflow.pole_mount,pole_mount_42
+44,Wire_21,23.0 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_43
+45,Wire_6,23.0 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_44
+46,Insulator_14,21.5 ft,0 deg,,Clamp,"Wire_7,Wire_22",pole_1,powerflow.pole_mount,pole_mount_45
+47,Wire_22,21.5 ft,270 deg,,Light_Full_(Tension),WEP_2,pole_1,powerflow.pole_mount,pole_mount_46
+48,Wire_7,21.5 ft,90 deg,,Light_Full_(Tension),WEP_1,pole_1,powerflow.pole_mount,pole_mount_47
+49,WEP_2,,270 deg,204.0 ft,Previous_Pole,nan,pole_1,powerflow.pole_mount,pole_mount_48
+50,WEP_1,,90 deg,180.0 ft,Next_Pole,nan,pole_1,powerflow.pole_mount,pole_mount_49

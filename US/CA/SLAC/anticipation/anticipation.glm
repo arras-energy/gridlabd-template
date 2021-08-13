@@ -35,6 +35,7 @@ class pole_mount
 	char32 type;
 	char1024 related;
 	char32 id; 
+	char32 size;
 }
 
 // load the gridlabd-python module
@@ -46,9 +47,9 @@ module powerflow {
 #if POLE_VULNERABILITY_ANALYSIS=="on"
 #debug "POLE VULNERABILITY ANALYSIS is enabled"
 // INPUT CSV POLE DATA CONVERTER
-#input "pole_library_config.csv" -f table -t "object" -C powerflow.pole_configuration
-#input "pole_vulnerability_config.csv" -f "table" -t "object" 
-// #input "Sample_Output.csv" -t object -f table
+//#input "pole_library_config.csv" -f table -t "object" -C powerflow.pole_configuration
+//#input "pole_vulnerability_config.csv" -f "table" -t "object" 
+#input "Sample_Output.csv" -t object -f table
 #endif //POLE_VULNERABILITY_ANALYSIS
 
 #if PSPS_ANALYSIS=="on"
