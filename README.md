@@ -2,9 +2,13 @@
 
 This repository contains the HiPAS GridLAB-D analysis templates.  Templates are published by organizations, which are specified by country and region.  Published organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organization's `.index` file.  Templates are contained in folders, the contents of which are published in `.catalog` files.
 
-# Example
+# Template Repository Structure
 
-The ICA template published by SLAC is listed in the `US/CA/SLAC` folder.  The template is listed in the `.index` file, and will be included in any index requests.  The folder `ica_analysis` contains the template files. The files listed in the `.catalog` file will be downloaded when the user gets the template.
+Each organization must be listed in the `.orgs` file to be scanned by the `template` subcommand, e.g., `US/CA/SLAC` is listed. There is no provision for a hierarchy. 
+
+Each template must be listed in the organization's `.index` file. 
+
+The files listed in the `.catalog` file will be downloaded when the user gets the template.
 
 ~~~
 +- .orgs
@@ -32,13 +36,9 @@ The ICA template published by SLAC is listed in the `US/CA/SLAC` folder.  The te
 +- <COUNTRYn>/
 ~~~
 
-# Publishing Templates
+# Template Catalogs
 
-Each organization must be listed in the `.orgs` file to be scanned by the `template` subcommand, e.g., `US/CA/SLAC` is listed. There is no provision for a hierarchy.
-
-Each template must be listed in the organization's `.index` file.
-
-Each file in a template must be listed in the template's `.catalog` file. The format is
+Each file in a template must be listed in the template's `.catalog` file. The catalog format is
 
 ~~~
 <FILE1>:a=<PERMISSIONS>
