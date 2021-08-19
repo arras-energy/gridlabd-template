@@ -18,7 +18,7 @@ Bills only have per kWh charges. Additional rates like demand charges, meter cha
 
 1. tariff_library_config.csv
 
-   User inputs utility name, sector, tariff name, tariff type, tariff region for OpenEI database.
+   User inputs utility name, sector, tariff name, tariff type, tariff region for finding tariff in OpenEI database.
 
 2. config.csv
 
@@ -38,7 +38,7 @@ Bills only have per kWh charges. Additional rates like demand charges, meter cha
 
 6. model.glm
 
-   Gridlabd file defining default modules and objs for testing tariff_design.py fncs. 
+   Gridlabd file defining default modules and objs for testing tariff_design.py fncs.  
 
 7. config.glm
 

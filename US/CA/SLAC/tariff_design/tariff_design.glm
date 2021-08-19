@@ -4,7 +4,7 @@
 module revenue;
 
 //py modules
-module tariff_design_testing;
+module tariff_design;
 
 //Define classes here (inputs and outputs)
 
