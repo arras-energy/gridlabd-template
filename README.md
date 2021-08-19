@@ -1,30 +1,51 @@
 # GridLAB-D Analysis Templates
 
-This repository contains the HiPAS GridLAB-D analysis templates.  Templates are published by organizations, which are specified by country and region.  Published organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organization's `.index` file.  Templates are contained in folders, the contents of which are published in `.zip` folders.
+This repository contains the HiPAS GridLAB-D analysis templates.  Templates are published by organizations, which are specified by country and region.  Published organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organization's `.index` file.  Templates are contained in folders, the contents of which are published in `.catalog` files.
 
-## Example
+# Example
 
-The organization `US/CA/SLAC` is listed in `.orgs` and publishes the template for integrated capacity analysis in the folder `US/CA/SLAC/ica_analysis`.  The template is compiled in the file `US/CA/SLAC/ica_analysis.zip`, which is listed in the index file `US/CA/SLAC/.index`.
+The ICA template published by SLAC is listed in the `US/CA/SLAC` folder.  The template is listed in the `.index` file, and will be included in any index requests.  The folder `ica_analysis` contains the template files. The files listed in the `.catalog` file will be downloaded when the user gets the template.
+
+~~~
++- .orgs
++- <COUNTRY1>/
+|  +- <REGION1>/
+|  |  +- <ORG1>/
+|  |  |  +- .index
+|  |  |  +- <TEMPLATE1>/
+|  |  |  |  +- .catalog
+|  |  |  |  +- <FILE1>
+|  |  |  |  +- <FILE2>
+|  |  |  |  +- ...
+|  |  |  |  +- <FILEn>
+|  |  |  |- <TEMPLATE2>/
+|  |  |  |- ...
+|  |  |  |- <TEMPLATEn>/
+|  |  +- <ORG2>/
+|  |  +- ...
+|  |  +- <ORGn>/
+|  +- <REGION2>/
+|  +- ...
+|  +- <REGIONn>/
++- <COUNTRY2>/
++- ...
++- <COUNTRYn>/
+~~~
 
 # Publishing Templates
 
-When a change is made to a template or a new template is created, the `publish.sh` script updates the templates from the indexes.
+Each organization must be listed in the `.orgs` file to be scanned by the `template` subcommand, e.g., `US/CA/SLAC` is listed. There is no provision for a hierarchy.
 
-## Example
+Each template must be listed in the organization's `.index` file.
 
-The following example illustrates how the ICA template was first published
-
-~~~
-bash$ ./compile
-Creating US/CA/SLAC/ica_analysis.zip...done
-~~~
-
-The following exmaple illustrates how the ICA template is updated when a file changes
+Each file in a template must be listed in the template's `.catalog` file. The format is
 
 ~~~
-bash$ touch US/CA/SLAC/ica_analysis/ica_analysis.glm
-bash$ ./compile
-Updating US/CA/SLAC/ica_analysis.zip...done
+<FILE1>:a=<PERMISSIONS>
+<FILE2>:a=<PERMISSIONS>
+...
+<FILEn>:a=<PERMISSIONS>
 ~~~
 
-Note that after the `compile` script is run, you must push that changes to the main repository.  Please observe the usual convention for creating pull requests, as pushing directly to `master` is not permitted.
+where `<PERMISSIONS>` can be any combination of 'r' and 'x'.
+
