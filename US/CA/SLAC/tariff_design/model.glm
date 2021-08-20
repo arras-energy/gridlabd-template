@@ -4,6 +4,8 @@
 
 #set randomseed=1234
 
+#define tariff_index=${TARIFF_INDEX}
+
 // Clock 
 clock {
 	timezone ${TIMEZONE};

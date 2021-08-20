@@ -70,7 +70,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 	index1 = (month-1) * 24
 	index2 = (month * 24)
 
-	# check syntax 
+	# splits schedule into a list
 	global schedule
 	if (day == 5) or (day == 6):
 		schedule = tariff_data["energyweekendschedule"].str.replace('[','', regex=True).str.replace(']','', regex=True).str.replace('L','', regex=True)
@@ -84,12 +84,6 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 	lookup = set()
 	global rates
 	rates = [x for x in schedule if x not in lookup and lookup.add(x) is None]
-
-	# Changing rates definition to fix peak vs offpeak def 
-	# rates = list(set(schedule))
-	# gives index in schedule where rate changes
-	#c = [i for i in range(1,len(schedule)) if schedule[i]!=schedule[i-1] ]
-	#timing = list(range(c[0],c[1]))
 
 	# fills in tariff obj with peak and offpeak rates
 	if len(rates) > 3:
@@ -155,14 +149,17 @@ def on_init(t):
 		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
 			shutil.copyfileobj(f_in, f_out)
 
-	# IS THIS CORRECT TO SET DELTA TO 1 HR
+	# Sets delta to 1 hr
 	meter = gridlabd.get_object("test_meter")
 	delta = to_float(gridlabd.get_value(meter["name"],"measured_energy_delta_timestep"))
 	if delta != 3600:
 		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
-	t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
+	t_counter = int(gridlabd.get_global("tariff_index"))
+	
+	# removed to get rid of terminal input
+	#t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
 	
 	global tariff_df # reads tariff on init 
 	tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
@@ -275,21 +272,17 @@ def on_commit(t):
 			meter_name = triplex_meter["name"]
 			gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
 
-			# ADDED TO SEE RESULTS
+			# Add if verbose is on print this?
 			#print(clock)
 			#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
-			
 			#print()
 
-			# Removing this print for less clutter
-			#print(rate[0],rate[1],rate[2],rate[3],rate[4], tier[0],tier[1],tier[2],tier[3])
-			#print(tier0,tier1,tier2,tier3,tier4, "\n")
 
 		else:
 			print("Implementation for non-inclining block rate in progress") 
 	else:
-		# Removing this print out for clarity
 		d=0
+		# Add here if verbose is on print this?
 		#print("Time passed was not a complete hour. Billing unchanged")
 
 	return gridlabd.NEVER
@@ -301,7 +294,7 @@ def on_term(t):
 	meter_name = triplex_meter["name"]
 
 	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"), "Total power:", gridlabd.get_value(bill_name,"total_power"))
-	
+
 	# Add writing to own csv here?
 	# Could use on exit in terminal and look at json file maybe?
 	return None
