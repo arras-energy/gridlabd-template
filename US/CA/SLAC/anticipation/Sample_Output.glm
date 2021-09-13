@@ -1,4 +1,4 @@
-// Objects 
+// /usr/local/opt/gridlabd/4.2.27-210827-develop_add_weather_metar/share/gridlabd/csv-table2glm-object.py Sample_Output.csv Sample_Output.glm {} 
 object powerflow.pole_configuration { 
 	pole_length 75.5 ft;
 	pole_depth 9.5 ft;

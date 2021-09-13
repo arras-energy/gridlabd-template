@@ -3,7 +3,7 @@
 
 //Set up for globals
 #set literal_if=FALSE
-#set verbose=TRUE
+#set verbose=FALSE
 #set output_message_context=NONE
 
 //Set up modules
@@ -41,15 +41,27 @@ class pole_mount
 // load the gridlabd-python module
 module anticipation;
 module powerflow { 
+#if RELIABILITY_MODE==off
       stop_on_pole_failure TRUE;
+#endif
       message_flags VERBOSE;
 }
+#if RELIABILITY_MODE==off // TO DO _ CHANGE TO ON
+object fault_check
+{
+    check_mode ONCHANGE;
+    output_filename "fault_check.txt";
+    reliability_mode TRUE;
+    grid_association true;
+}
+#endif //RELIABILITY_MODE
+
 #if POLE_VULNERABILITY_ANALYSIS=="on"
 #debug "POLE VULNERABILITY ANALYSIS is enabled"
 // INPUT CSV POLE DATA CONVERTER
 //#input "pole_library_config.csv" -f table -t "object" -C powerflow.pole_configuration
 //#input "pole_vulnerability_config.csv" -f "table" -t "object" 
-#input "Sample_Output.csv" -t object -f table
+#input "${POLE_DATA}" -f table -t object 
 #endif //POLE_VULNERABILITY_ANALYSIS
 
 #if PSPS_ANALYSIS=="on"
@@ -59,21 +71,23 @@ module powerflow {
 #if VEGETATION_VULNERABILITY_ANALYSIS=="on"
 #debug "VEGETATION_VULNERABILITY_ANALYSIS is enabled"
 #endif
-object recorder {
-  parent "pole6";
-  property "equipment_moment_nowind";
-  property "equipment_moment";
-  property "pole_moment_nowind";
-  property "pole_moment";
-  property "wire_tension";
-  property "tilt_angle";
-  property "total_moment";
-  property "resisting_moment";
-  property "critical_wind_speed";
-  property "pole_stress";
-  file "pole_outputs.csv";
-  interval -1;
-} 
+
+
+//object recorder {
+//  parent "pole6";
+//  property "equipment_moment_nowind";
+//  property "equipment_moment";
+//  property "pole_moment_nowind";
+//  property "pole_moment";
+//  property "wire_tension";
+//  property "tilt_angle";
+//  property "total_moment";
+//  property "resisting_moment";
+//  property "critical_wind_speed";
+//  property "pole_stress";
+//  file "pole_outputs.csv";
+//  interval -1;
+//} 
 
 
 

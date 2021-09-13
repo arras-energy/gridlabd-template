@@ -1,0 +1,318 @@
+// /usr/local/opt/gridlabd/4.2.27-210903-use_case_resilience/share/gridlabd/csv-table2glm-object.py pole_data.csv pole_data.glm {} 
+object powerflow.pole { 
+	name "pole1";
+	tilt_angle 5;
+	tilt_direction 270;
+	configuration "WOOD-C-45/5";
+	install_year 1990;
+	repair_time 1 h;
+	latitude 37.4275;
+	longitude 122.1697;
+	configuration "WOOD-C-45/5";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole2";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "WOOD-C-45/5";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "WOOD-C-45/5";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole3";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-20/3";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-20/3";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole4";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-25/3";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-25/3";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole5";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-50/3";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-50/3";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole6";
+	tilt_angle 1 rad;
+	tilt_direction 0;
+	configuration "SYP-35/5";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-35/5";
+	wind_speed 0;
+	//flags " VERBOSE";
+}
+object powerflow.pole { 
+	name "pole7";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-80/H-2";
+	equipment_moment_nowind 100;
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-80/H-2";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole8";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-90/H-2";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-90/H-2";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole9";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-100/H-2";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-100/H-2";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole10";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-110/H-3";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-110/H-3";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole { 
+	name "pole11";
+	tilt_angle 8 deg;
+	tilt_direction 270;
+	configuration "SYP-120/H-4";
+	install_year 2000;
+	repair_time 8 h;
+	latitude 37.127;
+	longitude 122.1646;
+	configuration "SYP-120/H-4";
+	wind_speed 0;
+	//flags " NONE";
+}
+object powerflow.pole_configuration { 
+	name "WOOD-C-45/5";
+	pole_type "WOOD";
+	pole_length 45 ft;
+	pole_depth 4.5 ft;
+	ground_diameter 10.35031847;
+	top_diameter 6.050955414;
+	fiber_strength 8000 psi;
+	repair_time 1 h;
+}
+object powerflow.pole_configuration { 
+	name "WOOD2";
+	pole_type "WOOD";
+	pole_length 60 ft;
+	pole_depth 4.5 ft;
+	ground_diameter 10.35031847;
+	top_diameter 6.050955414;
+	fiber_strength 8000 psi;
+	repair_time 3 h;
+}
+object powerflow.pole_configuration { 
+	name "SYP-20/3";
+	pole_type "WOOD";
+	pole_length 20 ft;
+	pole_depth " 5.5 ft";
+	ground_diameter 8.598726115;
+	top_diameter 7.324840764;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-25/3";
+	pole_type "WOOD";
+	pole_length 25 ft ;
+	pole_depth " 5.5 ft";
+	ground_diameter 9.394904459;
+	top_diameter 7.324840764;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-30/5";
+	pole_type "WOOD";
+	pole_length 30 ft;
+	pole_depth " 5.5 ft";
+	ground_diameter 8.757961783;
+	top_diameter 6.050955414;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-35/5";
+	pole_type "WOOD";
+	overload_factor_transverse_general 1.75;
+	strength_factor_250b_wood 0.75;
+	strength_factor_250b_support 1;
+	pole_length 35 ft;
+	pole_depth " 5.5 ft";
+	ground_diameter 9.23566879;
+	top_diameter 6.050955414;
+	fiber_strength " 8000 psi";
+	repair_time 50;
+}
+object powerflow.pole_configuration { 
+	name "SYP-40/3";
+	pole_type "WOOD";
+	pole_length 40 ft;
+	pole_depth " 6 ft";
+	ground_diameter 11.46496815;
+	top_diameter 7.324840764;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-45/4";
+	pole_type "WOOD";
+	pole_length 45 ft;
+	pole_depth " 6.5 ft";
+	ground_diameter 11.14649682;
+	top_diameter 6.687898089;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-50/3";
+	pole_type "WOOD";
+	overload_factor_transverse_general 1.75;
+	strength_factor_250b_wood 0.75;
+	pole_length 50 ft;
+	pole_depth " 7 ft";
+	ground_diameter 12.42038217;
+	top_diameter 7.324840764;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-55/2";
+	pole_type "WOOD";
+	pole_length 55 ft;
+	pole_depth " 7.5 ft";
+	ground_diameter 13.85350318;
+	top_diameter 7.961783439;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-60/1";
+	pole_type "WOOD";
+	pole_length 60 ft;
+	pole_depth " 8 ft";
+	ground_diameter 15.2866242;
+	top_diameter 8.598726115;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-70/H-2";
+	pole_type "WOOD";
+	pole_length 70 ft;
+	pole_depth " 9 ft";
+	ground_diameter 18.15286624;
+	top_diameter 9.872611465;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-80/H-2";
+	pole_type "WOOD";
+	design_ice_thickness 70;
+	design_wind_loading 40;
+	design_temperature 70;
+	overload_factor_vertical 70;
+	overload_factor_transverse_general 1.75;
+	overload_factor_transverse_crossing 70;
+	overload_factor_transverse_wire 70;
+	overload_factor_longitudinal_general 70;
+	overload_factor_longitudinal_deadend 70;
+	strength_factor_250b_wood 0.75;
+	strength_factor_250b_support 1;
+	pole_length " 80 ft";
+	pole_depth " 10 ft ";
+	ground_diameter 19.10828025;
+	top_diameter 9.872611465;
+	fiber_strength " 8000 psi";
+	repair_time 50;
+}
+object powerflow.pole_configuration { 
+	name "SYP-90/H-2";
+	pole_type "WOOD";
+	pole_length 90 ft;
+	pole_depth " 11 ft";
+	ground_diameter 20.06369427;
+	top_diameter 9.872611465;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-100/H-2";
+	pole_type "WOOD";
+	pole_length 100 ft;
+	pole_depth " 12 ft";
+	ground_diameter 20.85987261;
+	top_diameter 9.872611465;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-110/H-3";
+	pole_type "WOOD";
+	pole_length 110 ft;
+	pole_depth " 13 ft";
+	ground_diameter 22.77070064;
+	top_diameter 10.50955414;
+	fiber_strength " 8000 psi";
+}
+object powerflow.pole_configuration { 
+	name "SYP-120/H-4";
+	pole_type "WOOD";
+	pole_length 120 ft;
+	pole_depth " 14 ft";
+	ground_diameter 24.68152866;
+	top_diameter 11.14649682;
+	fiber_strength " 8000 psi";
+}
