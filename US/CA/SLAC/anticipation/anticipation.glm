@@ -24,11 +24,11 @@ module tape;
 
 
 //Setting up the clock
-clock {
-  starttime ${STARTTIME};
-  stoptime ${STOPTIME};
-  timezone ${TIMEZONE};
-}
+//clock {
+//  starttime ${STARTTIME};
+//  stoptime ${STOPTIME};
+//  timezone ${TIMEZONE};
+//}
 
 class pole_mount
 {
@@ -71,7 +71,6 @@ object fault_check
 #if VEGETATION_VULNERABILITY_ANALYSIS=="on"
 #debug "VEGETATION_VULNERABILITY_ANALYSIS is enabled"
 #endif
-
 
 //object recorder {
 //  parent "pole6";
