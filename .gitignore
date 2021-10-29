@@ -2,3 +2,4 @@
 __MACOSX/
 *.pyc
 *.csv
+*.json
