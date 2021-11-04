@@ -1,0 +1,9 @@
+#define POLE_VULNERABILITY_ANALYSIS=on
+#define PSPS_ANALYSIS=off
+#define VEGETATION_VULNERABILITY_ANALYSIS=off
+#define RELIABILITY_MODE=on
+#define POLE_DATA="pole_data.csv"
+#define WEATHER_FILE=test_wind.player
+#define STARTTIME=2021-06-08 00:00:00
+#define STOPTIME=2021-06-08 01:00:00
+#define TIMEZONE=PST+8PDT
