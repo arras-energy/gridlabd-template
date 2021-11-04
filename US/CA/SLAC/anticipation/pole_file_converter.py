@@ -280,6 +280,44 @@ def parse_space_to_underscore(cell_string, current_column, current_row):
 		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
 	return cell_string.replace(' ','_')
 
+<<<<<<< Updated upstream
+=======
+# The excel file to read. 
+# excel = 'Pole_Output_Sample.xls'
+excel = 'SampleReport.xls'
+
+# Round to nearest hundreth decimal place if value has more decimal places than that. 
+decimal_rounding = 2 
+
+# Read all the sheets in the .xls file 
+df = pd.read_excel(excel, sheet_name=None,)  
+
+
+# The first row of each xls file is the header so we convert it to header.
+# for key in df:
+# 	new_header_index = df[key].iloc[:, 0].first_valid_index()
+# 	new_header = df[key].iloc[new_header_index-1]
+# 	df[key] = df[key][new_header_index:]
+# 	df[key].columns = new_header
+# 	df[key].index = range(len(df[key].index))
+# 	df[key].columns.name = None
+
+# First do operations on the sheet 'Design - Pole.'
+df_current_sheet = df['Design - Pole'].copy()
+new_header_index = df_current_sheet.iloc[:, 0].first_valid_index()
+new_header = df_current_sheet.iloc[new_header_index-1]
+df_current_sheet = df_current_sheet[new_header_index:]
+df_current_sheet.columns = new_header
+df_current_sheet.index = range(len(df_current_sheet.index))
+df_current_sheet.columns.name = None
+# df_current_sheet = df['Design - Structure']
+# print(df_current_sheet)
+
+# Drop unneeded columns 
+df_current_sheet.drop(['Owner', 'Foundation', 'Ground Water Level',],axis=1,inplace=True)
+
+
+>>>>>>> Stashed changes
 # Parse necessary columns into a format supported by Gridlabd.
 parse_column(df_current_sheet, 'Lean Angle', parse_angle)
 parse_column(df_current_sheet, 'Lean Direction', parse_angle)
@@ -330,6 +368,7 @@ df_pole_config['class'] = ['powerflow.pole_configuration'] * len(df_pole_config)
 df_pole_library['class'] = ['powerflow.pole'] * len(df_pole_library)
 
 # Additional properties for each class. These values are just for testing purposes for now. 
+<<<<<<< Updated upstream
 df_pole_config['name'] = 'test_name'
 df_pole_library['configuration'] = 'test_name'
 df_pole_library['name'] = 'pole_1'
@@ -338,6 +377,36 @@ df_pole_library['name'] = 'pole_1'
 df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore_index=True)	
 # For visualization. 
 print(df_current_sheet)
+=======
+pole_configuration_name = []
+pole_name = []
+for i in range(len(df_current_sheet["name"])):
+	pole_configuration_name.append(f"pole_configuration_{df_current_sheet['name'][i]}")
+	pole_name.append(f"pole_{df_current_sheet['name'][i]}")
+
+df_pole_config['class'] = ['pole_configuration'] * len(df_pole_config)
+df_pole_library['class'] = ['pole'] * len(df_pole_library)
+df_pole_config['name'] = pole_configuration_name
+df_pole_library['configuration'] = pole_configuration_name
+df_pole_library['name'] = pole_name
+# df_pole_library['wind_speed'] = ['0'] * len(df_pole_library)
+df_pole_library['weather'] = ['weather'] * len(df_pole_library)
+df_pole_library['flags'] = ['NONE'] * len(df_pole_library)
+
+# print(111)
+# print(df_pole_config)
+# print(df_pole_library)
+# Combine. 
+df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore_index=True)	
+# For visualization. 
+
+print(df['Design - Pole'])
+
+df_pole_config.to_csv('pole_library_config_1.csv')
+df_pole_library.to_csv('pole_vulnerability_config_1.csv')
+
+# os.system(f"gridlabd anticipation.glm -v")
+>>>>>>> Stashed changes
 
 # Secondly, do operations on the sheet 'Design - Structure.'
 df_current_sheet = df['Design - Structure'] 
