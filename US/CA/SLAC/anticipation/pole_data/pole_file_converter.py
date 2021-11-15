@@ -3,31 +3,7 @@ import string
 import math
 import re
 import gridlabd
-
-# The excel file to read. 
-excel = 'Pole_Output_Sample.xls'
-
-# Round to nearest hundreth decimal place if value has more decimal places than that. 
-decimal_rounding = 2 
-
-# Read all the sheets in the .xls file 
-df = pd.read_excel(excel, sheet_name=None)  
-
-
-# The first row of each xls file is the header so we convert it to header.  
-for key in df: 
-	new_header = df[key].iloc[0] 
-	df[key] = df[key][1:]
-	df[key].columns = new_header 
-
-
-
-# First do operations on the sheet 'Design - Pole.'
-df_current_sheet = df['Design - Pole'] 
-# Drop unneeded columns 
-df_current_sheet.drop(['Owner', 'Foundation', 'Ground Water Level',], 
-					  axis=1, 
-					  inplace=True)
+import numpy as np
 
 
 def parse_angle(cell_string, current_column, current_row):
@@ -175,7 +151,8 @@ def parse_column(df_current_sheet, current_column, parsing_function):
     current_column -- the string to be parsed (presumably from a cell)
     parsing_function -- the function to be called for each cell
     """
-	for row in range(1,len(df_current_sheet[current_column])+1):
+	print(df_current_sheet)
+	for row in range(len(df_current_sheet[current_column])):
 		current_string = str(df_current_sheet.at[row,current_column])
 		if (current_string == 'nan'):
 			df_current_sheet.at[row,current_column] = ''
@@ -309,7 +286,7 @@ df_current_sheet.columns = new_header
 df_current_sheet.index = range(len(df_current_sheet.index))
 df_current_sheet.columns.name = None
 # df_current_sheet = df['Design - Structure']
-# print(df_current_sheet)
+print(df_current_sheet)
 
 # Drop unneeded columns 
 df_current_sheet.drop(['Owner', 'Foundation', 'Ground Water Level',],axis=1,inplace=True)
@@ -321,7 +298,8 @@ parse_column(df_current_sheet, 'Lean Direction', parse_angle)
 parse_column(df_current_sheet, 'Length', parse_length)
 parse_column(df_current_sheet, 'GLC', parse_circumference_to_diamater)
 parse_column(df_current_sheet, 'AGL', parse_length)
-parse_column(df_current_sheet, 'Effective Stress Adjustment', parse_pressure)
+parse_column(df_current_sheet, 'Effective Allowable Stress', parse_pressure) # for sec data
+# parse_column(df_current_sheet, 'Effective Stress Adjustment', parse_pressure)
 parse_column(df_current_sheet, 'GPS Point', check_lat_long)
 
 
@@ -331,7 +309,7 @@ df_current_sheet[['latitude','longitude']] = df_current_sheet['GPS Point'].str.s
 
 
 # Subtract agl from length to get depth. 
-for row in range(1,len(df_current_sheet['AGL'])+1):
+for row in range(0,len(df_current_sheet['AGL'])):
 	try: 
 		df_current_sheet.at[row,'AGL'] = subtract_length_columns(str(df_current_sheet.at[row,'Length']), str(df_current_sheet.at[row,'AGL']), 'Length', 'AGL', row)
 
@@ -346,14 +324,19 @@ for row in range(1,len(df_current_sheet['AGL'])+1):
 
 # Rename columns to its corresponding column name in Gridlabd.
 # I believe class in the file is referring to grade, so it is renamed. 
-df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
-	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'pole_length', 'GLC' : 'ground_diameter', 'AGL' : 'pole_depth', 'Class': "grade"}, inplace=True)
+df_current_sheet.rename(columns = {np.nan : 'name', 'Lean Angle': 'tilt_angle', 
+	'Lean Direction': 'tilt_direction', 'Effective Allowable Stress': 'fiber_strength',\
+	 'Length' : 'pole_length', 'GLC' : 'ground_diameter', 'AGL' : 'pole_depth',\
+	  'Class': "grade"}, inplace=True) # for sec data
+# df_current_sheet.rename(columns = {'Lean Angle': 'tilt_angle', 
+# 	'Lean Direction': 'tilt_direction', 'Effective Stress Adjustment': 'fiber_strength', 'Length' : 'pole_length', 'GLC' : 'ground_diameter', 'AGL' : 'pole_depth', 'Class': "grade"}, inplace=True)
 
 # Split GPS Point into longitude and latitude, then parse.
 
 
 # Remove original GPS Point column
-df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axis=1,inplace=True)
+df_current_sheet.drop(columns = {'GPS Point'},axis=1,inplace=True) # sce data
+# df_current_sheet.drop(columns = {'GPS Point', 'Allowable Stress Adjustment'},axis=1,inplace=True)
 print(df_current_sheet)
 
 # Split the dataframe based on properties of pole_config and pole_library.
@@ -394,35 +377,35 @@ df_pole_library.to_csv('pole_vulnerability_config_1.csv')
 
 # os.system(f"gridlabd anticipation.glm -v")
 
-# Secondly, do operations on the sheet 'Design - Structure.'
-df_current_sheet = df['Design - Structure'] 
+# # Secondly, do operations on the sheet 'Design - Structure.'
+# df_current_sheet = df['Design - Structure'] 
 
-parse_column(df_current_sheet, 'Height', parse_length)
-parse_column(df_current_sheet, 'Offset/Lead', parse_length)
-parse_column(df_current_sheet, 'Direction', parse_angle)
-parse_column(df_current_sheet, 'Type', parse_space_to_underscore)
+# parse_column(df_current_sheet, 'Height', parse_length)
+# parse_column(df_current_sheet, 'Offset/Lead', parse_length)
+# parse_column(df_current_sheet, 'Direction', parse_angle)
+# parse_column(df_current_sheet, 'Type', parse_space_to_underscore)
 
-# Replace spaces and hashtags 
-df_current_sheet['Related'] = df_current_sheet['Related'].apply(lambda x: str(x).replace(' ', ''))
-df_current_sheet['Related'] = df_current_sheet['Related'].apply(lambda x: str(x).replace('#', '_'))
-df_current_sheet['ID#'] = df_current_sheet['ID#'].apply(lambda x: str(x).replace('#', '_'))
+# # Replace spaces and hashtags 
+# df_current_sheet['Related'] = df_current_sheet['Related'].apply(lambda x: str(x).replace(' ', ''))
+# df_current_sheet['Related'] = df_current_sheet['Related'].apply(lambda x: str(x).replace('#', '_'))
+# df_current_sheet['ID#'] = df_current_sheet['ID#'].apply(lambda x: str(x).replace('#', '_'))
 
-# Specify parent of the pole_mount objects
-df_current_sheet['parent'] = ['pole_1'] * len(df_current_sheet)
+# # Specify parent of the pole_mount objects
+# df_current_sheet['parent'] = ['pole_1'] * len(df_current_sheet)
 
 
-# Rename/delete some columns
-# Todo: Keep size and convert data from that input into area and weight. 
-df_current_sheet.drop(columns = {'Owner', 'Size'}, inplace=True)
-df_current_sheet.rename(str.lower, axis='columns', inplace=True)
+# # Rename/delete some columns
+# # Todo: Keep size and convert data from that input into area and weight. 
+# df_current_sheet.drop(columns = {'Owner', 'Size'}, inplace=True)
+# df_current_sheet.rename(str.lower, axis='columns', inplace=True)
 
-# Todo: The last two rows of the offset/lead column is the distance between adjacent poles. Handle it somehow.
-df_current_sheet.rename(columns = {'id#' : 'id', 'offset/lead' : 'offset'}, inplace=True)
+# # Todo: The last two rows of the offset/lead column is the distance between adjacent poles. Handle it somehow.
+# df_current_sheet.rename(columns = {'id#' : 'id', 'offset/lead' : 'offset'}, inplace=True)
 
-# Add 'class' column to 'Design - Strucuture'. 
-df_current_sheet['class'] = ['powerflow.pole_mount'] * len(df_current_sheet)
+# # Add 'class' column to 'Design - Strucuture'. 
+# df_current_sheet['class'] = ['powerflow.pole_mount'] * len(df_current_sheet)
 
-df_current_sheet['name'] = [f'pole_mount_{i}' for i in range(len(df_current_sheet))]
+# df_current_sheet['name'] = [f'pole_mount_{i}' for i in range(len(df_current_sheet))]
 
 
 
@@ -447,7 +430,7 @@ for key in df:
 
 df_final.reset_index(drop=True, inplace=True)
 # Create final csv file. 
-df_final.to_csv('Sample_Output.csv', index=False)
+df_final.to_csv('SampleReport.csv', index=False)
 
 # For visualization. 
 print(df_final)
