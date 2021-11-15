@@ -280,8 +280,6 @@ def parse_space_to_underscore(cell_string, current_column, current_row):
 		raise ValueError(f'The cell column: {current_column}, row {current_row} is empty. Please enter a value.')
 	return cell_string.replace(' ','_')
 
-<<<<<<< Updated upstream
-=======
 # The excel file to read. 
 # excel = 'Pole_Output_Sample.xls'
 excel = 'SampleReport.xls'
@@ -317,7 +315,6 @@ df_current_sheet.columns.name = None
 df_current_sheet.drop(['Owner', 'Foundation', 'Ground Water Level',],axis=1,inplace=True)
 
 
->>>>>>> Stashed changes
 # Parse necessary columns into a format supported by Gridlabd.
 parse_column(df_current_sheet, 'Lean Angle', parse_angle)
 parse_column(df_current_sheet, 'Lean Direction', parse_angle)
@@ -368,16 +365,6 @@ df_pole_config['class'] = ['powerflow.pole_configuration'] * len(df_pole_config)
 df_pole_library['class'] = ['powerflow.pole'] * len(df_pole_library)
 
 # Additional properties for each class. These values are just for testing purposes for now. 
-<<<<<<< Updated upstream
-df_pole_config['name'] = 'test_name'
-df_pole_library['configuration'] = 'test_name'
-df_pole_library['name'] = 'pole_1'
-
-# Combine. 
-df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore_index=True)	
-# For visualization. 
-print(df_current_sheet)
-=======
 pole_configuration_name = []
 pole_name = []
 for i in range(len(df_current_sheet["name"])):
@@ -406,7 +393,6 @@ df_pole_config.to_csv('pole_library_config_1.csv')
 df_pole_library.to_csv('pole_vulnerability_config_1.csv')
 
 # os.system(f"gridlabd anticipation.glm -v")
->>>>>>> Stashed changes
 
 # Secondly, do operations on the sheet 'Design - Structure.'
 df_current_sheet = df['Design - Structure'] 
