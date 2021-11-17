@@ -27,4 +27,3 @@ powerflow.pole_configuration,SYP-90/H-2,,,,,,,,,,,,,,WOOD,,,,,,,,,,,,90 ft, 11 f
 powerflow.pole_configuration,SYP-100/H-2,,,,,,,,,,,,,,WOOD,,,,,,,,,,,,100 ft, 12 ft,20.85987261,9.872611465, 8000 psi,,,
 powerflow.pole_configuration,SYP-110/H-3,,,,,,,,,,,,,,WOOD,,,,,,,,,,,,110 ft, 13 ft,22.77070064,10.50955414, 8000 psi,,,
 powerflow.pole_configuration,SYP-120/H-4,,,,,,,,,,,,,,WOOD,,,,,,,,,,,,120 ft, 14 ft,24.68152866,11.14649682, 8000 psi,,,
-powerflow.pole_mount,,line1to2,pole1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
