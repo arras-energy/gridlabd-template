@@ -11,7 +11,6 @@ module powerflow;
 module climate;
 module tape; 
 
-
 // convert CSV configuration file, if any
 #ifexist "anticipation_config.csv"
 #exec strings <anticipation_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >anticipation_config.glm
@@ -21,6 +20,14 @@ module tape;
 #ifexist "anticipation_config.glm"
 #include "anticipation_config.glm"
 #endif
+
+// Set up clock
+clock {
+      starttime ${STARTTIME};
+      stoptime ${STOPTIME};
+      timezone ${TIMEZONE};
+}
+
 
 class pole_mount
 {
@@ -58,9 +65,6 @@ object fault_check
 
 #if POLE_VULNERABILITY_ANALYSIS=="on"
 #debug "POLE VULNERABILITY ANALYSIS is enabled"
-// INPUT CSV POLE DATA CONVERTER
-//#input "pole_library_config_1.csv" -f table -t "object" -C powerflow.pole_configuration
-//#input "pole_vulnerability_config_1.csv" -f "table" -t "object" 
 #input "${POLE_DATA}" -f table -t object 
 #endif //POLE_VULNERABILITY_ANALYSIS
 
