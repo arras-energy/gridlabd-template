@@ -372,9 +372,6 @@ df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore
 
 print(df['Design - Pole'])
 
-# df_pole_config.to_csv('pole_library_config_1.csv')
-# df_pole_library.to_csv('pole_vulnerability_config_1.csv')
-
 # os.system(f"gridlabd anticipation.glm -v")
 
 # # Secondly, do operations on the sheet 'Design - Structure.'
