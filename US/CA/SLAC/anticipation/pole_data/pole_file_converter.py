@@ -372,8 +372,8 @@ df['Design - Pole']= pd.concat([df_pole_config, df_pole_library], axis=0, ignore
 
 print(df['Design - Pole'])
 
-df_pole_config.to_csv('pole_library_config_1.csv')
-df_pole_library.to_csv('pole_vulnerability_config_1.csv')
+# df_pole_config.to_csv('pole_library_config_1.csv')
+# df_pole_library.to_csv('pole_vulnerability_config_1.csv')
 
 # os.system(f"gridlabd anticipation.glm -v")
 
@@ -411,7 +411,8 @@ df_pole_library.to_csv('pole_vulnerability_config_1.csv')
 
 
 # Keep track of final df to output at the end. 
-df_final = pd.concat([df['Design - Pole'], df_current_sheet], axis=0, ignore_index=True)
+# df_final = pd.concat([df['Design - Pole'], df_current_sheet], axis=0, ignore_index=True)
+df_final = df['Design - Pole'].copy()
 
 # Move class column to the first column. May not be necessary. 
 class_column = df_final.pop('class')
@@ -425,12 +426,12 @@ df_final.insert(0, 'class', class_column)
 
 # Create the intermediate csv files. May not be necessary. 
 
-for key in df: 
-	df[key].to_csv('%s.csv' %key)
+# for key in df: 
+# 	df[key].to_csv('%s.csv' %key)
 
 df_final.reset_index(drop=True, inplace=True)
 # Create final csv file. 
-df_final.to_csv('SampleReport.csv', index=False)
+df_final.to_csv('pole_data_sec.csv', index=False)
 
 # For visualization. 
 print(df_final)
