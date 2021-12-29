@@ -1,3 +1,4 @@
+To view the online documentation please use the [Docs Browser](https://docs.gridlabd.us/) and select the `gridlabd-template` project.
 # GridLAB-D Analysis Templates
 
 This repository contains the HiPAS GridLAB-D analysis templates.  To use a template in GridLAB-D you must first download the template from the template repository. To see the list of available templates, use the `template index` subcommand, e.g.,
