@@ -13,6 +13,6 @@ echo "hi"
 echo "OPENFIDO_INPUT = $OPENFIDO_INPUT"
 echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
 
-echo $(gridlabd US/CA/SLAC/tariff-design/model.glm US/CA/SLAC/tariff-design/tariff-design.glm)
+echo "This is output: $(gridlabd US/CA/SLAC/tariff-design/model.glm US/CA/SLAC/tariff-design/tariff-design.glm)"
 
 exit 0
