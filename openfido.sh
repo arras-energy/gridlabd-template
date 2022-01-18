@@ -13,7 +13,10 @@ echo "hi"
 echo "OPENFIDO_INPUT = $OPENFIDO_INPUT"
 echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
 
-echo "This is output: $(gridlabd US/CA/SLAC/tariff-design/model.glm US/CA/SLAC/tariff-design/tariff-design.glm)"
+# go to directory where the files are 
+cd US/CA/SLAC/tariff-design
+
+echo "This is output: $(gridlabd model.glm tariff-design.glm)"
 
 echo "hi"
 
