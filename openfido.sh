@@ -15,4 +15,6 @@ echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
 
 echo "This is output: $(gridlabd US/CA/SLAC/tariff-design/model.glm US/CA/SLAC/tariff-design/tariff-design.glm)"
 
+echo "hi"
+
 exit 0
