@@ -16,8 +16,10 @@ echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
 # go to directory where the files are 
 cd US/CA/SLAC/tariff_design
 
-echo "This is output: $(gridlabd model.glm tariff-design.glm)"
+echo "Running gridlabd" 
 
-echo "hi"
+gridlabd model.glm tariff_design.glm 2>&1 | tee output.txt
+
+cat output.txt 
 
 exit 0
