@@ -18,7 +18,7 @@ cd US/CA/SLAC/tariff_design
 
 echo "Running gridlabd" 
 
-gridlabd model.glm tariff_design.glm 2>&1 | tee output.txt
+gridlabd model.glm tariff_design.glm >&1 | tee output.txt
 
 cat output.txt 
 mv output.txt $OPENFIDO_OUTPUT
