@@ -18,6 +18,7 @@ cd US/CA/SLAC/tariff_design
 
 echo "Running gridlabd" 
 
+# put -t to get the template online 
 gridlabd model.glm tariff_design.glm >&1 | tee output.txt
 
 cat output.txt 
