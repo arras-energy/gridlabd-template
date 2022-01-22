@@ -293,7 +293,20 @@ def on_term(t):
 	triplex_meter = gridlabd.get_object("test_meter")
 	meter_name = triplex_meter["name"]
 
+	# Search for floating point 
+	total_charges = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_charges")))
+	total_usage = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_usage")))
+	billing_hrs = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"billing_hrs")))
+	total_power = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_power")))
+
+
+
 	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"), "Total power:", gridlabd.get_value(bill_name,"total_power"))
+	# Units are hardcoded for now. Can use re to find units later if needed. 
+	df = pandas.DataFrame([[total_charges.group(0), "$"], [total_usage.group(0), "kWh"], [billing_hrs.group(0), "hrs"], [total_power.group(0), "?"]], ["Total Charges", "Total Usage", "Total Duration", "Total Power"],["Value", "Units"])
+	print(df)
+	df.to_csv('output.csv')
+
 
 	# Add writing to own csv here?
 	# Could use on exit in terminal and look at json file maybe?
