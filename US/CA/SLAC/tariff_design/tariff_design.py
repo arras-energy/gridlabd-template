@@ -4,6 +4,7 @@ import csv
 import pandas 
 import datetime
 from dateutil import parser
+import re
 
 def to_float(x):
 	return float(x.split(' ')[0])
