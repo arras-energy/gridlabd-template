@@ -19,9 +19,8 @@ cd US/CA/SLAC/tariff_design
 echo "Running gridlabd" 
 
 # put -t to get template online
-gridlabd model.glm tariff_design.glm >&1 | tee output.txt
+gridlabd model.glm tariff_design.glm
 
-cat output.txt 
-mv output.txt $OPENFIDO_OUTPUT
+mv output.csv $OPENFIDO_OUTPUT
 
 exit 0
