@@ -1,0 +1,10 @@
+// Integration Capacity Analysis (ICA) GridLAB-D auxiliary model file
+
+// convert CSV configuration file, if any
+#ifexist "weather_forecast.csv"
+#input "weather_forecast.csv" -f config -t config
+#endif
+
+// load the gridlabd-python module
+module weather_forecast;
+
