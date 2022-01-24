@@ -13,8 +13,24 @@ echo "hi"
 echo "OPENFIDO_INPUT = $OPENFIDO_INPUT"
 echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
 
+if ! ls -1 $OPENFIDO_INPUT/*.glm; then
+  echo "Input .glm file not found"
+  exit 1
+fi
+
+if ! ls -1 $OPENFIDO_INPUT/*.csv; then
+  echo "Input .csv file not found"
+  exit 1
+fi
+
+
 # go to directory where the files are 
 cd US/CA/SLAC/tariff_design
+
+echo "Copying input files to working directory"
+cp -r $OPENFIDO_INPUT/* .
+
+
 
 echo "Running gridlabd" 
 
