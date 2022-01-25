@@ -30,6 +30,10 @@ cd US/CA/SLAC/tariff_design
 echo "Copying input files to working directory"
 cp -r $OPENFIDO_INPUT/* .
 
+while IFS=, read -r field1 field2
+do
+    echo "$field1 and $field2"
+done < config.csv
 
 
 echo "Running gridlabd" 
