@@ -29,10 +29,25 @@ cd US/CA/SLAC/tariff_design
 
 echo "Copying input files to working directory"
 cp -r $OPENFIDO_INPUT/* .
+# default values for certain variables
+MODEL_NAME_INPUT = "model.glm"
+OUTPUT_NAME_INPUT = "output.csv"
+START_TIME_INPUT = "2020-01-01 00:00:00 PST"
+STOP_TIME_INPUT = "2020-01-01 12:00:00 PST"
+TIME_ZONE_INPUT = "PST+8PDT"
 
+# no default values
+TARIFF_ROW_INPUT = ""
+
+
+# rows can be in any order
 while IFS=, read -r field1 field2
 do
-    echo "$field1 and $field2"
+    case "$field1" in
+        "WEATHER_STATION")
+            echo "$field1 and $field2"
+            ;;
+    esac
 done < config.csv
 
 
