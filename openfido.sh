@@ -45,8 +45,29 @@ while IFS=, read -r field1 field2
 do
     case "$field1" in
         "WEATHER_STATION")
-            echo "$field1 and $field2"
+            echo "$field1 1 $field2"
             ;;
+        "STARTTIME")
+            echo "$field1 2 $field2"
+            ;;
+        "STOPTIME")
+            echo "$field1 3 $field2"
+            ;;
+        "TIMEZONE")
+            echo "$field1 4 $field2"
+            ;;
+        "TARIFF_INDEX")
+            echo "$field1 5 $field2"
+            ;;
+        "MODEL")
+            echo "$field1 6 $field2"
+            ;;
+        "OUTPUT")
+            echo "$field1 7 $field2"
+            ;;
+        *)
+            echo "$field1 8 $field2"
+    
     esac
 done < config.csv
 
