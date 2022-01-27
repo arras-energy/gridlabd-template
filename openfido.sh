@@ -38,6 +38,7 @@ TIME_ZONE_INPUT="PST+8PDT"
 
 # no default values
 TARIFF_ROW_INPUT=""
+WEATHER_STATION=""
 
 
 # rows can be in any order
@@ -45,25 +46,32 @@ while IFS=, read -r field1 field2
 do
     case "$field1" in
         "WEATHER_STATION")
-            echo "$field1 1 $field2"
+            WEATHER_STATION=$field2
+            echo "$WEATHER_STATION"
             ;;
         "STARTTIME")
-            echo "$field1 2 $field2"
+            START_TIME_INPUT=$field2
+            echo "$START_TIME_INPUT"
             ;;
         "STOPTIME")
-            echo "$field1 3 $field2"
+            STOP_TIME_INPUT=$field2
+            echo "$STOP_TIME_INPUT"
             ;;
         "TIMEZONE")
-            echo "$field1 4 $field2"
+            TIME_ZONE_INPUT=$field2
+            echo "$TIME_ZONE_INPUT"
             ;;
         "TARIFF_INDEX")
-            echo "$field1 5 $field2"
+            TARIFF_ROW_INPUT=$field2
+            echo "$TARIFF_ROW_INPUT"
             ;;
         "MODEL")
-            echo "$field1 6 $field2"
+            MODEL_NAME_INPUT=$field2
+            echo "$MODEL_NAME_INPUT"
             ;;
         "OUTPUT")
-            echo "$field1 7 $field2"
+            OUTPUT_NAME_INPUT=$field2
+            echo "$OUTPUT_NAME_INPUT"
             ;;
         *)
             echo "$field1 8 $field2"
