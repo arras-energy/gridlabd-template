@@ -85,8 +85,10 @@ echo "Running gridlabd"
 
 # put -t to get template online
 gridlabd $MODEL_NAME_INPUT tariff_design.glm
+if [ $OUTPUT_NAME_INPUT != "output.csv" ]; then
+  mv output.csv $OUTPUT_NAME_INPUT
+fi
 
-mv output.csv $OUTPUT_NAME_INPUT
 mv $OUTPUT_NAME_INPUT $OPENFIDO_OUTPUT
 
 exit 0
