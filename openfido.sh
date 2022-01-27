@@ -49,7 +49,7 @@ do
             WEATHER_STATION=$field2
             echo "$WEATHER_STATION"
             ;;
-        "STARTTIME")
+        "START_TIME_INPUT")
             START_TIME_INPUT=$field2
             echo "$START_TIME_INPUT"
             ;;
@@ -74,7 +74,8 @@ do
             echo "$OUTPUT_NAME_INPUT"
             ;;
         *)
-            echo "$field1 8 $field2"
+            echo "$field1 must be one of the following: WEATHER_STATION, START_TIME_INPUT, STOPTIME, TIMEZONE, TARIFF_INDEX, MODEL, OUTPUT"
+            ;;
     
     esac
 done < config.csv
@@ -83,8 +84,9 @@ done < config.csv
 echo "Running gridlabd" 
 
 # put -t to get template online
-gridlabd model.glm tariff_design.glm
+gridlabd $MODEL_NAME_INPUT tariff_design.glm
 
-mv output.csv $OPENFIDO_OUTPUT
+mv output.csv $OUTPUT_NAME_INPUT
+mv $OUTPUT_NAME_INPUT $OPENFIDO_OUTPUT
 
 exit 0
