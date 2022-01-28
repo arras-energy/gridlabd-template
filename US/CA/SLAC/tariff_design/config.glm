@@ -1,6 +1,9 @@
-#define WEATHER_STATION=CA-San_Francisco_Intl_Ap
+#define WEATHER_STATION=CA-Needles_Airport
 #define STARTTIME=2020-01-01 00:00:00 PST
-#define STOPTIME= "2020-01-01 12:00:00 PST"
+#define STOPTIME=2020-01-01 12:00:00 PST
 #define TIMEZONE=PST+8PDT
-#define TARIFF_INDEX= 0
-#define MODEL= model.glm
+#define TARIFF_INDEX=0
+#define MODEL=model.glm
+#define OUTPUT=haha.csv 
+#define asdf=asdf
+#define ha=asdf

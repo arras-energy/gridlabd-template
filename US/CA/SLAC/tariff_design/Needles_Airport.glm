@@ -1,0 +1,6 @@
+#weather get Needles_Airport.tmy3
+module climate;
+object climate
+{
+	tmyfile "Needles_Airport.tmy3";
+}

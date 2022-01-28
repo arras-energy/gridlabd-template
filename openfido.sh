@@ -49,7 +49,7 @@ do
             WEATHER_STATION=$field2
             echo "$WEATHER_STATION"
             ;;
-        "START_TIME")
+        "STARTTIME")
             START_TIME_INPUT=$field2
             echo "$START_TIME_INPUT"
             ;;

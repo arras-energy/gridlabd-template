@@ -1,0 +1,6 @@
+#weather get Tulsa_International_Airport.tmy3
+module climate;
+object climate
+{
+	tmyfile "Tulsa_International_Airport.tmy3";
+}

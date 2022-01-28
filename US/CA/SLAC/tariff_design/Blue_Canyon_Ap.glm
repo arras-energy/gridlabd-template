@@ -1,0 +1,6 @@
+#weather get Blue_Canyon_Ap.tmy3
+module climate;
+object climate
+{
+	tmyfile "Blue_Canyon_Ap.tmy3";
+}

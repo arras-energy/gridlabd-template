@@ -1,5 +1,5 @@
 {	"application": "gridlabd",
-	"version" : "4.2.25",
+	"version" : "4.2.29",
 	"modules" : {
 		"tape" : {
 			"major" : "4",
@@ -21,7 +21,7 @@
 			"major" : "4",
 			"minor" : "2"
 		},
-		"tariff_design_testing" : {
+		"tariff_design" : {
 			"major" : "4",
 			"minor" : "2"
 		}
@@ -1898,7 +1898,7 @@
 			"profiler.count" : "0"
 		},
 		"node" : {
-			"object_size" : "2856",
+			"object_size" : "2864",
 			"parent" : "powerflow_object",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -2304,6 +2304,11 @@
 				"access" : "PUBLIC",
 				"description" : "Flag to indicate a voltage-sourcing or swing-type generator is present -- used for generators and deltamode"
 			},
+			"reset_disabled_island_state" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "Deltamode/multi-island flag -- used to reset disabled status (and reform an island)"
+			},
 			"GFA_enable" : {
 				"type" : "bool",
 				"access" : "PUBLIC",
@@ -2375,7 +2380,7 @@
 			}
 		},
 		"link" : {
-			"object_size" : "3072",
+			"object_size" : "3288",
 			"parent" : "powerflow_object",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -2386,6 +2391,7 @@
 				"type" : "enumeration",
 				"access" : "PUBLIC",
 				"keywords" : {
+					"INITIALIZE" : "0x2",
 					"OPEN" : "0x0",
 					"CLOSED" : "0x1"
 				},
@@ -2641,7 +2647,7 @@
 			}
 		},
 		"capacitor" : {
-			"object_size" : "3320",
+			"object_size" : "3328",
 			"parent" : "node",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -2838,7 +2844,7 @@
 			}
 		},
 		"fuse" : {
-			"object_size" : "3200",
+			"object_size" : "3416",
 			"parent" : "link",
 			"trl" : "8",
 			"module" : "powerflow",
@@ -2901,7 +2907,7 @@
 			}
 		},
 		"meter" : {
-			"object_size" : "4256",
+			"object_size" : "4264",
 			"parent" : "node",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -3363,7 +3369,7 @@
 			}
 		},
 		"line" : {
-			"object_size" : "3088",
+			"object_size" : "3304",
 			"parent" : "link",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -3509,7 +3515,7 @@
 			}
 		},
 		"overhead_line" : {
-			"object_size" : "3096",
+			"object_size" : "3312",
 			"parent" : "line",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -3524,7 +3530,7 @@
 			}
 		},
 		"underground_line" : {
-			"object_size" : "3088",
+			"object_size" : "3304",
 			"parent" : "line",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -4172,7 +4178,7 @@
 			}
 		},
 		"transformer" : {
-			"object_size" : "3448",
+			"object_size" : "3664",
 			"parent" : "link",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -4272,7 +4278,7 @@
 			}
 		},
 		"load" : {
-			"object_size" : "3904",
+			"object_size" : "4560",
 			"parent" : "node",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -5267,7 +5273,7 @@
 			}
 		},
 		"regulator" : {
-			"object_size" : "4088",
+			"object_size" : "4304",
 			"parent" : "link",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -5326,7 +5332,7 @@
 			}
 		},
 		"triplex_node" : {
-			"object_size" : "3008",
+			"object_size" : "3424",
 			"parent" : "powerflow_object",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -5400,78 +5406,6 @@
 				"unit" : "V",
 				"description" : "bus voltage, phase 2 to N"
 			},
-			"current_1" : {
-				"type" : "complex",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 1, also acts as accumulator"
-			},
-			"current_2" : {
-				"type" : "complex",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 2, also acts as accumulator"
-			},
-			"current_N" : {
-				"type" : "complex",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase N, also acts as accumulator"
-			},
-			"current_1_real" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 1, real"
-			},
-			"current_2_real" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 2, real"
-			},
-			"current_N_real" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase N, real"
-			},
-			"current_1_reac" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 1, imag"
-			},
-			"current_2_reac" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 2, imag"
-			},
-			"current_N_reac" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase N, imag"
-			},
-			"current_12" : {
-				"type" : "complex",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 1 to 2"
-			},
-			"current_12_real" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 1 to 2, real"
-			},
-			"current_12_reac" : {
-				"type" : "double",
-				"access" : "PUBLIC",
-				"unit" : "A",
-				"description" : "constant current load on phase 1 to 2, imag"
-			},
 			"prerotated_current_1" : {
 				"type" : "complex",
 				"access" : "HIDDEN",
@@ -5544,136 +5478,306 @@
 				"unit" : "A",
 				"description" : "posted current on phase 1 to 2, imag, from a residential object, if attached"
 			},
+			"current_1" : {
+				"type" : "complex",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 1, also acts as accumulator"
+			},
+			"current_2" : {
+				"type" : "complex",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 2, also acts as accumulator"
+			},
+			"current_N" : {
+				"type" : "complex",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase N, also acts as accumulator"
+			},
+			"current_1_real" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 1, real"
+			},
+			"current_2_real" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 2, real"
+			},
+			"current_N_real" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase N, real"
+			},
+			"current_1_reac" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 1, imag"
+			},
+			"current_2_reac" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 2, imag"
+			},
+			"current_N_reac" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase N, imag"
+			},
+			"current_12" : {
+				"type" : "complex",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 1 to 2"
+			},
+			"current_12_real" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 1 to 2, real"
+			},
+			"current_12_reac" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
+				"unit" : "A",
+				"description" : "deprecated - use triplex_load - constant current load on phase 1 to 2, imag"
+			},
 			"power_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VA",
-				"description" : "constant power on phase 1 (120V)"
+				"description" : "deprecated - use triplex_load - constant power on phase 1 (120V)"
 			},
 			"power_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VA",
-				"description" : "constant power on phase 2 (120V)"
+				"description" : "deprecated - use triplex_load - constant power on phase 2 (120V)"
 			},
 			"power_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VA",
-				"description" : "constant power on phase 1 to 2 (240V)"
+				"description" : "deprecated - use triplex_load - constant power on phase 1 to 2 (240V)"
 			},
 			"power_1_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "W",
-				"description" : "constant power on phase 1, real"
+				"description" : "deprecated - use triplex_load - constant power on phase 1, real"
 			},
 			"power_2_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "W",
-				"description" : "constant power on phase 2, real"
+				"description" : "deprecated - use triplex_load - constant power on phase 2, real"
 			},
 			"power_12_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "W",
-				"description" : "constant power on phase 1 to 2, real"
+				"description" : "deprecated - use triplex_load - constant power on phase 1 to 2, real"
 			},
 			"power_1_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VAr",
-				"description" : "constant power on phase 1, imag"
+				"description" : "deprecated - use triplex_load - constant power on phase 1, imag"
 			},
 			"power_2_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VAr",
-				"description" : "constant power on phase 2, imag"
+				"description" : "deprecated - use triplex_load - constant power on phase 2, imag"
 			},
 			"power_12_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VAr",
-				"description" : "constant power on phase 1 to 2, imag"
+				"description" : "deprecated - use triplex_load - constant power on phase 1 to 2, imag"
 			},
 			"shunt_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "S",
-				"description" : "constant shunt impedance on phase 1"
+				"description" : "deprecated - use triplex_load - constant shunt impedance on phase 1"
 			},
 			"shunt_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "S",
-				"description" : "constant shunt impedance on phase 2"
+				"description" : "deprecated - use triplex_load - constant shunt impedance on phase 2"
 			},
 			"shunt_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "S",
-				"description" : "constant shunt impedance on phase 1 to 2"
+				"description" : "deprecated - use triplex_load - constant shunt impedance on phase 1 to 2"
 			},
 			"impedance_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 1"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 1"
 			},
 			"impedance_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 2"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 2"
 			},
 			"impedance_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 1 to 2"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 1 to 2"
 			},
 			"impedance_1_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 1, real"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 1, real"
 			},
 			"impedance_2_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 2, real"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 2, real"
 			},
 			"impedance_12_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 1 to 2, real"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 1 to 2, real"
 			},
 			"impedance_1_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 1, imag"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 1, imag"
 			},
 			"impedance_2_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 2, imag"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 2, imag"
 			},
 			"impedance_12_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
-				"description" : "constant series impedance on phase 1 to 2, imag"
+				"description" : "deprecated - use triplex_load - constant series impedance on phase 1 to 2, imag"
+			},
+			"acc_temp_current_1" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "A",
+				"description" : "accumulator - used for debugging/interfacing only - current load on phase 1"
+			},
+			"acc_temp_current_2" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "A",
+				"description" : "accumulator - used for debugging/interfacing only - current load on phase 2"
+			},
+			"acc_temp_current_N" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "A",
+				"description" : "accumulator - used for debugging/interfacing only - current load on phase N"
+			},
+			"acc_temp_current_12" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "A",
+				"description" : "accumulator - used for debugging/interfacing only - current load on phase 1 to 2"
+			},
+			"acc_temp_power_1" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "VA",
+				"description" : "accumulator - used for debugging/interfacing only - power on phase 1 (120V)"
+			},
+			"acc_temp_power_2" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "VA",
+				"description" : "accumulator - used for debugging/interfacing only - power on phase 2 (120V)"
+			},
+			"acc_temp_power_12" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "VA",
+				"description" : "accumulator - used for debugging/interfacing only - power on phase 1 to 2 (240V)"
+			},
+			"acc_temp_shunt_1" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "S",
+				"description" : "accumulator - used for debugging/interfacing only - shunt impedance on phase 1"
+			},
+			"acc_temp_shunt_2" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "S",
+				"description" : "accumulator - used for debugging/interfacing only - shunt impedance on phase 2"
+			},
+			"acc_temp_shunt_12" : {
+				"type" : "complex",
+				"access" : "HIDDEN",
+				"unit" : "S",
+				"description" : "accumulator - used for debugging/interfacing only - shunt impedance on phase 1 to 2"
 			},
 			"house_present" : {
 				"type" : "bool",
 				"access" : "PUBLIC",
 				"description" : "boolean for detecting whether a house is attached, not an input"
+			},
+			"reset_disabled_island_state" : {
+				"type" : "bool",
+				"access" : "PUBLIC",
+				"description" : "Deltamode/multi-island flag -- used to reset disabled status (and reform an island)"
 			},
 			"GFA_enable" : {
 				"type" : "bool",
@@ -5830,7 +5934,7 @@
 			}
 		},
 		"triplex_meter" : {
-			"object_size" : "4000",
+			"object_size" : "4416",
 			"parent" : "triplex_node",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -6144,7 +6248,7 @@
 			}
 		},
 		"triplex_line" : {
-			"object_size" : "3088",
+			"object_size" : "3304",
 			"parent" : "line",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -6328,7 +6432,7 @@
 			}
 		},
 		"switch" : {
-			"object_size" : "3144",
+			"object_size" : "3400",
 			"parent" : "link",
 			"trl" : "8",
 			"module" : "powerflow",
@@ -6375,15 +6479,27 @@
 				"default" : "BANKED",
 				"description" : "switch bank operating mode"
 			},
+			"switch_impedance" : {
+				"type" : "complex",
+				"access" : "PUBLIC",
+				"unit" : "Ohm",
+				"description" : "Impedance value of the swtich when closed"
+			},
 			"switch_resistance" : {
 				"type" : "double",
 				"access" : "PUBLIC",
 				"unit" : "Ohm",
-				"description" : "The resistance value of the switch when it is not blown."
+				"description" : "Resistance portion of impedance value of the switch when it is closed."
+			},
+			"switch_reactance" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "Ohm",
+				"description" : "Reactance portion of impedance value of the switch when it is closed."
 			}
 		},
 		"substation" : {
-			"object_size" : "3592",
+			"object_size" : "3600",
 			"parent" : "node",
 			"trl" : "7",
 			"module" : "powerflow",
@@ -6539,7 +6655,7 @@
 			}
 		},
 		"pqload" : {
-			"object_size" : "5472",
+			"object_size" : "6128",
 			"parent" : "load",
 			"trl" : "7",
 			"module" : "powerflow",
@@ -6879,7 +6995,7 @@
 			}
 		},
 		"series_reactor" : {
-			"object_size" : "3152",
+			"object_size" : "3368",
 			"parent" : "link",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -7272,6 +7388,7 @@
 				"type" : "enumeration",
 				"access" : "PUBLIC",
 				"keywords" : {
+					"SINGLE_DEBUG" : "0x3",
 					"ALL" : "0x2",
 					"ONCHANGE" : "0x1",
 					"SINGLE" : "0x0"
@@ -7310,7 +7427,7 @@
 			}
 		},
 		"motor" : {
-			"object_size" : "5240",
+			"object_size" : "5248",
 			"parent" : "node",
 			"trl" : "1",
 			"module" : "powerflow",
@@ -7922,7 +8039,7 @@
 			}
 		},
 		"recloser" : {
-			"object_size" : "3184",
+			"object_size" : "3440",
 			"parent" : "switch",
 			"trl" : "0",
 			"module" : "powerflow",
@@ -7948,7 +8065,7 @@
 			}
 		},
 		"sectionalizer" : {
-			"object_size" : "3144",
+			"object_size" : "3400",
 			"parent" : "switch",
 			"trl" : "0",
 			"module" : "powerflow",
@@ -8494,7 +8611,7 @@
 			}
 		},
 		"triplex_load" : {
-			"object_size" : "3480",
+			"object_size" : "4112",
 			"parent" : "triplex_node",
 			"trl" : "9",
 			"module" : "powerflow",
@@ -8849,7 +8966,7 @@
 			}
 		},
 		"vfd" : {
-			"object_size" : "3416",
+			"object_size" : "3632",
 			"parent" : "link",
 			"trl" : "7",
 			"module" : "powerflow",
@@ -8927,7 +9044,7 @@
 			}
 		},
 		"pole" : {
-			"object_size" : "320",
+			"object_size" : "328",
 			"trl" : "7",
 			"module" : "powerflow",
 			"profiler.numobjs" : "0",
@@ -9305,6 +9422,12 @@
 				"access" : "PUBLIC",
 				"unit" : "ft",
 				"description" : "Mean spacing between poles adjacent"
+			},
+			"angle" : {
+				"type" : "double",
+				"access" : "PUBLIC",
+				"unit" : "deg",
+				"description" : "Angle of the pole line"
 			}
 		},
 		"residential_enduse" : {
@@ -13489,12 +13612,12 @@
 		"version.patch" : {
 			"type" : "int32",
 			"access" : "REFERENCE",
-			"value" : "25"
+			"value" : "29"
 		},
 		"version.build" : {
 			"type" : "int32",
 			"access" : "REFERENCE",
-			"value" : "210801"
+			"value" : "220103"
 		},
 		"version.branch" : {
 			"type" : "char256",
@@ -13504,12 +13627,12 @@
 		"version" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "4.2.25-210801-master"
+			"value" : "4.2.29-220103-master"
 		},
 		"command_line" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/bin/gridlabd.bin model.glm tariff_design.glm"
+			"value" : "/usr/local/opt/gridlabd/4.2.29-220103-master/bin/gridlabd.bin model.glm tariff_design.glm"
 		},
 		"environment" : {
 			"type" : "char1024",
@@ -13559,7 +13682,7 @@
 		"workdir" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/model"
+			"value" : "/model/us/ca/slac/tariff_design"
 		},
 		"dumpfile" : {
 			"type" : "char1024",
@@ -13619,7 +13742,7 @@
 		"stoptime" : {
 			"type" : "timestamp",
 			"access" : "PUBLIC",
-			"value" : "2021-01-01 00:00:00 PST"
+			"value" : "2020-01-01 12:00:00 PST"
 		},
 		"double_format" : {
 			"type" : "char32",
@@ -13675,7 +13798,7 @@
 		"execdir" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/bin"
+			"value" : "/usr/local/opt/gridlabd/4.2.29-220103-master/bin"
 		},
 		"strictnames" : {
 			"type" : "bool",
@@ -14136,7 +14259,7 @@
 		"exename" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/bin/gridlabd.bin"
+			"value" : "/usr/local/opt/gridlabd/4.2.29-220103-master/bin/gridlabd.bin"
 		},
 		"wget_options" : {
 			"type" : "char1024",
@@ -14349,7 +14472,7 @@
 				"RADIANS" : "0x20"
 			},
 			"access" : "PUBLIC",
-			"value" : ""
+			"value" : "STRING"
 		},
 		"rusage_file" : {
 			"type" : "char1024",
@@ -14376,15 +14499,35 @@
 			"access" : "REFERENCE",
 			"value" : ""
 		},
+		"country" : {
+			"type" : "char8",
+			"access" : "PUBLIC",
+			"value" : "US"
+		},
+		"region" : {
+			"type" : "char32",
+			"access" : "PUBLIC",
+			"value" : "CA"
+		},
+		"organization" : {
+			"type" : "char32",
+			"access" : "PUBLIC",
+			"value" : "SLAC"
+		},
+		"profile_output_format" : {
+			"type" : "set",
+			"access" : "PUBLIC",
+			"value" : ""
+		},
 		"csv_load_options" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "-f config -t config\r"
+			"value" : "-f config -t config"
 		},
 		"WEATHER_STATION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "CA-San_Francisco_Intl_Ap"
+			"value" : "Needles_Airport"
 		},
 		"STARTTIME" : {
 			"type" : "char1024",
@@ -14394,12 +14537,42 @@
 		"STOPTIME" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "2021-01-01 00:00:00 PST"
+			"value" : "2020-01-01 12:00:00 PST"
 		},
 		"TIMEZONE" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
 			"value" : "PST+8PDT"
+		},
+		"TARIFF_INDEX" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "0"
+		},
+		"MODEL" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "model.glm"
+		},
+		"OUTPUT" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "haha.csv"
+		},
+		"asdf" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "asdf"
+		},
+		"ha" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "asdf"
+		},
+		"tariff_index" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "0"
 		},
 		"tape::gnuplot_path" : {
 			"type" : "char1024",
@@ -14450,7 +14623,7 @@
 		"climate::library_path" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "/usr/local/opt/gridlabd/4.2.25-210801-master/share/gridlabd/weather/US"
+			"value" : "/usr/local/opt/gridlabd/4.2.29-220103-master/share/gridlabd/weather/US"
 		},
 		"powerflow::message_flags" : {
 			"type" : "set",
@@ -14471,12 +14644,12 @@
 		"powerflow::primary_voltage_ratio" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+60"
+			"value" : "+60 pu"
 		},
 		"powerflow::nominal_frequency" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+60"
+			"value" : "+60 Hz"
 		},
 		"powerflow::require_voltage_control" : {
 			"type" : "bool",
@@ -14491,32 +14664,32 @@
 		"powerflow::fault_impedance" : {
 			"type" : "complex",
 			"access" : "PUBLIC",
-			"value" : "+1e-06+0j"
+			"value" : "+1e-06+0j Ohm"
 		},
 		"powerflow::ground_impedance" : {
 			"type" : "complex",
 			"access" : "PUBLIC",
-			"value" : "+1e-06+0j"
+			"value" : "+1e-06+0j Ohm"
 		},
 		"powerflow::warning_underfrequency" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+55"
+			"value" : "+55 Hz"
 		},
 		"powerflow::warning_overfrequency" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+65"
+			"value" : "+65 Hz"
 		},
 		"powerflow::warning_undervoltage" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+0.8"
+			"value" : "+0.8 V"
 		},
 		"powerflow::warning_overvoltage" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+1.2"
+			"value" : "+1.2 V"
 		},
 		"powerflow::warning_voltageangle" : {
 			"type" : "double",
@@ -14526,7 +14699,7 @@
 		"powerflow::maximum_voltage_error" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+1e-06"
+			"value" : "+1e-06 V"
 		},
 		"powerflow::solver_method" : {
 			"type" : "enumeration",
@@ -14555,6 +14728,16 @@
 			"value" : "NEVER"
 		},
 		"powerflow::NR_matrix_output_references" : {
+			"type" : "bool",
+			"access" : "PUBLIC",
+			"value" : "FALSE"
+		},
+		"powerflow::NR_matrix_output_rhs" : {
+			"type" : "bool",
+			"access" : "PUBLIC",
+			"value" : "FALSE"
+		},
+		"powerflow::NR_island_failure_handled" : {
 			"type" : "bool",
 			"access" : "PUBLIC",
 			"value" : "FALSE"
@@ -14592,12 +14775,12 @@
 		"powerflow::default_maximum_voltage_error" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+1e-06"
+			"value" : "+1e-06 pu"
 		},
 		"powerflow::default_maximum_power_error" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+0.0001"
+			"value" : "+0.0001 pu"
 		},
 		"powerflow::NR_admit_change" : {
 			"type" : "bool",
@@ -14637,7 +14820,7 @@
 		"powerflow::default_resistance" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+0.0001"
+			"value" : "+0.0001 Ohm"
 		},
 		"powerflow::enable_inrush" : {
 			"type" : "bool",
@@ -14647,7 +14830,7 @@
 		"powerflow::low_voltage_impedance_level" : {
 			"type" : "double",
 			"access" : "PUBLIC",
-			"value" : "+0.7"
+			"value" : "+0.7 pu"
 		},
 		"powerflow::enable_mesh_fault_current" : {
 			"type" : "bool",
@@ -15054,15 +15237,15 @@
 			"id" : "0",
 			"class" : "climate",
 			"rank" : "0",
-			"clock" : "INIT",
+			"clock" : "2020-01-01 00:00:00 PST",
 			"rng_state" : "16597",
-			"guid" : "52DCEF13C0495E5042882813300AD572",
+			"guid" : "417CD0F2E240ECE42A05E99E9F65690F",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
 			"solar_zenith": "0 rad",
 			"city": "",
-			"tmyfile": "CA-San_Francisco_Intl_Ap.tmy3",
+			"tmyfile": "Needles_Airport.tmy3",
 			"temperature": "59 degF",
 			"humidity": "0.75 pu",
 			"solar_flux": "0 W/sf",
@@ -15114,7 +15297,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "7600E7F72E61822F67D867426913B204",
+			"guid" : "B56F8C35CAA9A7F47EA84628166AFF7",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15213,6 +15396,7 @@
 			"impedance_2_reac": "0 Ohm",
 			"impedance_12_reac": "0 Ohm",
 			"house_present": "FALSE",
+			"reset_disabled_island_state": "FALSE",
 			"GFA_enable": "FALSE",
 			"GFA_freq_low_trip": "59.5 Hz",
 			"GFA_freq_high_trip": "60.5 Hz",
@@ -15249,7 +15433,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "59CB4BE7AE0938307DF281927786A01",
+			"guid" : "2E7B9E2BA68C28E4F1C933204267FD3",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1500 sf",
@@ -15435,7 +15619,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "32738",
-			"guid" : "20109B9FEECF92A4C714AC95791EBB6",
+			"guid" : "141AF4D0620B683751C722CB4ADA372",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15472,7 +15656,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "D8F7E21B60C3E6C5271A309F23197FB",
+			"guid" : "123A0367592BB02528ED11DBE04768B",
 			"flags" : "0x0",
 			"tariff": "tariff",
 			"meter": "test_meter",
