@@ -42,7 +42,7 @@ WEATHER_STATION=""
 
 
 # rows can be in any order
-while IFS=, read -r field1 field2
+while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do
     case "$field1" in
         "WEATHER_STATION")
@@ -78,7 +78,8 @@ do
             ;;
     
     esac
-done < <(grep "" config.csv)
+done < config.csv
+
 
 
 echo "Running gridlabd" 
