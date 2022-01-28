@@ -80,6 +80,7 @@ do
     esac
 done < config.csv
 
+echo " weather is $WEATHER_STATION"
 WEATHER_STATION_LIST=$(gridlabd weather index $(WEATHER_STATION))
 
 if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
