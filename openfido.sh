@@ -49,7 +49,7 @@ do
             WEATHER_STATION=$field2
             echo "$WEATHER_STATION"
             ;;
-        "START_TIME_INPUT")
+        "START_TIME")
             START_TIME_INPUT=$field2
             echo "$START_TIME_INPUT"
             ;;
@@ -78,7 +78,7 @@ do
             ;;
     
     esac
-done < config.csv
+done < <(grep "" config.csv)
 
 
 echo "Running gridlabd" 
