@@ -82,6 +82,7 @@ done < config.csv
 
 echo " weather is $WEATHER_STATION"
 WEATHER_STATION_LIST=$(gridlabd weather index $(WEATHER_STATION))
+echo " weather list is $WEATHER_STATION_LIST"
 
 if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
     echo $WEATHER_STATION_LIST;
