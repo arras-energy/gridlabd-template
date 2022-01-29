@@ -18,8 +18,8 @@ if ! ls -1 $OPENFIDO_INPUT/*.glm; then
   exit 1
 fi
 
-if ! ls -1 $OPENFIDO_INPUT/*.csv; then
-  echo "Input .csv file not found"
+if ! ls -1 $OPENFIDO_INPUT/config.csv; then
+  echo "Input config.csv file not found"
   exit 1
 fi
 
@@ -32,12 +32,8 @@ cp -r $OPENFIDO_INPUT/* .
 # default values for certain variables
 MODEL_NAME_INPUT="model.glm"
 OUTPUT_NAME_INPUT="output.csv"
-START_TIME_INPUT="2020-01-01 00:00:00 PST"
-STOP_TIME_INPUT="2020-01-01 12:00:00 PST"
-TIME_ZONE_INPUT="PST+8PDT"
 
 # no default values
-TARIFF_ROW_INPUT=""
 WEATHER_STATION=""
 
 
@@ -57,22 +53,6 @@ do
             fi
             echo "$WEATHER_STATION"
             ;;
-        "STARTTIME")
-            START_TIME_INPUT=$field2
-            echo "$START_TIME_INPUT"
-            ;;
-        "STOPTIME")
-            STOP_TIME_INPUT=$field2
-            echo "$STOP_TIME_INPUT"
-            ;;
-        "TIMEZONE")
-            TIME_ZONE_INPUT=$field2
-            echo "$TIME_ZONE_INPUT"
-            ;;
-        "TARIFF_INDEX")
-            TARIFF_ROW_INPUT=$field2
-            echo "$TARIFF_ROW_INPUT"
-            ;;
         "MODEL")
             MODEL_NAME_INPUT=$field2
             echo "$MODEL_NAME_INPUT"
@@ -81,10 +61,6 @@ do
             OUTPUT_NAME_INPUT=$field2
             echo "$OUTPUT_NAME_INPUT"
             ;;
-        *)
-            echo "$field1 must be one of the following: WEATHER_STATION, START_TIME_INPUT, STOPTIME, TIMEZONE, TARIFF_INDEX, MODEL, OUTPUT"
-            ;;
-    
     esac
 done < config.csv
 
