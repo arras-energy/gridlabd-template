@@ -50,7 +50,8 @@ do
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
             if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
-                WEATHER_STATION=$(basename $WEATHER_STATION_LIST .tmy3)
+                WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
+                awk -F ',' '{gsub("$WEATHER_STATION","$WEATHER_STATION_PARSED",$2); print}' OFS="," config.csv > config1.csv
                 echo $WEATHER_STATION
             fi
             echo "$WEATHER_STATION"
@@ -84,7 +85,7 @@ do
             ;;
     
     esac
-done < config.csv > testt.csv
+done < config.csv
 
 #check variables to see if the ones that don't have a default are updated
 
