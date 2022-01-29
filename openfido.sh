@@ -46,7 +46,7 @@ while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do
     case "$field1" in
         "WEATHER_STATION")
-            #set up variable
+            # TODO: handle if input doesn't return a unique weather station
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
             if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
@@ -84,7 +84,7 @@ do
             ;;
     
     esac
-done < config.csv
+done < config.csv > testt.csv
 
 #check variables to see if the ones that don't have a default are updated
 
