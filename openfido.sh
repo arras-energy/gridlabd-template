@@ -47,6 +47,7 @@ do
     case "$field1" in
         "WEATHER_STATION")
             # TODO: handle if input doesn't return a unique weather station
+            # Replaces weather station with correctly formatted weather station
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
             if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
