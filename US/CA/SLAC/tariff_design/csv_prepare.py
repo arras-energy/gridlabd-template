@@ -3,11 +3,10 @@ import pandas as pd
 
 
 
-def parse_start_time(value, row, df):
+def parse_time(value, row, df):
     print(value, row)
     df.at[row,"Value"] = "poop"
-def parse_stop_time(value, row, df):
-    print("hi")
+
 def parse_time_zone(value, row, df):
     print("hi")
 def parse_model_name(value, row, df):
@@ -29,20 +28,10 @@ def parse_tariff_inclining_block_rate(value, row, df):
 def default(value, row, df): 
     print(value)
 
-
-
-
-
-def main():
-    config_file = "config.csv"
-    df = pd.read_csv(config_file)
-   
-
-   
-
+def parse_csv_values(df):
     switcher = {
-    "STARTTIME": parse_start_time,
-    "STOPTIME": parse_stop_time,
+    "STARTTIME": parse_time,
+    "STOPTIME": parse_time,
     "TIMEZONE": parse_time_zone,
     "MODEL": parse_model_name,
     "OUTPUT": parse_output_name,
@@ -56,6 +45,31 @@ def main():
     for index, row in df.iterrows():
         switcher.get(row["Header"], default)(row["Value"], index, df)
 
+# Loop through df again and find the tariff values. Match them with df_tariff_index
+def generate_tariff_index(df, df_tariff_index):
+    tariff_utility = ""
+    tariff_sector = ""
+    tariff_name = ""
+    tariff_type = ""
+    tariff_region = ""
+    tariff_incling_block_rate = ""
+    for index, row in df.iterrows():
+        if (row["Header"] == "TARIFF_UTILITY"):
+            print("hi")
+
+       
+    #df_tariff_index.query('col1 == 2 and col3 == "Y" ')
+    return 0
+
+
+
+def main():
+    config_file = "config.csv"
+    tariff_index_file = "tariff_library_config.csv"
+    df_tariff_index = pd.read_csv(tariff_index_file)
+    df = pd.read_csv(config_file)
+    parse_csv_values(df)
+    tariff_index = generate_tariff_index(df, df_tariff_index)
     df.to_csv("asdf.csv")
 
 if __name__ == "__main__":
