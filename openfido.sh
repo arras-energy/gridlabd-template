@@ -46,7 +46,13 @@ while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do
     case "$field1" in
         "WEATHER_STATION")
+            #set up variable
             WEATHER_STATION=$field2
+            WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
+            if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
+                WEATHER_STATION = $(basename $WEATHER_STATION_LIST .tmy3)
+                echo $WEATHER_STATION
+            fi
             echo "$WEATHER_STATION"
             ;;
         "STARTTIME")
@@ -80,16 +86,10 @@ do
     esac
 done < config.csv
 
+#check variables to see if the ones that don't have a default are updated
 
-WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
+#I'll make it into a temporary csv file and then run a python script to format it
 
-
-
-echo " weather list is $WEATHER_STATION_LIST"
-
-if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
-    echo $WEATHER_STATION_LIST;
-fi
 
 echo "Running gridlabd" 
 
