@@ -55,7 +55,23 @@ def generate_tariff_index(df, df_tariff_index):
     tariff_incling_block_rate = ""
     for index, row in df.iterrows():
         if (row["Header"] == "TARIFF_UTILITY"):
-            print("hi")
+            tariff_utility = row["Value"] 
+            print(tariff_utility)
+        if (row["Header"] == "TARIFF_SECTOR"):
+            tariff_sector = row["Value"]
+            print(tariff_sector)
+        if (row["Header"] == "TARIFF_NAME"):
+            tariff_name = row["Value"]
+            print(tariff_name)
+        if (row["Header"] == "TARIFF_TYPE"):
+            tariff_type = row["Value"]
+            print(tariff_type)
+        if (row["Header"] == "TARIFF_REGION"):
+            tariff_region = row["Value"]
+            print(tariff_region)
+        if (row["Header"] == "TARIFF_INCLINING_BLOCK_RATE"):
+            tariff_incling_block_rate = row["Value"]
+            print(tariff_incling_block_rate)
 
        
     #df_tariff_index.query('col1 == 2 and col3 == "Y" ')
