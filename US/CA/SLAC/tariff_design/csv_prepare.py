@@ -79,7 +79,7 @@ def generate_tariff_index(df, df_tariff_index):
 
     # Query one at a time to better pin point error 
     df_tariff_index.query('region == @tariff_region', inplace = True) 
-     print(df_tariff_index.to_string())
+    print(df_tariff_index.to_string())
     df_tariff_index.query('utility == @tariff_utility', inplace = True)
    
     #df_tariff_index.query('name == @tariff_name', inplace = True)
