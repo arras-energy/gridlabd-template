@@ -82,10 +82,10 @@ def generate_tariff_index(df, df_tariff_index):
     df_tariff_index.query('utility == @tariff_utility', inplace = True)
     print(df_tariff_index.to_string())
 
-    df_tariff_index.query('region == @tariff_region', inplace = True) 
+    #df_tariff_index.query('region == @tariff_region', inplace = True) 
 
    
-    #df_tariff_index.query('name == @tariff_name', inplace = True)
+    df_tariff_index.query('name == @tariff_name', inplace = True)
     print(df_tariff_index.to_string())
     
 
