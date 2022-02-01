@@ -82,10 +82,10 @@ def generate_tariff_index(df, df_tariff_index):
     df_tariff_index.query('utility == @tariff_utility', inplace = True)
     print(df_tariff_index.to_string())
 
-    df_tariff_index.query(' _region == @tariff_region', inplace = True) 
+    df_tariff_index.query('_region == @tariff_region', inplace = True) 
 
    
-    #df_tariff_index.query('name == @tariff_name', inplace = True)
+    #df_tariff_index.query(' _name == @tariff_name', inplace = True)
     print(df_tariff_index.to_string())
     
 
@@ -94,10 +94,10 @@ def generate_tariff_index(df, df_tariff_index):
 
 
     # These values are currently the same for all provided rows  
-    #df_tariff_index.query('sector == @tariff_sector', inplace = True)
-    #df_tariff_index.query('type == @tariff_type', inplace = True)
-    #df_tariff_index.query(f'INCLINING_BLOCK_RATE == {tariff_inclining_block_rate}', inplace = True)
-    #df_tariff_index.query('sector == @tariff_sector', inplace = True)
+    #df_tariff_index.query(' _sector == @tariff_sector', inplace = True)
+    #df_tariff_index.query(' _type == @tariff_type', inplace = True)
+    #df_tariff_index.query(f' _INCLINING_BLOCK_RATE == {tariff_inclining_block_rate}', inplace = True)
+    #df_tariff_index.query('{sector == @tariff_sector', inplace = True)
 
     # TODO: Currently assumes one match 
     return df_tariff_index.index.tolist()[0]
