@@ -29,6 +29,8 @@ def default(value, row, df):
     print(value)
 
 def parse_csv_values(df):
+    # Error checking done here 
+    # Check for header values 
     switcher = {
     "STARTTIME": parse_time,
     "STOPTIME": parse_time,
@@ -45,14 +47,14 @@ def parse_csv_values(df):
     for index, row in df.iterrows():
         switcher.get(row["Header"], default)(row["Value"], index, df)
 
-# Loop through df again and find the tariff values. Match them with df_tariff_index
 def generate_tariff_index(df, df_tariff_index):
+    # Loop through df again and find the tariff values. Match them with df_tariff_index
     tariff_utility = ""
     tariff_sector = ""
     tariff_name = ""
     tariff_type = ""
     tariff_region = ""
-    tariff_incling_block_rate = ""
+    tariff_inclining_block_rate = ""
     for index, row in df.iterrows():
         if (row["Header"] == "TARIFF_UTILITY"):
             tariff_utility = row["Value"] 
@@ -70,13 +72,31 @@ def generate_tariff_index(df, df_tariff_index):
             tariff_region = row["Value"]
             print(tariff_region)
         if (row["Header"] == "TARIFF_INCLINING_BLOCK_RATE"):
-            tariff_incling_block_rate = row["Value"]
-            print(tariff_incling_block_rate)
+            tariff_inclining_block_rate = row["Value"]
+            print(tariff_inclining_block_rate)
 
-       
-    #df_tariff_index.query('col1 == 2 and col3 == "Y" ')
-    return 0
+    # In case of white spaces
+    df_tariff_index.columns = [column.replace(" ", "_") for column in df_tariff_index.columns]
 
+    # Query one at a time to better pin point error 
+    df_tariff_index.query('utility == @tariff_utility', inplace = True)
+    df_tariff_index.query('name == @tariff_name', inplace = True)
+    df_tariff_index.query('region == @tariff_region', inplace = True)
+
+
+    # These values are currently the same for all provided rows  
+    #df_tariff_index.query('sector == @tariff_sector', inplace = True)
+    #df_tariff_index.query('type == @tariff_type', inplace = True)
+    #df_tariff_index.query(f'INCLINING_BLOCK_RATE == {tariff_inclining_block_rate}', inplace = True)
+    #df_tariff_index.query('sector == @tariff_sector', inplace = True)
+
+    # TODO: Currently assumes one match 
+    return df_tariff_index.index.tolist()[0]
+
+def add_tariff_index_row(df, tariff_index):
+    df2 = pd.DataFrame({"Header" : ["TARIFF_INDEX"], "Value" : [tariff_index]})
+    df = pd.concat([df, df2], ignore_index = True, axis = 0)
+    return df 
 
 
 def main():
@@ -86,6 +106,8 @@ def main():
     df = pd.read_csv(config_file)
     parse_csv_values(df)
     tariff_index = generate_tariff_index(df, df_tariff_index)
+    df = add_tariff_index_row(df, tariff_index)
+    print(df.to_string())
     df.to_csv("asdf.csv")
 
 if __name__ == "__main__":
