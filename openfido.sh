@@ -36,7 +36,7 @@ OUTPUT_NAME_INPUT="output.csv"
 # no default values
 WEATHER_STATION=""
 
-
+python3 csv_prepare.py 
 # rows can be in any order
 while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do

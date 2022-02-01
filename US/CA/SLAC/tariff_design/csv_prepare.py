@@ -2,10 +2,9 @@ import csv
 import pandas as pd 
 
 
-
+# Might want to parse model and output name as well. 
 def parse_time(value, row, df):
     print(value, row)
-    df.at[row,"Value"] = "poop"
 
 def parse_time_zone(value, row, df):
     print("hi")
@@ -108,7 +107,7 @@ def main():
     tariff_index = generate_tariff_index(df, df_tariff_index)
     df = add_tariff_index_row(df, tariff_index)
     print(df.to_string())
-    df.to_csv("asdf.csv")
+    df.to_csv("config.csv")
 
 if __name__ == "__main__":
     main()
