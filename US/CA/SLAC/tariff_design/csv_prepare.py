@@ -78,9 +78,12 @@ def generate_tariff_index(df, df_tariff_index):
     df_tariff_index.columns = [column.replace(" ", "") for column in df_tariff_index.columns]
 
     # Query one at a time to better pin point error 
-    df_tariff_index.query('region == @tariff_region', inplace = True) 
     print(df_tariff_index.to_string())
     df_tariff_index.query('utility == @tariff_utility', inplace = True)
+    print(df_tariff_index.to_string())
+
+    df_tariff_index.query('region == "Mountain Baseline Region"', inplace = True) 
+
    
     #df_tariff_index.query('name == @tariff_name', inplace = True)
     print(df_tariff_index.to_string())
