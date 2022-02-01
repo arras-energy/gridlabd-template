@@ -75,7 +75,7 @@ def generate_tariff_index(df, df_tariff_index):
             print(tariff_inclining_block_rate)
 
     # In case of white spaces
-    df_tariff_index.columns = [column.replace(" ", "_") for column in df_tariff_index.columns]
+    df_tariff_index.columns = [column.replace(" ", "") for column in df_tariff_index.columns]
 
     # Query one at a time to better pin point error 
     df_tariff_index.query('utility == @tariff_utility', inplace = True)
