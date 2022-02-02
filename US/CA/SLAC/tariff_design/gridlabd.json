@@ -14524,10 +14524,15 @@
 			"access" : "PUBLIC",
 			"value" : "-f config -t config"
 		},
+		"Header" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Value"
+		},
 		"WEATHER_STATION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "Needles_Airport"
+			"value" : "CA-San_Francisco_Intl_Ap"
 		},
 		"STARTTIME" : {
 			"type" : "char1024",
@@ -14544,11 +14549,6 @@
 			"access" : "PUBLIC",
 			"value" : "PST+8PDT"
 		},
-		"TARIFF_INDEX" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "0"
-		},
 		"MODEL" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
@@ -14557,22 +14557,42 @@
 		"OUTPUT" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "haha.csv"
+			"value" : "output.csv"
 		},
-		"asdf" : {
+		"TARIFF_UTILITY" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "asdf"
+			"value" : "San Diego Gas & Electric Co"
 		},
-		"ha" : {
+		"TARIFF_SECTOR" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "asdf"
+			"value" : "Residential"
+		},
+		"TARIFF_NAME" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "DR"
+		},
+		"TARIFF_TYPE" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "TOU"
+		},
+		"TARIFF_REGION" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "Mountain Baseline Region"
+		},
+		"TARIFF_INCLINING_BLOCK_RATE" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "True"
 		},
 		"tariff_index" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "0"
+			"value" : "0r\uFFDAaV\u007F"
 		},
 		"tape::gnuplot_path" : {
 			"type" : "char1024",
@@ -15237,15 +15257,15 @@
 			"id" : "0",
 			"class" : "climate",
 			"rank" : "0",
-			"clock" : "2020-01-01 00:00:00 PST",
+			"clock" : "INIT",
 			"rng_state" : "16597",
-			"guid" : "417CD0F2E240ECE42A05E99E9F65690F",
+			"guid" : "10193A9E298C2175703A2617879781CD",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
 			"solar_zenith": "0 rad",
 			"city": "",
-			"tmyfile": "Needles_Airport.tmy3",
+			"tmyfile": "CA-San_Francisco_Intl_Ap.tmy3",
 			"temperature": "59 degF",
 			"humidity": "0.75 pu",
 			"solar_flux": "0 W/sf",
@@ -15297,7 +15317,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "B56F8C35CAA9A7F47EA84628166AFF7",
+			"guid" : "607F18DDDE15FB90F7B9098B14D4B80",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15433,7 +15453,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "2E7B9E2BA68C28E4F1C933204267FD3",
+			"guid" : "47D4D408E16DCA8440EA586F8B6218C7",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1500 sf",
@@ -15619,7 +15639,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "32738",
-			"guid" : "141AF4D0620B683751C722CB4ADA372",
+			"guid" : "C9461892DCEDCF71A43051888EAC240",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15656,7 +15676,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "123A0367592BB02528ED11DBE04768B",
+			"guid" : "54900B57686160616EBCC05F27E7107E",
 			"flags" : "0x0",
 			"tariff": "tariff",
 			"meter": "test_meter",

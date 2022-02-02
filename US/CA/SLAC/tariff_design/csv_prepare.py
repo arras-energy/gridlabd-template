@@ -2,7 +2,7 @@ import csv
 import pandas as pd 
 
 
-# Might want to parse model and output name as well. Make sure no extra lines.
+# Might want to parse model and output name as well. Make sure no extra lines. Some tariff indexes give error (7)
 def parse_time(value, row, df):
     print(value, row)
 

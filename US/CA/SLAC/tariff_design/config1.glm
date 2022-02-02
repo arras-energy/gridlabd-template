@@ -5,9 +5,10 @@
 #define TIMEZONE=PST+8PDT
 #define MODEL=model.glm
 #define OUTPUT=output.csv 
-#define TARIFF_UTILITY=San Diego Gas & Electric Co
+#define TARIFF_UTILITY=Pacific Gas & Electric Co
 #define TARIFF_SECTOR=Residential
-#define TARIFF_NAME=DR
+#define TARIFF_NAME=E-TOU-C3
 #define TARIFF_TYPE=TOU
-#define TARIFF_REGION=Mountain Baseline Region
+#define TARIFF_REGION=Region R
 #define TARIFF_INCLINING_BLOCK_RATE=True
+#define TARIFF_INDEX=0

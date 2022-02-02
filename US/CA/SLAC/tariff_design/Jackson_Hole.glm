@@ -1,6 +1,0 @@
-#weather get Jackson_Hole.tmy3
-module climate;
-object climate
-{
-	tmyfile "Jackson_Hole.tmy3";
-}

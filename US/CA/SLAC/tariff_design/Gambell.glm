@@ -1,6 +1,0 @@
-#weather get Gambell.tmy3
-module climate;
-object climate
-{
-	tmyfile "Gambell.tmy3";
-}
