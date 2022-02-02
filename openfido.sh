@@ -76,6 +76,6 @@ if [ $OUTPUT_NAME_INPUT != "output.csv" ]; then
 fi
 
 mv $OUTPUT_NAME_INPUT $OPENFIDO_OUTPUT
-mv config1.csv $OPENFIDO_OUTPUT
+
 
 exit 0
