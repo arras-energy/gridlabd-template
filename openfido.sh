@@ -44,6 +44,7 @@ do
             # Replaces weather station with correctly formatted weather station
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
+            ;;
         "MODEL")
             MODEL_NAME_INPUT=$field2
             echo "$MODEL_NAME_INPUT"
