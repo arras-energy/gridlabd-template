@@ -44,13 +44,6 @@ do
             # Replaces weather station with correctly formatted weather station
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
-            if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
-                WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
-                gawk -i inplace -F ',' '{gsub("$WEATHER_STATION","$WEATHER_STATION_PARSED",$2); print}' OFS="," config.csv
-                echo $(cat config.csv)
-            fi
-            echo "$WEATHER_STATION"
-            ;;
         "MODEL")
             MODEL_NAME_INPUT=$field2
             echo "$MODEL_NAME_INPUT"
@@ -61,6 +54,14 @@ do
             ;;
     esac
 done < config.csv
+
+if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
+    WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
+    gawk -i inplace -F ',' '{gsub("$WEATHER_STATION","$WEATHER_STATION_PARSED",$2); print}' OFS="," config.csv
+    echo $(cat config.csv)
+fi
+echo "$WEATHER_STATION_PARSED"
+
 
 #check variables to see if the ones that don't have a default are updated
 
