@@ -47,7 +47,7 @@ do
             if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
                 WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
                 gawk -i inplace -F ',' '{gsub("$WEATHER_STATION","$WEATHER_STATION_PARSED",$2); print}' OFS="," config.csv
-                echo $WEATHER_STATION
+                echo $WEATHER_STATION_PARSED
             fi
             echo "$WEATHER_STATION"
             ;;
