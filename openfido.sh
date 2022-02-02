@@ -60,7 +60,7 @@ do
             echo "$OUTPUT_NAME_INPUT"
             ;;
     esac
-done < config1.csv
+done < config.csv
 
 #check variables to see if the ones that don't have a default are updated
 

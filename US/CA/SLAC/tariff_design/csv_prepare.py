@@ -114,7 +114,7 @@ def main():
     tariff_index = generate_tariff_index(df, df_tariff_index)
     df = add_tariff_index_row(df, tariff_index)
     print(df.to_string())
-    df.to_csv("config1.csv", index = False)
+    df.to_csv("config.csv", index = False)
 
 if __name__ == "__main__":
     main()
