@@ -39,7 +39,7 @@ python3 csv_prepare.py
 if ls error.csv; then
   echo "Error with tariff information in config.csv."
   mv error.csv $OPENFIDO_OUTPUT
-  exit 1
+  exit 0
 fi
 # rows can be in any order
 while IFS=, read -r field1 field2 || [ -n "$field1" ]
