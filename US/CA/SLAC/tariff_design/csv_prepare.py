@@ -76,15 +76,40 @@ def generate_tariff_index(df, df_tariff_index):
 
     # In case of white spaces
     df_tariff_index.columns = [column.replace(" ", "") for column in df_tariff_index.columns]
-
+    df_copy = df_tariff_index.copy(deep=True)
     # Query one at a time to better pin point error 
-    df_tariff_index.query('utility == @tariff_utility', inplace = True)
+    if (tariff_utility != ""):
+        df_copy = df_tariff_index.query('utility == @tariff_utility', inplace = False)
+        if (len(df_copy) > 0):
+            df_tariff_index = df_copy.copy(deep=False)
+    if (tariff_region != ""):
+        df_copy = df_tariff_index.query('region == @tariff_region', inplace = False) 
+        if (len(df_copy) > 0):
+            df_tariff_index = df_copy.copy(deep=False)
+    if (tariff_name != ""):
+        df_copy = df_tariff_index.query('name == @tariff_name', inplace = False)
+        if (len(df_copy) > 0):
+            df_tariff_index = df_copy.copy(deep=False)
+
+    #df_tariff_index['row_num'] = df_tariff_index.index;
+    #df_tariff_index.set_index(["utility","name", "region"],inplace=True)
+    #df_tariff_index = df_tariff_index.loc[tariff_utility][["row_num"]]
+    #df_tariff_index = df_tariff_index.loc[tariff_utility]
+    #if (len(df_tariff_index.index) == 1):
+        #return df_tariff_index["row_num"]
+    #else:
+        #print(df_tariff_index.index.get_level_values(0))
+        #return -1 
+
+    if (len(df_tariff_index)==1):
+        return df_tariff_index.index.tolist()[0]
+    else:
+        df_tariff_index[["utility","region","name"]].to_csv("error.csv", index = False)
+        return -1
+
+
     
-
-    df_tariff_index.query('region == @tariff_region', inplace = True) 
-
-   
-    df_tariff_index.query('name == @tariff_name', inplace = True)
+    
     
 
     
@@ -97,7 +122,7 @@ def generate_tariff_index(df, df_tariff_index):
     #df_tariff_index.query('{sector == @tariff_sector', inplace = True)
 
     # TODO: Currently assumes one match 
-    return df_tariff_index.index.tolist()[0]
+    
 
 def add_tariff_index_row(df, tariff_index):
     df2 = pd.DataFrame({"Header" : ["TARIFF_INDEX"], "Value" : [tariff_index]})
@@ -112,6 +137,8 @@ def main():
     df = pd.read_csv(config_file)
     parse_csv_values(df)
     tariff_index = generate_tariff_index(df, df_tariff_index)
+    if (tariff_index == -1):
+        return
     df = add_tariff_index_row(df, tariff_index)
     print(df.to_string())
     df.to_csv("config.csv", index = False)
