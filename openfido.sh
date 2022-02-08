@@ -50,6 +50,7 @@ do
             # Replaces weather station with correctly formatted weather station
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
+            # Calling it twice. Storing it does not allow line counting. 
             WEATHER_STATION_INDEX_NUMBER=$(gridlabd weather index $WEATHER_STATION | wc -l)
             ;;
         "MODEL")
@@ -69,7 +70,7 @@ if [ WEATHER_STATION_INDEX_NUMBER == 1 ] ; then
     echo "$WEATHER_STATION_PARSED"
     gawk -i inplace -F ',' '{gsub(find,replace,$2); print}' find="$WEATHER_STATION" replace="$WEATHER_STATION_PARSED" OFS="," config.csv
     echo $(cat config.csv)
-elif [ WEATHER_STATION_INDEX_NUMBER > 1 ]; then
+elif [ WEATHER_STATION_INDEX_NUMBER > 1 ] ; then
     echo "$($WEATHER_STATION_LIST | wc -l)"
     exit 
 fi
