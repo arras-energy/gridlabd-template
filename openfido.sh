@@ -64,10 +64,12 @@ done < config.csv
 
 if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
+    echo "$WEATHER_STATION"
+    echo "$WEATHER_STATION_PARSED"
     gawk -i inplace -F ',' '{gsub("$WEATHER_STATION","$WEATHER_STATION_PARSED",$2); print}' OFS="," config.csv
     echo $(cat config.csv)
 fi
-echo "$WEATHER_STATION_PARSED"
+
 
 
 #check variables to see if the ones that don't have a default are updated
