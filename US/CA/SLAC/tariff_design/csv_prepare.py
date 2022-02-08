@@ -3,6 +3,8 @@ import pandas as pd
 
 
 # Might want to parse model and output name as well. Make sure no extra lines. Some tariff indexes give error (7)
+def parse_weather(value, row, df):
+    print("hi")
 def parse_time(value, row, df):
     print(value, row)
 
@@ -31,6 +33,7 @@ def parse_csv_values(df):
     # Error checking done here 
     # Check for header values 
     switcher = {
+    "WEATHER_STATION": parse_weather,
     "STARTTIME": parse_time,
     "STOPTIME": parse_time,
     "TIMEZONE": parse_time_zone,
@@ -108,9 +111,6 @@ def generate_tariff_index(df, df_tariff_index):
         return -1
 
 
-    
-    
-    
 
     
 
