@@ -71,7 +71,7 @@ if [ WEATHER_STATION_INDEX_NUMBER == 1 ] ; then
     gawk -i inplace -F ',' '{gsub(find,replace,$2); print}' find="$WEATHER_STATION" replace="$WEATHER_STATION_PARSED" OFS="," config.csv
     echo $(cat config.csv)
 elif [ WEATHER_STATION_INDEX_NUMBER > 1 ] ; then
-    echo "$(WEATHER_STATION_LIST | wc -l)"
+    echo "$WEATHER_STATION_LIST"
     exit 
 fi
 
