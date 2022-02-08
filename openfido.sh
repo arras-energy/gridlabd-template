@@ -33,6 +33,7 @@ OUTPUT_NAME_INPUT="output.csv"
 
 # no default values
 WEATHER_STATION=""
+WEATHER_STATION_INDEX_NUMBER=0
 
 python3 csv_prepare.py 
 
