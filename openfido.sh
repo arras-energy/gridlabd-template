@@ -66,7 +66,7 @@ if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
     echo "$WEATHER_STATION"
     echo "$WEATHER_STATION_PARSED"
-    gawk -i inplace -F ',' '{gsub("$WEATHER_STATION","$WEATHER_STATION_PARSED",$2); print}' OFS="," config.csv
+    gawk -i inplace -F ',' '{gsub(find,replace,$2); print}' find="$WEATHER_STATION" replace="$WEATHER_STATION_PARSED" OFS="," config.csv
     echo $(cat config.csv)
 fi
 
