@@ -49,7 +49,8 @@ do
             # TODO: handle if input doesn't return a unique weather station
             # Replaces weather station with correctly formatted weather station
             WEATHER_STATION=$field2
-            WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
+            WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION | wc -l)
+            echo $WEATHER_STATION_LIST
             ;;
         "MODEL")
             MODEL_NAME_INPUT=$field2
@@ -62,12 +63,15 @@ do
     esac
 done < config.csv
 
-if [ $(echo $WEATHER_STATION_LIST | wc -l) == 1 ] ; then
+if [ $WEATHER_STATION_LIST == 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
     echo "$WEATHER_STATION"
     echo "$WEATHER_STATION_PARSED"
     gawk -i inplace -F ',' '{gsub(find,replace,$2); print}' find="$WEATHER_STATION" replace="$WEATHER_STATION_PARSED" OFS="," config.csv
     echo $(cat config.csv)
+elif [ $WEATHER_STATION_LIST > 1 ]; then
+    echo "$($WEATHER_STATION_LIST | wc -l)"
+    exit 0
 fi
 
 
