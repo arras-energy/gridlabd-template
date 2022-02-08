@@ -68,6 +68,7 @@ done < config.csv
 if [ $WEATHER_STATION == "" ] ; then
     echo "Please provide WEATHER_STATION"
     exit 0
+fi
 
 if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
