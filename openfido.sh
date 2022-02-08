@@ -65,6 +65,10 @@ do
     esac
 done < config.csv
 
+if [ $WEATHER_STATION == "" ] ; then
+    echo "Please provide WEATHER_STATION"
+    exit 0
+
 if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
     echo "$WEATHER_STATION"
@@ -73,10 +77,10 @@ if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     echo $(cat config.csv)
 elif [ $WEATHER_STATION_INDEX_NUMBER -gt 1 ] ; then
     echo "$WEATHER_STATION_LIST"
-    exit 
+    exit 0
 else 
     echo "None match"
-    exit
+    exit 0
 fi
 
 
