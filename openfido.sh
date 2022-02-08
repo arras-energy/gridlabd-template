@@ -52,6 +52,7 @@ do
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
             # Calling it twice. Storing it does not allow line counting. 
             WEATHER_STATION_INDEX_NUMBER=$(gridlabd weather index $WEATHER_STATION | wc -l)
+            echo "$WEATHER_STATION_INDEX_NUMBER"
             ;;
         "MODEL")
             MODEL_NAME_INPUT=$field2
