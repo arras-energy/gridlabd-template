@@ -74,6 +74,9 @@ if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
 elif [ $WEATHER_STATION_INDEX_NUMBER -gt 1 ] ; then
     echo "$WEATHER_STATION_LIST"
     exit 
+else 
+    echo "None match"
+    exit
 fi
 
 
