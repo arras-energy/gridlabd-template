@@ -2,34 +2,47 @@ import csv
 import pandas as pd 
 
 
-# Might want to parse model and output name as well. Make sure no extra lines. Some tariff indexes give error (7)
-def parse_weather(value, row, df):
+# Parses weather station value. Checks for no spaces, capitalization, 
+def parse_weather(value, row, df,tariff_index_file):
     print("hi")
-def parse_time(value, row, df):
+def parse_time(value, row, df,tariff_index_file):
     print(value, row)
 
-def parse_time_zone(value, row, df):
+def parse_time_zone(value, row, df,tariff_index_file):
     print("hi")
-def parse_model_name(value, row, df):
+# Parses model name value. Makes sure there is .glm at the end. 
+def parse_model_name(value, row, df,tariff_index_file):
+    if not value.endswith('.glm'):
+        print("adding glm to model name...")
+        df.at[row, "Value"] = value + ".glm"
+# Parses output name value. Makes sure there is .csv at the end. 
+def parse_output_name(value, row, df,tariff_index_file):
+    if not value.endswith('.csv'):
+        print("adding csv to output name...")
+        df.at[row, "Value"] = value + ".csv"
+# could do levenshtein distance
+def parse_tariff_utility(value, row, df,tariff_index_file):
+    unique_utility = tariff_index_file.utility.unique()
+    if value in unique_utility:
+        print(value)
+    else:
+        print("bye")
+def parse_tariff_sector(value, row, df,tariff_index_file):
+    print("Currently unnecessary")
+# Only takes in a few values. 
+def parse_tariff_name(value, row, df,tariff_index_file):
     print("hi")
-def parse_output_name(value, row, df):
+def parse_tariff_type(value, row, df,tariff_index_file):
+    print("Currently unnecessary")
+# Only takes in a few values. 
+def parse_tariff_region(value, row, df,tariff_index_file):
     print("hi")
-def parse_tariff_utility(value, row, df):
-    print("hi")
-def parse_tariff_sector(value, row, df):
-    print("hi")
-def parse_tariff_name(value, row, df):
-    print("hi")
-def parse_tariff_type(value, row, df):
-    print("hi")
-def parse_tariff_region(value, row, df):
-    print("hi")
-def parse_tariff_inclining_block_rate(value, row, df): 
-    print("hi")
-def default(value, row, df): 
+def parse_tariff_inclining_block_rate(value, row, df,tariff_index_file): 
+    print("Currently unnecessary")
+def default(value, row, df,tariff_index_file): 
     print(value)
 
-def parse_csv_values(df):
+def parse_csv_values(df,tariff_index_file):
     # Error checking done here 
     # Check for header values 
     switcher = {
@@ -47,7 +60,7 @@ def parse_csv_values(df):
     "TARIFF_INCLINING_BLOCK_RATE":parse_tariff_inclining_block_rate
     }
     for index, row in df.iterrows():
-        switcher.get(row["Header"], default)(row["Value"], index, df)
+        switcher.get(row["Header"], default)(row["Value"], index, df,tariff_index_file)
 
 def generate_tariff_index(df, df_tariff_index):
     # Loop through df again and find the tariff values. Match them with df_tariff_index
@@ -133,9 +146,21 @@ def add_tariff_index_row(df, tariff_index):
 def main():
     config_file = "config.csv"
     tariff_index_file = "tariff_library_config.csv"
-    df_tariff_index = pd.read_csv(tariff_index_file)
-    df = pd.read_csv(config_file)
-    parse_csv_values(df)
+    try:
+        df_tariff_index = pd.read_csv(tariff_index_file)
+    except FileNotFoundError:
+        print(f"{tariff_index_file} not found.")
+    except pd.errors.EmptyDataError:
+        print(f"No data in {tariff_index_file}")
+    try:
+        df = pd.read_csv(config_file)
+    except FileNotFoundError:
+        print(f"{config_file} not found.")
+    except pd.errors.EmptyDataError:
+        print(f"No data in {config_file}")
+
+    parse_csv_values(df,df_tariff_index)
+    print(df_tariff_index)
     tariff_index = generate_tariff_index(df, df_tariff_index)
     if (tariff_index == -1):
         return
