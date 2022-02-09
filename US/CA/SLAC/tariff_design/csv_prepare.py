@@ -1,15 +1,18 @@
 import csv
 import pandas as pd 
+import re
 
 
 # Parses weather station value. Checks for no spaces, capitalization, 
 def parse_weather(value, row, df,tariff_index_file):
     print("hi")
 def parse_time(value, row, df,tariff_index_file):
-    print(value, row)
-
+    if re.match("^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] [A-Z]{3}$", value) == None:
+        print("bad time")
+# Matches exactly for now 
 def parse_time_zone(value, row, df,tariff_index_file):
-    print("hi")
+    if re.match("^[A-Z]{3}\+[1-9][A-Z]{3}$", value) == None:
+        print("bad")
 # Parses model name value. Makes sure there is .glm at the end. 
 def parse_model_name(value, row, df,tariff_index_file):
     if not value.endswith('.glm'):
