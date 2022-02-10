@@ -2,7 +2,9 @@ import csv
 import pandas as pd 
 import re
 
-
+# The column names for config.csv 
+df_column_one_name = "Header"
+df_column_two_name = "Value"
 # Parses weather station value. Checks for no spaces, capitalization, 
 def parse_weather(value, row, df,tariff_index_file):
     print("hi")
@@ -17,12 +19,12 @@ def parse_time_zone(value, row, df,tariff_index_file):
 def parse_model_name(value, row, df,tariff_index_file):
     if not value.endswith('.glm'):
         print("adding glm to model name...")
-        df.at[row, "Value"] = value + ".glm"
+        df.at[row, df_column_two_name] = value + ".glm"
 # Parses output name value. Makes sure there is .csv at the end. 
 def parse_output_name(value, row, df,tariff_index_file):
     if not value.endswith('.csv'):
         print("adding csv to output name...")
-        df.at[row, "Value"] = value + ".csv"
+        df.at[row, df_column_two_name] = value + ".csv"
 # could do levenshtein distance
 def parse_tariff_utility(value, row, df,tariff_index_file):
     unique_utility = tariff_index_file.utility.unique()
@@ -63,7 +65,15 @@ def parse_csv_values(df,tariff_index_file):
     "TARIFF_INCLINING_BLOCK_RATE":parse_tariff_inclining_block_rate
     }
     for index, row in df.iterrows():
-        switcher.get(row["Header"], default)(row["Value"], index, df,tariff_index_file)
+        switcher.get(row[df_column_one_name], default)(row[df_column_two_name], index, df,tariff_index_file)
+
+def is_column_names_valid(df):
+    if (len(df.columns) != 2):
+        return False
+    if df.columns[0] != df_column_one_name or df.columns[1] != df_column_two_name:
+        return False
+    return True 
+
 
 def generate_tariff_index(df, df_tariff_index):
     # Loop through df again and find the tariff values. Match them with df_tariff_index
@@ -74,23 +84,23 @@ def generate_tariff_index(df, df_tariff_index):
     tariff_region = ""
     tariff_inclining_block_rate = ""
     for index, row in df.iterrows():
-        if (row["Header"] == "TARIFF_UTILITY"):
-            tariff_utility = row["Value"] 
+        if (row[df_column_one_name] == "TARIFF_UTILITY"):
+            tariff_utility = row[df_column_two_name] 
             print(tariff_utility)
-        if (row["Header"] == "TARIFF_SECTOR"):
-            tariff_sector = row["Value"]
+        if (row[df_column_one_name] == "TARIFF_SECTOR"):
+            tariff_sector = row[df_column_two_name]
             print(tariff_sector)
-        if (row["Header"] == "TARIFF_NAME"):
-            tariff_name = row["Value"]
+        if (row[df_column_one_name] == "TARIFF_NAME"):
+            tariff_name = row[df_column_two_name]
             print(tariff_name)
-        if (row["Header"] == "TARIFF_TYPE"):
-            tariff_type = row["Value"]
+        if (row[df_column_one_name] == "TARIFF_TYPE"):
+            tariff_type = row[df_column_two_name]
             print(tariff_type)
-        if (row["Header"] == "TARIFF_REGION"):
-            tariff_region = row["Value"]
+        if (row[df_column_one_name] == "TARIFF_REGION"):
+            tariff_region = row[df_column_two_name]
             print(tariff_region)
-        if (row["Header"] == "TARIFF_INCLINING_BLOCK_RATE"):
-            tariff_inclining_block_rate = row["Value"]
+        if (row[df_column_one_name] == "TARIFF_INCLINING_BLOCK_RATE"):
+            tariff_inclining_block_rate = row[df_column_two_name]
             print(tariff_inclining_block_rate)
 
     # In case of white spaces
@@ -141,7 +151,7 @@ def generate_tariff_index(df, df_tariff_index):
     
 
 def add_tariff_index_row(df, tariff_index):
-    df2 = pd.DataFrame({"Header" : ["TARIFF_INDEX"], "Value" : [tariff_index]})
+    df2 = pd.DataFrame({df_column_one_name : ["TARIFF_INDEX"], df_column_two_name : [tariff_index]})
     df = pd.concat([df, df2], ignore_index = True, axis = 0)
     return df 
 
@@ -161,6 +171,9 @@ def main():
         print(f"{config_file} not found.")
     except pd.errors.EmptyDataError:
         print(f"No data in {config_file}")
+    if (not is_column_names_valid(df)):
+        return 
+
 
     parse_csv_values(df,df_tariff_index)
     print(df_tariff_index)
