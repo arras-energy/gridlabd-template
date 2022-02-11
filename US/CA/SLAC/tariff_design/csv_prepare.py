@@ -1,10 +1,13 @@
 import csv
 import pandas as pd 
 import re
+import gridlabd 
 
 # The column names for config.csv 
 df_column_one_name = "Header"
 df_column_two_name = "Value"
+config_file = "config.csv"
+tariff_index_file = "tariff_library_config.csv"
 # Parses weather station value. Checks for no spaces, capitalization, 
 def parse_weather(value, row, df,tariff_index_file):
     print("hi")
@@ -18,34 +21,36 @@ def parse_time_zone(value, row, df,tariff_index_file):
 # Parses model name value. Makes sure there is .glm at the end. 
 def parse_model_name(value, row, df,tariff_index_file):
     if not value.endswith('.glm'):
-        print("adding glm to model name...")
-        df.at[row, df_column_two_name] = value + ".glm"
+        gridlabd.warning("Model name should end with .glm. Adding .glm...")
+        df.at[row, df_column_two_name] = value.strip() + ".glm"
 # Parses output name value. Makes sure there is .csv at the end. 
 def parse_output_name(value, row, df,tariff_index_file):
     if not value.endswith('.csv'):
-        print("adding csv to output name...")
-        df.at[row, df_column_two_name] = value + ".csv"
+        gridlabd.warning("Output name should end with .csv Adding .csv...")
+        df.at[row, df_column_two_name] = value.strip() + ".csv"
 # could do levenshtein distance
 def parse_tariff_utility(value, row, df,tariff_index_file):
     unique_utility = tariff_index_file.utility.unique()
-    if value in unique_utility:
-        print(value)
-    else:
-        print("bye")
+    if not value in unique_utility:
+        gridlabd.warning(f"{value} not recognized. Will attempt to generate tariff configuration.\nOnly {unique_utility} are accepted.")
 def parse_tariff_sector(value, row, df,tariff_index_file):
-    print("Currently unnecessary")
+    raise NotImplementedError
 # Only takes in a few values. 
 def parse_tariff_name(value, row, df,tariff_index_file):
-    print("hi")
+    unique_tariff_name = tariff_index_file.name.unique()
+    if not value in unique_tariff_name:
+        gridlabd.warning(f"{value} not recognized. Will attempt to generate tariff configuration\nOnly {unique_tariff_name} are accepted.")
 def parse_tariff_type(value, row, df,tariff_index_file):
-    print("Currently unnecessary")
+    raise NotImplementedError
 # Only takes in a few values. 
 def parse_tariff_region(value, row, df,tariff_index_file):
-    print("hi")
+    unique_tariff_region = tariff_index_file.region.unique()
+    if not value in unique_tariff_region:
+        gridlabd.warning(f"{value} not recognized. Will attempt to generate tariff configuration\nOnly {unique_tariff_region} are accepted.")
 def parse_tariff_inclining_block_rate(value, row, df,tariff_index_file): 
-    print("Currently unnecessary")
+    raise NotImplementedError
 def default(value, row, df,tariff_index_file): 
-    print(value)
+    gridlabd.warning(f"{df_column_one_name} value -not supported")
 
 def parse_csv_values(df,tariff_index_file):
     # Error checking done here 
@@ -65,14 +70,15 @@ def parse_csv_values(df,tariff_index_file):
     "TARIFF_INCLINING_BLOCK_RATE":parse_tariff_inclining_block_rate
     }
     for index, row in df.iterrows():
-        switcher.get(row[df_column_one_name], default)(row[df_column_two_name], index, df,tariff_index_file)
-
+        df.at[index, df_column_two_name] = row[df_column_two_name].strip()
+        try:
+            switcher.get(row[df_column_one_name], default)(row[df_column_two_name], index, df,tariff_index_file)
+        except ValueError as e:
+            raise
 def is_column_names_valid(df):
-    if (len(df.columns) != 2):
-        return False
-    if df.columns[0] != df_column_one_name or df.columns[1] != df_column_two_name:
-        return False
-    return True 
+    if len(df.columns) != 2 or df.columns[0] != df_column_one_name or df.columns[1] != df_column_two_name:
+        raise ValueError(f"{config_file} column headers must be 'Header' and 'Value'")
+    
 
 
 def generate_tariff_index(df, df_tariff_index):
@@ -86,22 +92,16 @@ def generate_tariff_index(df, df_tariff_index):
     for index, row in df.iterrows():
         if (row[df_column_one_name] == "TARIFF_UTILITY"):
             tariff_utility = row[df_column_two_name] 
-            print(tariff_utility)
         if (row[df_column_one_name] == "TARIFF_SECTOR"):
             tariff_sector = row[df_column_two_name]
-            print(tariff_sector)
         if (row[df_column_one_name] == "TARIFF_NAME"):
             tariff_name = row[df_column_two_name]
-            print(tariff_name)
         if (row[df_column_one_name] == "TARIFF_TYPE"):
             tariff_type = row[df_column_two_name]
-            print(tariff_type)
         if (row[df_column_one_name] == "TARIFF_REGION"):
             tariff_region = row[df_column_two_name]
-            print(tariff_region)
         if (row[df_column_one_name] == "TARIFF_INCLINING_BLOCK_RATE"):
             tariff_inclining_block_rate = row[df_column_two_name]
-            print(tariff_inclining_block_rate)
 
     # In case of white spaces
     df_tariff_index.columns = [column.replace(" ", "") for column in df_tariff_index.columns]
@@ -133,8 +133,10 @@ def generate_tariff_index(df, df_tariff_index):
     if (len(df_tariff_index)==1):
         return df_tariff_index.index.tolist()[0]
     else:
-        df_tariff_index[["utility","region","name"]].to_csv("error.csv", index = False)
-        return -1
+        raise ValueError(f"\nInputs did not correspond to unique tariff configuration."\
+            " Please add information to input from values below.\n"\
+            "Corresponding header values are TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME\n" + df_tariff_index[["utility","region","name"]].to_string())
+        
 
 
 
@@ -157,31 +159,35 @@ def add_tariff_index_row(df, tariff_index):
 
 
 def main():
-    config_file = "config.csv"
-    tariff_index_file = "tariff_library_config.csv"
+
     try:
         df_tariff_index = pd.read_csv(tariff_index_file)
     except FileNotFoundError:
-        print(f"{tariff_index_file} not found.")
+        gridlabd.error(f"{tariff_index_file} file not found")
     except pd.errors.EmptyDataError:
-        print(f"No data in {tariff_index_file}")
+        gridlabd.error(f"{tariff_index_file} file empty")
+
+    gridlabd.output(f"Reading input {config_file}...")
+
     try:
         df = pd.read_csv(config_file)
     except FileNotFoundError:
-        print(f"{config_file} not found.")
+        gridlabd.error(f"{config_file} file not found")
     except pd.errors.EmptyDataError:
-        print(f"No data in {config_file}")
-    if (not is_column_names_valid(df)):
-        return 
+        gridlabd.error(f"{config_file} file not found")
+
+    gridlabd.output(f"Success")
 
 
-    parse_csv_values(df,df_tariff_index)
-    print(df_tariff_index)
-    tariff_index = generate_tariff_index(df, df_tariff_index)
-    if (tariff_index == -1):
-        return
-    df = add_tariff_index_row(df, tariff_index)
-    print(df.to_string())
+
+    try:
+        is_column_names_valid(df)
+        parse_csv_values(df,df_tariff_index)
+        df = add_tariff_index_row(df,generate_tariff_index(df, df_tariff_index))
+    except ValueError as e:
+        gridlabd.error(str(e))
+
+    
     df.to_csv("config.csv", index = False)
 
 if __name__ == "__main__":
