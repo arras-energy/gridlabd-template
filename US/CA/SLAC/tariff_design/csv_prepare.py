@@ -4,34 +4,44 @@ import re
 import gridlabd 
 import datetime 
 from dateutil import parser 
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
 config_file = "config.csv" # name of config file 
 tariff_index_file = "tariff_library_config.csv" # name of tariff config file 
+verbose = True
+
+def print_verbose(msg):
+    if verbose:
+        print("VERBOSE [TARIFF_DESIGN] : " + msg)
 
 
 def parse_weather(value, row, df,tariff_index_file):
-    """ Currently needs to be implemented. 
+    """ Parses weather station index for the command "gridlabd weather index {value}" dont in openfido.sh. Prints warning if can not parse.
     """
+    if re.match("[A-Z]{2}-[A-Z][a-z]*(_[a-z]*)*$", value) == None:
+        gridlabd.warning(f"{value} could not be parsed. On failure, check below for list of case sensitive, matching weather stations."\
+            " On success, ignore this message.")
+    
+
 
     print("hi")
 def parse_time(value, row, df,tariff_index_file):
-    """ Parses time value in ISO8601 or YYYY-MM-DD DD:HH:MM TZN. Latter format will throw a warning.
+    """ Parses time value in ISO8601 or YYYY-MM-DD DD:HH:MM TZN. Raises exception if can not parse. 
 
     """
-    print(parser.parse(value))
-    if re.match("^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01]) ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9] [A-Z]{3}$", value) == None:
-        print("bad time")
+    parser.parse(value)
 
 def parse_time_zone(value, row, df,tariff_index_file):
-    """ Parses time zone value with any three capital letters followed by a "+", a number, and any three more capital letters. 
+    """ Parses time zone value with any three capital letters followed by a "+", a number, and any three more capital letters. Raises exception. 
     
     Example: EST+5EDT
     """
     if re.match("^[A-Z]{3}\+[1-9][A-Z]{3}$", value) == None:
-        print("bad")
+        raise ValueError
 def parse_model_name(value, row, df,tariff_index_file):
     """ Parses name of model. Appends .glm if not present at end of string.
     """
@@ -48,34 +58,90 @@ def parse_output_name(value, row, df,tariff_index_file):
 def parse_tariff_utility(value, row, df,tariff_index_file):
     """ TODO: Levenshtein distance
     """
+    utility_match_ratio = 80
+    utility_match_perfect_ratio = 100
     unique_utility = tariff_index_file.utility.unique()
-    if not value in unique_utility:
-        gridlabd.warning(f"{value} not recognized. Will attempt to generate tariff configuration.\nOnly {unique_utility} are accepted.")
+    best_matches = process.extract(value, unique_utility) # returns the best match in [0] and score in [1]
+    match_list = [] 
+    for match, score in best_matches:
+        print(score)
+        if score == utility_match_perfect_ratio:
+            df.at[row, df_column_two_name] = match 
+            return
+        if score > utility_match_ratio:
+            match_list.append(match)
+    if len(match_list) == 1:
+        df.at[row, df_column_two_name] = match_list[0]
+        print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
+    elif len(match_list) > 1:
+        gridlabd.warning(f"Found multiple matches for {value}. Please specify from the list below:\n{match_list}")
+    else:
+        gridlabd.warning(f"Could not match {value} with elements in {unique_utility}. Will attempt to generate tariff configuration.")
+
+
+    #if best_match[1] > 80:
+        #df.at[row, df_column_two_name] = best_match[0]
+    #else:
+        #
 def parse_tariff_sector(value, row, df,tariff_index_file):
     """ Currently not needed and is just a function stub.
     """
     raise NotImplementedError
 def parse_tariff_name(value, row, df,tariff_index_file):
-    """ Matches value with names in tariff configuration file. 
+    """ Matches value with names in tariff configuration file. Raises warning if not found. 
     """
+    name_match_ratio = 80
+    name_match_perfect_ratio = 100
     unique_tariff_name = tariff_index_file.name.unique()
-    if not value in unique_tariff_name:
-        gridlabd.warning(f"{value} not recognized. Will attempt to generate tariff configuration\nOnly {unique_tariff_name} are accepted.")
+    best_matches = process.extract(value, unique_tariff_name) # returns the best match in [0] and score in [1]
+    match_list = []
+    for match, score in best_matches:
+        print(score)
+        if score == name_match_perfect_ratio:
+            df.at[row, df_column_two_name] = match
+            return
+        if score > name_match_ratio:
+            match_list.append(match)
+    if len(match_list) == 1:
+        df.at[row, df_column_two_name] = match_list[0]
+        print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
+    elif len(match_list) > 1:
+        print("multiple")
+        gridlabd.warning(f"Found multiple matches for {value}. On success, ignore warning. On failure, please specify from the list below:\n{match_list}")
+    else:
+        gridlabd.warning(f"Could not match {value} with elements in {unique_utility}. Will attempt to generate tariff configuration.")
 def parse_tariff_type(value, row, df,tariff_index_file):
     """ Currently not needed and is just a function stub.
     """
     raise NotImplementedError
 # Only takes in a few values. 
 def parse_tariff_region(value, row, df,tariff_index_file):
-    """ Matches value with regions in tariff configuration file. 
+    """ Matches value with regions in tariff configuration file. Raises warning if not found. 
     """
+    region_match_ratio = 90
+    region_match_perfect_ratio = 100
     unique_tariff_region = tariff_index_file.region.unique()
-    if not value in unique_tariff_region:
-        gridlabd.warning(f"{value} not recognized. Will attempt to generate tariff configuration\nOnly {unique_tariff_region} are accepted.")
+    best_matches = process.extract(value, unique_tariff_region) # returns the best match in [0] and score in [1]
+    match_list = []
+    for match, score in best_matches:
+        print(score)
+        if score == region_match_perfect_ratio:
+            df.at[row, df_column_two_name] = match
+            return
+        if score > region_match_ratio:
+            match_list.append(match)
+    if len(match_list) == 1:
+        df.at[row, df_column_two_name] = match_list[0]
+        print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
+    elif len(match_list) > 1:
+        print("multiple")
+        gridlabd.warning(f"Found multiple matches for {value}. Please specify from the list below:\n{match_list}")
+    else:
+        gridlabd.warning(f"Could not match {value} with elements in {unique_tariff_region}. Will attempt to generate tariff configuration.")
 def parse_tariff_inclining_block_rate(value, row, df,tariff_index_file): 
     raise NotImplementedError
 def default(value, row, df,tariff_index_file): 
-    """ Handles unsupported values 
+    """ Handles unsupported values. Raises warning. 
     """
     gridlabd.warning(f"({df.at[row, df_column_one_name]}, {value}) on row {row} not supported")
 
@@ -166,7 +232,7 @@ def generate_tariff_index(df, df_tariff_index):
     else:
         raise ValueError(f"\nInputs did not correspond to unique tariff configuration."\
             " Please add information to input from values below.\n"\
-            "Corresponding header values are TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME\n" + df_tariff_index[["utility","region","name"]].to_string())
+            "Corresponding config.csv header values are TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME\n" + df_tariff_index[["utility","region","name"]].to_string())
         
 
 
@@ -217,6 +283,7 @@ def main():
         gridlabd.error(str(e))
 
     print(df.to_string())
+    print(dir(gridlabd))
     df.to_csv("config.csv", index = False)
 
 if __name__ == "__main__":
