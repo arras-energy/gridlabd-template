@@ -35,6 +35,7 @@ OUTPUT_NAME_INPUT="output.csv"
 WEATHER_STATION=""
 WEATHER_STATION_INDEX_NUMBER=0
 
+python3 -m pip install -r  requirements.txt
 python3 csv_prepare.py 
 
 if ls error.csv; then
@@ -47,7 +48,6 @@ while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do
     case "$field1" in
         "WEATHER_STATION")
-            # TODO: handle if input doesn't return a unique weather station
             # Replaces weather station with correctly formatted weather station
             WEATHER_STATION=$field2
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
@@ -66,6 +66,7 @@ do
     esac
 done < config.csv
 
+# Handle based on weather stations returned 
 if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
     echo "$WEATHER_STATION"
@@ -80,11 +81,6 @@ else
     exit 0
 fi
 
-
-
-#check variables to see if the ones that don't have a default are updated
-
-#I'll make it into a temporary csv file and then run a python script to format it
 
 
 echo "Running gridlabd" 
