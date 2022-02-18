@@ -7,6 +7,10 @@ from dateutil import parser
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
+# figure out gridlabd warning with gridlabd.set_global 
+# maybe check start time with end time. 
+# try to move stuff to openfido/tariff_design afterwards
+# submit application to gridabld 
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
@@ -58,18 +62,18 @@ def parse_output_name(value, row, df,tariff_index_file):
 def parse_tariff_utility(value, row, df,tariff_index_file):
     """ TODO: Levenshtein distance
     """
-    utility_match_ratio = 80
+    utility_match_ratio = 85
     utility_match_perfect_ratio = 100
     unique_utility = tariff_index_file.utility.unique()
     best_matches = process.extract(value, unique_utility) # returns the best match in [0] and score in [1]
     match_list = [] 
     for match, score in best_matches:
-        print(score)
         if score == utility_match_perfect_ratio:
             df.at[row, df_column_two_name] = match 
             return
         if score > utility_match_ratio:
             match_list.append(match)
+            print(match)
     if len(match_list) == 1:
         df.at[row, df_column_two_name] = match_list[0]
         print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
@@ -90,18 +94,19 @@ def parse_tariff_sector(value, row, df,tariff_index_file):
 def parse_tariff_name(value, row, df,tariff_index_file):
     """ Matches value with names in tariff configuration file. Raises warning if not found. 
     """
-    name_match_ratio = 80
+    name_match_ratio = 85
     name_match_perfect_ratio = 100
     unique_tariff_name = tariff_index_file.name.unique()
     best_matches = process.extract(value, unique_tariff_name) # returns the best match in [0] and score in [1]
     match_list = []
     for match, score in best_matches:
-        print(score)
+        
         if score == name_match_perfect_ratio:
             df.at[row, df_column_two_name] = match
             return
         if score > name_match_ratio:
             match_list.append(match)
+            print(score)
     if len(match_list) == 1:
         df.at[row, df_column_two_name] = match_list[0]
         print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
@@ -179,6 +184,10 @@ def is_column_names_valid(df):
 def generate_tariff_index(df, df_tariff_index):
     """ Generates tariff index (row number in tariff_config) based on matching values of df (config.csv) and df_tariff_index
     """
+    def raise_tariff_index_error():
+        raise ValueError(f"Tariff inputs resulted in no matches. Please replace values TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME with the closest matches listed below.\n"\
+                + df_tariff_index[["utility","region","name"]].to_string())
+
     tariff_utility = ""
     tariff_sector = ""
     tariff_name = ""
@@ -201,38 +210,38 @@ def generate_tariff_index(df, df_tariff_index):
 
     # In case of white spaces
     df_tariff_index.columns = [column.replace(" ", "") for column in df_tariff_index.columns]
-    df_copy = df_tariff_index.copy(deep=True)
-    # Query one at a time and preserves last dataframe that had values. 
+    
+    df_copy = df_tariff_index
     if (tariff_utility != ""):
         df_copy = df_tariff_index.query('utility == @tariff_utility', inplace = False)
-        if (len(df_copy) > 0):
-            df_tariff_index = df_copy.copy(deep=False)
+        if (len(df_copy) == 0):
+            raise_tariff_index_error()
+        df_tariff_index = df_copy
     if (tariff_region != ""):
         df_copy = df_tariff_index.query('region == @tariff_region', inplace = False) 
-        if (len(df_copy) > 0):
-            df_tariff_index = df_copy.copy(deep=False)
+        if (len(df_copy) == 0):
+            raise_tariff_index_error()
+        df_tariff_index = df_copy
     if (tariff_name != ""):
         df_copy = df_tariff_index.query('name == @tariff_name', inplace = False)
-        if (len(df_copy) > 0):
-            df_tariff_index = df_copy.copy(deep=False)
+        if (len(df_copy) == 0 or len(df_copy) > 1):
+            raise_tariff_index_error()
+        df_tariff_index = df_copy
 
-    # Testing with indexes
-    #df_tariff_index['row_num'] = df_tariff_index.index;
-    #df_tariff_index.set_index(["utility","name", "region"],inplace=True)
-    #df_tariff_index = df_tariff_index.loc[tariff_utility][["row_num"]]
-    #df_tariff_index = df_tariff_index.loc[tariff_utility]
-    #if (len(df_tariff_index.index) == 1):
-        #return df_tariff_index["row_num"]
-    #else:
-        #print(df_tariff_index.index.get_level_values(0))
-        #return -1 
+    # df_tariff_index['TARIFF_INDEX'] = df_tariff_index.index;
+    # df_tariff_index.set_index(["utility","name", "region"],inplace=True)
+    # df_tariff_index = df_tariff_index.loc[(tariff_utility, tariff_name, tariff_region), "TARIFF_INDEX"]
+    # print(df_tariff_index.to_string())
+    
+    # #df_tariff_index = df_tariff_index.loc[tariff_name][["TARIFF_INDEX"]]
+    # if (len(df_tariff_index.index) == 1):
+    #     return df_tariff_index["TARIFF_INDEX"]
+    # else:
+    #     print(df_tariff_index.index.get_level_values(0))
+    #     return -1 
 
-    if (len(df_tariff_index)==1):
-        return df_tariff_index.index.tolist()[0]
-    else:
-        raise ValueError(f"\nInputs did not correspond to unique tariff configuration."\
-            " Please add information to input from values below.\n"\
-            "Corresponding config.csv header values are TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME\n" + df_tariff_index[["utility","region","name"]].to_string())
+
+    return df_tariff_index.index.tolist()[0]
         
 
 
@@ -258,7 +267,7 @@ def add_tariff_index_row(df, tariff_index):
 
 
 def main():
-
+    #gridlabd.set_global("suppress_repeat_messages","FALSE")
     try:
         df_tariff_index = pd.read_csv(tariff_index_file)
     except FileNotFoundError:
@@ -274,6 +283,7 @@ def main():
         gridlabd.error(f"{config_file} file not found")
     except pd.errors.EmptyDataError:
         gridlabd.error(f"{config_file} file not found")
+    gridlabd.output(f"Reading input {config_file}...")
 
     try:
         is_column_names_valid(df)
@@ -283,7 +293,6 @@ def main():
         gridlabd.error(str(e))
 
     print(df.to_string())
-    print(dir(gridlabd))
     df.to_csv("config.csv", index = False)
 
 if __name__ == "__main__":
