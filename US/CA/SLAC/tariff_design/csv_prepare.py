@@ -26,7 +26,7 @@ def print_verbose(msg):
 def parse_weather(value, row, df,tariff_index_file):
     """ Parses weather station index for the command "gridlabd weather index {value}" dont in openfido.sh. Prints warning if can not parse.
     """
-    if re.match("[A-Z]{2}-[A-Z][a-z]*(_[a-z]*)*$", value) == None:
+    if re.match("[A-Z]{2}(-[A-Z][a-z]*(_[A-Z][a-z]*)*)?$", value) == None:
         gridlabd.warning(f"{value} could not be parsed. On failure, check below for list of case sensitive, matching weather stations."\
             " On success, ignore this message.")
     
@@ -45,7 +45,7 @@ def parse_time_zone(value, row, df,tariff_index_file):
     Example: EST+5EDT
     """
     if re.match("^[A-Z]{3}\+[1-9][A-Z]{3}$", value) == None:
-        raise ValueError
+        raise ValueError("Could not parse time zone")
 def parse_model_name(value, row, df,tariff_index_file):
     """ Parses name of model. Appends .glm if not present at end of string.
     """
