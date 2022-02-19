@@ -13,6 +13,7 @@ import os
 # try to move stuff to openfido/tariff_design afterwards
 # submit application to gridabld 
 # currently row index 1 isn't avaiable in OpenEI, 3 requires more specificaiton
+#check power
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
@@ -32,9 +33,6 @@ def parse_weather(value, row, df,tariff_index_file):
         gridlabd.warning(f"{value} could not be parsed. On failure, check below for list of case sensitive, matching weather stations."\
             " On success, ignore this message.")
     
-
-
-    print("hi")
 def parse_time(value, row, df,tariff_index_file):
     """ Parses time value in ISO8601 or YYYY-MM-DD DD:HH:MM TZN. Raises exception if can not parse. 
 
@@ -275,8 +273,10 @@ def main():
         df_tariff_index = pd.read_csv(tariff_index_file)
     except FileNotFoundError:
         gridlabd.error(f"{tariff_index_file} file not found")
+        sys.exit(1)
     except pd.errors.EmptyDataError:
         gridlabd.error(f"{tariff_index_file} file empty")
+        sys.exit(1)
 
     gridlabd.output(f"Reading input {config_file}...")
 
@@ -284,9 +284,10 @@ def main():
         df = pd.read_csv(config_file)
     except FileNotFoundError:
         gridlabd.error(f"{config_file} file not found")
+        sys.exit(1)
     except pd.errors.EmptyDataError:
         gridlabd.error(f"{config_file} file not found")
-    gridlabd.output(f"Reading input {config_file}...")
+        sys.exit(1)
 
     try:
         is_column_names_valid(df)
@@ -295,12 +296,10 @@ def main():
     except ValueError as e:
         gridlabd.error(str(e))
         sys.exit(1)
-    print("hi")
     df.to_csv("config.csv", index = False)
 
 if __name__ == "__main__":
     main()
-    sys.exit(1)
 
 
 
