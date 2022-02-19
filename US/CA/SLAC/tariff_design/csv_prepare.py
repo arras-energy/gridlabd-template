@@ -12,7 +12,7 @@ import os
 # maybe check start time with end time. 
 # try to move stuff to openfido/tariff_design afterwards
 # submit application to gridabld 
-# currently row index 1 isn't avaiable in OpenEI, 3 requires more specificaiton
+# currently row index 1,5,6,8 isn't active in OpenEI, 3,7  requires more specificaiton
 #check power
 
 df_column_one_name = "Header" # config.csv column one name 
@@ -73,7 +73,6 @@ def parse_tariff_utility(value, row, df,tariff_index_file):
             return
         if score > utility_match_ratio:
             match_list.append(match)
-            print(match)
     if len(match_list) == 1:
         df.at[row, df_column_two_name] = match_list[0]
         print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
@@ -297,6 +296,7 @@ def main():
         gridlabd.error(str(e))
         sys.exit(1)
     df.to_csv("config.csv", index = False)
+    print(gridlabd.get_global('clock'))     
 
 if __name__ == "__main__":
     main()
