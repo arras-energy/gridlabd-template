@@ -7,6 +7,8 @@ set -u
 set -e
 # print command to stdout before executing it:
 set -x
+# later, get the value and put it back
+gridlabd -D suppress_repeat_messages=FALSE
 
 echo "OPENFIDO_INPUT = $OPENFIDO_INPUT"
 echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"

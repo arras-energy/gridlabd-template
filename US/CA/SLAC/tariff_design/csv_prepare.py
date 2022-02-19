@@ -13,7 +13,7 @@ import os
 # try to move stuff to openfido/tariff_design afterwards
 # submit application to gridabld 
 # currently row index 1,5,6,8 isn't active in OpenEI, 3,7  requires more specificaiton
-#check power
+#check power - line 274
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
@@ -296,7 +296,6 @@ def main():
         gridlabd.error(str(e))
         sys.exit(1)
     df.to_csv("config.csv", index = False)
-    print(gridlabd.get_global('clock'))     
 
 if __name__ == "__main__":
     main()
