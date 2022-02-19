@@ -6,11 +6,13 @@ import datetime
 from dateutil import parser 
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
-
+import sys
+import os 
 # figure out gridlabd warning with gridlabd.set_global 
 # maybe check start time with end time. 
 # try to move stuff to openfido/tariff_design afterwards
 # submit application to gridabld 
+# currently row index 1 isn't avaiable in OpenEI, 3 requires more specificaiton
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
@@ -268,6 +270,7 @@ def add_tariff_index_row(df, tariff_index):
 
 def main():
     #gridlabd.set_global("suppress_repeat_messages","FALSE")
+
     try:
         df_tariff_index = pd.read_csv(tariff_index_file)
     except FileNotFoundError:
@@ -291,12 +294,13 @@ def main():
         df = add_tariff_index_row(df,generate_tariff_index(df, df_tariff_index))
     except ValueError as e:
         gridlabd.error(str(e))
-
-    print(df.to_string())
+        sys.exit(1)
+    print("hi")
     df.to_csv("config.csv", index = False)
 
 if __name__ == "__main__":
     main()
+    sys.exit(1)
 
 
 
