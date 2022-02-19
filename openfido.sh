@@ -38,11 +38,11 @@ WEATHER_STATION_INDEX_NUMBER=0
 python3 -m pip install -r  requirements.txt
 python3 csv_prepare.py 
 
-if ls error.csv; then
-  echo "Error with tariff information in config.csv."
-  mv error.csv $OPENFIDO_OUTPUT
-  exit 0
+if [ $? != 0 ];
+then
+    exit 1 
 fi
+
 # rows can be in any order
 while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do
