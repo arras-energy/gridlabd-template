@@ -77,7 +77,7 @@ if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     echo $(cat config.csv)
 elif [ $WEATHER_STATION_INDEX_NUMBER -gt 1 ] ; then
     echo "$WEATHER_STATION_LIST"
-    exit 0
+    exit 1
 else 
     echo "None match"
     exit 1
