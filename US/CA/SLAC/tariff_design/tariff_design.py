@@ -293,18 +293,20 @@ def on_term(t):
 	bill_name = bill["name"]
 	triplex_meter = gridlabd.get_object("test_meter")
 	meter_name = triplex_meter["name"]
-
 	# Search for floating point 
-	total_charges = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_charges")))
-	total_usage = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_usage")))
-	billing_hrs = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"billing_hrs")))
-	total_power = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_power")))
+	# total_charges = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_charges")))
+	# total_usage = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_usage")))
+	# billing_hrs = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"billing_hrs")))
+	# total_power = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_power")))
+	total_charges_split = str(gridlabd.get_value(bill_name,"total_charges")).split(" ")
+	total_usage_split = str(gridlabd.get_value(bill_name,"total_usage")).split(" ")
+	billing_hrs = str(gridlabd.get_value(bill_name,"billing_hrs")) # no split because get_value does not return a unit
+	total_power_split = str(gridlabd.get_value(bill_name,"total_power")).split(" ")
 
 
 
 	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"), "Total power:", gridlabd.get_value(bill_name,"total_power"))
-	# Units are hardcoded for now. Can use re to find units later if needed. 
-	df = pandas.DataFrame([[total_charges.group(0), "$"], [total_usage.group(0), "kWh"], [billing_hrs.group(0), "hrs"], [total_power.group(0), "?"]], ["Total Charges", "Total Usage", "Total Duration", "Total Power"],["Value", "Units"])
+	df = pandas.DataFrame([[total_charges_split[0][1:], total_charges_split[1]], [total_usage_split[0][1:], total_usage_split[1]], [billing_hrs[1:], "hrs"], [total_power_split[0][1:], total_power_split[1]]], ["Total Charges", "Total Usage", "Total Duration", "Total Power"],["Value", "Units"])
 	print(df)
 	df.to_csv('output.csv')
 
