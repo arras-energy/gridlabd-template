@@ -8,7 +8,7 @@ set -e
 # print command to stdout before executing it:
 set -x
 # later, get the value and put it back
-gridlabd -D suppress_repeat_messages=FALSE
+# gridlabd -D suppress_repeat_messages=FALSE
 
 echo "OPENFIDO_INPUT = $OPENFIDO_INPUT"
 echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
@@ -55,15 +55,12 @@ do
             WEATHER_STATION_LIST=$(gridlabd weather index $WEATHER_STATION)
             # Calling it twice. Storing it does not allow line counting. 
             WEATHER_STATION_INDEX_NUMBER=$(gridlabd weather index $WEATHER_STATION | wc -l)
-            echo "$WEATHER_STATION_INDEX_NUMBER"
             ;;
         "MODEL")
             MODEL_NAME_INPUT=$field2
-            echo "$MODEL_NAME_INPUT"
             ;;
         "OUTPUT")
             OUTPUT_NAME_INPUT=$field2
-            echo "$OUTPUT_NAME_INPUT"
             ;;
     esac
 done < config.csv
@@ -71,21 +68,15 @@ done < config.csv
 # Handle based on weather stations returned 
 if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
-    echo "$WEATHER_STATION"
-    echo "$WEATHER_STATION_PARSED"
     gawk -i inplace -F ',' '{gsub(find,replace,$2); print}' find="$WEATHER_STATION" replace="$WEATHER_STATION_PARSED" OFS="," config.csv
-    echo $(cat config.csv)
 elif [ $WEATHER_STATION_INDEX_NUMBER -gt 1 ] ; then
-    echo "$WEATHER_STATION_LIST"
+    echo "ERROR [TARIFF_DESIGN] : Could not find unique weather station. Please specify from list below:\n$WEATHER_STATION_LIST"
     exit 1
 else 
-    echo "None match"
+    echo "ERROR [TARIFF_DESIGN] : Could not find matching weather stations. Please check capitalization and spelling."
     exit 1
 fi
 
-
-
-echo "Running gridlabd" 
 
 # put -t to get template online
 gridlabd $MODEL_NAME_INPUT tariff_design.glm
