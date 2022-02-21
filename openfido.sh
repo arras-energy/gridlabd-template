@@ -80,7 +80,7 @@ elif [ $WEATHER_STATION_INDEX_NUMBER -gt 1 ] ; then
     exit 0
 else 
     echo "None match"
-    exit 0
+    exit 1
 fi
 
 

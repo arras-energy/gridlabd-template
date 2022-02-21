@@ -1,6 +1,0 @@
-#weather get San_Francisco_Intl_Ap.tmy3
-module climate;
-object climate
-{
-	tmyfile "San_Francisco_Intl_Ap.tmy3";
-}
