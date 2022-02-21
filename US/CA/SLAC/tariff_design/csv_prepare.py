@@ -12,8 +12,8 @@ import os
 # maybe check start time with end time. 
 # try to move stuff to openfido/tariff_design afterwards
 # submit application to gridabld 
-# currently row index 1,5,6,8 isn't active in OpenEI, 3,7  requires more specificaiton
-#check power - line 274
+# currently row index 1,5,6,8 isn't active in OpenEI, 3,7  requires more specificaiton, only 0,2,4,9 works
+# check power - line 274
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
@@ -60,7 +60,7 @@ def parse_output_name(value, row, df,tariff_index_file):
         df.at[row, df_column_two_name] = value + ".csv"
 
 def parse_tariff_utility(value, row, df,tariff_index_file):
-    """ TODO: Levenshtein distance
+    """ Parses tariff_utility based on tariff configuration csv file. Supports fuzzy string matching. Raises exception if multiple matches/none.
     """
     utility_match_ratio = 85
     utility_match_perfect_ratio = 100
@@ -68,7 +68,7 @@ def parse_tariff_utility(value, row, df,tariff_index_file):
     best_matches = process.extract(value, unique_utility) # returns the best match in [0] and score in [1]
     match_list = [] 
     for match, score in best_matches:
-        if score == utility_match_perfect_ratio:
+        if score == utility_match_perfect_ratio: # perfect match means no need to look at others
             df.at[row, df_column_two_name] = match 
             return
         if score > utility_match_ratio:
@@ -77,9 +77,9 @@ def parse_tariff_utility(value, row, df,tariff_index_file):
         df.at[row, df_column_two_name] = match_list[0]
         print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
     elif len(match_list) > 1:
-        gridlabd.warning(f"Found multiple matches for {value}. Please specify from the list below:\n{match_list}")
+        raise ValueError(f"Found multiple matches for {value}. Please specify from the list below:\n{match_list}")
     else:
-        gridlabd.warning(f"Could not match {value} with elements in {unique_utility}. Will attempt to generate tariff configuration.")
+        raise ValueError(f"Could not match {value} with elements in {unique_utility}.")
 
 
     #if best_match[1] > 80:
@@ -91,7 +91,7 @@ def parse_tariff_sector(value, row, df,tariff_index_file):
     """
     raise NotImplementedError
 def parse_tariff_name(value, row, df,tariff_index_file):
-    """ Matches value with names in tariff configuration file. Raises warning if not found. 
+    """ Parses tariff_name based on tariff configuration csv file. Supports fuzzy string matching. Raises exception if multiple matches/none. 
     """
     name_match_ratio = 85
     name_match_perfect_ratio = 100
@@ -99,28 +99,25 @@ def parse_tariff_name(value, row, df,tariff_index_file):
     best_matches = process.extract(value, unique_tariff_name) # returns the best match in [0] and score in [1]
     match_list = []
     for match, score in best_matches:
-        
         if score == name_match_perfect_ratio:
             df.at[row, df_column_two_name] = match
             return
         if score > name_match_ratio:
             match_list.append(match)
-            print(score)
     if len(match_list) == 1:
         df.at[row, df_column_two_name] = match_list[0]
         print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
     elif len(match_list) > 1:
-        print("multiple")
-        gridlabd.warning(f"Found multiple matches for {value}. On success, ignore warning. On failure, please specify from the list below:\n{match_list}")
+        raise ValueError(f"Found multiple matches for {value}. On success, ignore warning. On failure, please specify from the list below:\n{match_list}")
     else:
-        gridlabd.warning(f"Could not match {value} with elements in {unique_utility}. Will attempt to generate tariff configuration.")
+        raise ValueError(f"Could not match {value} with elements in {unique_utility}.")
 def parse_tariff_type(value, row, df,tariff_index_file):
     """ Currently not needed and is just a function stub.
     """
     raise NotImplementedError
 # Only takes in a few values. 
 def parse_tariff_region(value, row, df,tariff_index_file):
-    """ Matches value with regions in tariff configuration file. Raises warning if not found. 
+    """ Parses tariff_region based on tariff configuration csv file. Supports fuzzy string matching. Raises exception if multiple matches/none. 
     """
     region_match_ratio = 90
     region_match_perfect_ratio = 100
@@ -128,7 +125,6 @@ def parse_tariff_region(value, row, df,tariff_index_file):
     best_matches = process.extract(value, unique_tariff_region) # returns the best match in [0] and score in [1]
     match_list = []
     for match, score in best_matches:
-        print(score)
         if score == region_match_perfect_ratio:
             df.at[row, df_column_two_name] = match
             return
@@ -138,10 +134,9 @@ def parse_tariff_region(value, row, df,tariff_index_file):
         df.at[row, df_column_two_name] = match_list[0]
         print_verbose(f"Found suitable match for {value} which has been replaced with {match_list[0]}")
     elif len(match_list) > 1:
-        print("multiple")
-        gridlabd.warning(f"Found multiple matches for {value}. Please specify from the list below:\n{match_list}")
+        raise ValueError(f"Found multiple matches for {value}. Please specify from the list below:\n{match_list}")
     else:
-        gridlabd.warning(f"Could not match {value} with elements in {unique_tariff_region}. Will attempt to generate tariff configuration.")
+        raise ValueError(f"Could not match {value} with elements in {unique_tariff_region}.")
 def parse_tariff_inclining_block_rate(value, row, df,tariff_index_file): 
     raise NotImplementedError
 def default(value, row, df,tariff_index_file): 
@@ -210,6 +205,7 @@ def generate_tariff_index(df, df_tariff_index):
     # In case of white spaces
     df_tariff_index.columns = [column.replace(" ", "") for column in df_tariff_index.columns]
     
+    # If field is provided, quries tariff configuration file. Raises error if not found. 
     df_copy = df_tariff_index
     if (tariff_utility != ""):
         df_copy = df_tariff_index.query('utility == @tariff_utility', inplace = False)
@@ -254,7 +250,6 @@ def generate_tariff_index(df, df_tariff_index):
     #df_tariff_index.query(f'INCLINING_BLOCK_RATE == {tariff_inclining_block_rate}', inplace = True)
     #df_tariff_index.query('{sector == @tariff_sector', inplace = True)
 
-    # TODO: Currently assumes one match 
     
 
 def add_tariff_index_row(df, tariff_index):

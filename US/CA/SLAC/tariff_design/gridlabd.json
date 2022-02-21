@@ -5481,231 +5481,231 @@
 			"current_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 1, also acts as accumulator"
 			},
 			"current_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 2, also acts as accumulator"
 			},
 			"current_N" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase N, also acts as accumulator"
 			},
 			"current_1_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 1, real"
 			},
 			"current_2_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 2, real"
 			},
 			"current_N_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase N, real"
 			},
 			"current_1_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 1, imag"
 			},
 			"current_2_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 2, imag"
 			},
 			"current_N_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase N, imag"
 			},
 			"current_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 1 to 2"
 			},
 			"current_12_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 1 to 2, real"
 			},
 			"current_12_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "A",
 				"description" : "deprecated - use triplex_load - constant current load on phase 1 to 2, imag"
 			},
 			"power_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VA",
 				"description" : "deprecated - use triplex_load - constant power on phase 1 (120V)"
 			},
 			"power_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VA",
 				"description" : "deprecated - use triplex_load - constant power on phase 2 (120V)"
 			},
 			"power_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VA",
 				"description" : "deprecated - use triplex_load - constant power on phase 1 to 2 (240V)"
 			},
 			"power_1_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "W",
 				"description" : "deprecated - use triplex_load - constant power on phase 1, real"
 			},
 			"power_2_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "W",
 				"description" : "deprecated - use triplex_load - constant power on phase 2, real"
 			},
 			"power_12_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "W",
 				"description" : "deprecated - use triplex_load - constant power on phase 1 to 2, real"
 			},
 			"power_1_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VAr",
 				"description" : "deprecated - use triplex_load - constant power on phase 1, imag"
 			},
 			"power_2_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VAr",
 				"description" : "deprecated - use triplex_load - constant power on phase 2, imag"
 			},
 			"power_12_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "VAr",
 				"description" : "deprecated - use triplex_load - constant power on phase 1 to 2, imag"
 			},
 			"shunt_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "S",
 				"description" : "deprecated - use triplex_load - constant shunt impedance on phase 1"
 			},
 			"shunt_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "S",
 				"description" : "deprecated - use triplex_load - constant shunt impedance on phase 2"
 			},
 			"shunt_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "S",
 				"description" : "deprecated - use triplex_load - constant shunt impedance on phase 1 to 2"
 			},
 			"impedance_1" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 1"
 			},
 			"impedance_2" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 2"
 			},
 			"impedance_12" : {
 				"type" : "complex",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 1 to 2"
 			},
 			"impedance_1_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 1, real"
 			},
 			"impedance_2_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 2, real"
 			},
 			"impedance_12_real" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 1 to 2, real"
 			},
 			"impedance_1_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 1, imag"
 			},
 			"impedance_2_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 2, imag"
 			},
 			"impedance_12_reac" : {
 				"type" : "double",
 				"access" : "PUBLIC",
-				"flags" : "DEPRECATED",
+				"flags" : "RECALC|CHARSET|EXTENDED|DEPRECATED|REQUIRED|OUTPUT|DYNAMIC",
 				"unit" : "Ohm",
 				"description" : "deprecated - use triplex_load - constant series impedance on phase 1 to 2, imag"
 			},
@@ -13895,7 +13895,7 @@
 		"suppress_repeat_messages" : {
 			"type" : "bool",
 			"access" : "PUBLIC",
-			"value" : "FALSE"
+			"value" : "TRUE"
 		},
 		"maximum_synctime" : {
 			"type" : "int32",
@@ -14532,7 +14532,7 @@
 		"WEATHER_STATION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "CA-San_Francisco_Al_Ap"
+			"value" : "CA-San_Francisco_Intl_Ap"
 		},
 		"STARTTIME" : {
 			"type" : "char1024",
@@ -14574,15 +14574,10 @@
 			"access" : "PUBLIC",
 			"value" : "Region R"
 		},
-		"TARIFF_INDEX" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "0"
-		},
 		"tariff_index" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "0"
+			"value" : "@r#bM\u007F"
 		},
 		"tape::gnuplot_path" : {
 			"type" : "char1024",
@@ -15247,15 +15242,15 @@
 			"id" : "0",
 			"class" : "climate",
 			"rank" : "0",
-			"clock" : "2020-01-01 00:00:00 PST",
+			"clock" : "INIT",
 			"rng_state" : "16597",
-			"guid" : "77C8BDF80CC9F17A507E1E7AFBBAC33A",
+			"guid" : "34183BB63291349CF32BACD8F6FA24C",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
 			"solar_zenith": "0 rad",
 			"city": "",
-			"tmyfile": "CA-San_Francisco_Al_Ap.tmy3",
+			"tmyfile": "CA-San_Francisco_Intl_Ap.tmy3",
 			"temperature": "59 degF",
 			"humidity": "0.75 pu",
 			"solar_flux": "0 W/sf",
@@ -15307,7 +15302,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "41F4140C09F3E867D52F7091AE2B016",
+			"guid" : "629EFC4A668FAA1A668C4F69BAA04D60",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15443,7 +15438,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "280AB5A021FBB52C4430E3F88550684B",
+			"guid" : "5F1B6E9C1BECA3BA65AB824E75B2371F",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1500 sf",
@@ -15629,7 +15624,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "32738",
-			"guid" : "117A48B4918709654ECE0728A46830D3",
+			"guid" : "215AA6740D13F82B20CF88C7102079A1",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15666,7 +15661,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "5E6344D6E82C579C5F39A2834F77274B",
+			"guid" : "4493B741F31E978015F6187A908D98B3",
 			"flags" : "0x0",
 			"tariff": "tariff",
 			"meter": "test_meter",
