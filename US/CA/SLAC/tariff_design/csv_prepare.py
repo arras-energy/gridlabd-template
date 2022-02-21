@@ -7,7 +7,6 @@ from dateutil import parser
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import sys
-import os 
 # figure out gridlabd warning with gridlabd.set_global 
 # maybe check start time with end time. 
 # try to move stuff to openfido/tariff_design afterwards
