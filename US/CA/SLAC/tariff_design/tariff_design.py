@@ -41,7 +41,7 @@ def read_tariff(pathtocsv, tariff_counter):
 	df = utility_active[mask].reset_index()
 
 	if df.shape[0] > 1:
-		idx = gridlabd.get_global("TARIFF_INDEX_SPECIFIC")
+		idx = gridlabd.get_global("TARIFF_INDEX_SPECIFIC") # multiple tariffs match, so get specific one
 		if (idx == None or int(idx) >= df.shape[0]):
 			gridlabd.error("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice below in config.csv.")
 			for i in range(df.shape[0]):
@@ -165,6 +165,7 @@ def on_init(t):
 	#t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
 	
 	global tariff_df # reads tariff on init 
+	
 	tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
 
 	return True

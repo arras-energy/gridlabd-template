@@ -138,6 +138,10 @@ def parse_tariff_region(value, row, df,tariff_index_file):
         raise ValueError(f"Could not match {value} with elements in {unique_tariff_region}.")
 def parse_tariff_inclining_block_rate(value, row, df,tariff_index_file): 
     raise NotImplementedError
+
+def parse_tariff_index_specific(value, row, df, tariff_index_file):
+    if (not value.isdigit()):
+        raise ValueError(f"{value} must be an integer.")
 def default(value, row, df,tariff_index_file): 
     """ Handles unsupported values. Raises warning. 
     """
@@ -158,7 +162,8 @@ def parse_csv_values(df,tariff_index_file):
     "TARIFF_NAME": parse_tariff_name,
     "TARIFF_TYPE": parse_tariff_type,
     "TARIFF_REGION":parse_tariff_region,
-    "TARIFF_INCLINING_BLOCK_RATE":parse_tariff_inclining_block_rate
+    "TARIFF_INCLINING_BLOCK_RATE":parse_tariff_inclining_block_rate,
+    "TARIFF_INDEX_SPECIFIC":parse_tariff_index_specific
     }
     for index, row in df.iterrows():
         df.at[index, df_column_two_name] = row[df_column_two_name].strip()
