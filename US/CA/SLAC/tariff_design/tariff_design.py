@@ -41,10 +41,13 @@ def read_tariff(pathtocsv, tariff_counter):
 	df = utility_active[mask].reset_index()
 
 	if df.shape[0] > 1:
-		print("Not enough information provided to define tariff: ", df.shape[0]," tariffs generated.")
-		for i in range(df.shape[0]):
-			print("Index",i,": ", df.iloc[i,3]) # print df name
-		idx = int(input("Enter desired tariff index: "))
+		idx = gridlabd.get_global("TARIFF_INDEX_SPECIFIC")
+		if (idx == None or int(idx) >= df.shape[0]):
+			gridlabd.error("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice below in config.csv.")
+			for i in range(df.shape[0]):
+				print("Index",i,": ", df.iloc[i,3]) # print df name
+			raise Exception()
+		idx = int(idx)
 		tariff_data = pandas.DataFrame(data=df.iloc[[idx]]).reset_index(drop=True)
 		# This is currently rasiing errors in docker?
 	elif df.shape[0] == 0:
@@ -158,7 +161,6 @@ def on_init(t):
 		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
 
 	t_counter = int(gridlabd.get_global("tariff_index"))
-	
 	# removed to get rid of terminal input
 	#t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
 	
@@ -306,6 +308,7 @@ def on_term(t):
 
 
 	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"), "Total power:", gridlabd.get_value(bill_name,"total_power"))
+	# Removes + sign at the beginning of string
 	df = pandas.DataFrame([[total_charges_split[0][1:], total_charges_split[1]], [total_usage_split[0][1:], total_usage_split[1]], [billing_hrs[1:], "hrs"], [total_power_split[0][1:], total_power_split[1]]], ["Total Charges", "Total Usage", "Total Duration", "Total Power"],["Value", "Units"])
 	print(df)
 	df.to_csv('output.csv')
