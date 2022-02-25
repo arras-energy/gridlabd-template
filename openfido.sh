@@ -27,7 +27,7 @@ fi
 
 if ! ls -1 $OPENFIDO_INPUT/config.csv; then
   echo "ERROR [openfido.sh]: input config.csv file not found" > /dev/stderr
-  exit 1
+  error
 fi
 
 
@@ -47,8 +47,7 @@ WEATHER_STATION_INDEX_NUMBER=0
 python3 -m pip install -r  requirements.txt
 python3 csv_prepare.py 
 
-if [ $? != 0 ];
-then
+if [ $? != 0 ]; then
     error
 fi
 
