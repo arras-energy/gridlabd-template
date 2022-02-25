@@ -169,7 +169,7 @@ def on_init(t):
 	try:
 		tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
 	except ValueError as e:
-		print(e)
+		gridlabd.error(e)
 		sys.exit(1) 
 
 	return True
