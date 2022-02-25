@@ -187,8 +187,8 @@ def generate_tariff_index(df, df_tariff_index):
     """ Generates tariff index (row number in tariff_config) based on matching values of df (config.csv) and df_tariff_index
     """
     def raise_tariff_index_error():
-        raise ValueError(f"Tariff inputs resulted in no matches. Please replace values TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME with the closest matches listed below.\n"\
-                + df_tariff_index[["utility","region","name"]].to_string())
+        raise ValueError(f"Tariff inputs did not result in unique value. Please replace values TARIFF_UTILITY, TARIFF_REGION, TARIFF_NAME with the closest matches listed below."\
+                + " Empty list indicates no closest matches.\n" + df_tariff_index[["utility","region","name"]].to_string())
 
     tariff_utility = ""
     tariff_sector = ""
@@ -227,7 +227,7 @@ def generate_tariff_index(df, df_tariff_index):
         df_tariff_index = df_copy
     if (tariff_name != ""):
         df_copy = df_tariff_index.query('name == @tariff_name', inplace = False)
-        if (len(df_copy) == 0 or len(df_copy) > 1):
+        if (len(df_copy) == 0):
             raise_tariff_index_error()
         df_tariff_index = df_copy
 
@@ -243,7 +243,8 @@ def generate_tariff_index(df, df_tariff_index):
     #     print(df_tariff_index.index.get_level_values(0))
     #     return -1 
 
-
+    if (len(df_tariff_index) > 1):
+        raise_tariff_index_error()
     return df_tariff_index.index.tolist()[0]
         
 
