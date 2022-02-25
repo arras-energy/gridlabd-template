@@ -14567,22 +14567,17 @@
 		"TARIFF_NAME" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "hi"
+			"value" : "E-1"
 		},
 		"TARIFF_REGION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "Region R"
-		},
-		"TARIFF_INDEX" : {
-			"type" : "char1024",
-			"access" : "PUBLIC",
-			"value" : "2"
+			"value" : "Region T"
 		},
 		"tariff_index" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "2"
+			"value" : "@\"\uFFB3y}\u007F"
 		},
 		"tape::gnuplot_path" : {
 			"type" : "char1024",
@@ -15249,7 +15244,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "16597",
-			"guid" : "169CEF8688755BD318F3F108AB66EE77",
+			"guid" : "3729AA94FC0844862067C1FB7F5F0F40",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
@@ -15307,7 +15302,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "4B51A3A30603BB502E48F4A3EF191FB3",
+			"guid" : "2F66816E0DDFA0394B79AA1CAA563CB5",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15443,7 +15438,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "2FEC3E88A56607792BDC3DB3DFCB295C",
+			"guid" : "7F69780B0CB7138E6F9FA7E489DF66BD",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1500 sf",
@@ -15629,7 +15624,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "32738",
-			"guid" : "F3DE7B905CC8DC2367AA18010582046",
+			"guid" : "674627C386C1AF01AC52D55AEE7C517",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15666,7 +15661,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "203F910E20B7491E3136FC9B35A9080B",
+			"guid" : "13781520BB8A09072E30C5C15D7B468E",
 			"flags" : "0x0",
 			"tariff": "tariff",
 			"meter": "test_meter",
