@@ -310,7 +310,6 @@ def main():
         gridlabd.error(str(e))
         sys.exit(1)
     df.to_csv("config.csv", index = False)
-    print_verbose(f"*** INITIAL {config_file} PARSING COMPLETE ***")
 
 if __name__ == "__main__":
     main()

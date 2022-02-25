@@ -45,12 +45,16 @@ WEATHER_STATION=""
 WEATHER_STATION_INDEX_NUMBER=0
 
 python3 -m pip install -r  requirements.txt
+
+echo "Parsing config.csv..."
 python3 csv_prepare.py 
+echo "*** CONFIG.CSV PARSING SUCCESS ***"
 
 if [ $? != 0 ]; then
     error
 fi
 
+echo "Matching weather station values..."
 # rows can be in any order
 while IFS=, read -r field1 field2 || [ -n "$field1" ]
 do
@@ -83,9 +87,11 @@ else
     echo "ERROR [TARIFF_DESIGN] : Could not find matching weather stations. Please check capitalization and spelling."  > /dev/stderr
     error
 fi
-
+echo "*** WEATHER STATION UNIQUE MATCH SUCCESS ***"
 
 # put -t to get template online
+
+echo "Running gridlabd simulation..."
 gridlabd $MODEL_NAME_INPUT tariff_design.glm
 if [ $OUTPUT_NAME_INPUT != "output.csv" ]; then
   mv output.csv $OUTPUT_NAME_INPUT
@@ -93,5 +99,12 @@ fi
 
 mv $OUTPUT_NAME_INPUT $OPENFIDO_OUTPUT
 
+echo '*** OUTPUTS ***'
+ls -l $OPENFIDO_OUTPUT
+
+echo '*** RUN COMPLETE ***'
+echo 'See Data Visualization and Artifacts for results.'
+
+echo '*** END ***'
 
 exit 0
