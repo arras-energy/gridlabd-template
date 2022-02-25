@@ -10,16 +10,23 @@ set -x
 # later, get the value and put it back
 # gridlabd -D suppress_repeat_messages=FALSE
 
+error()
+{
+    echo '*** ABNORMAL TERMINATION ***'
+    echo 'See error Console Output stderr for details.'
+    echo "See https://github.com/openfido/loadshape for help"
+    exit 1
+}
 echo "OPENFIDO_INPUT = $OPENFIDO_INPUT"
 echo "OPENFIDO_OUTPUT = $OPENFIDO_OUTPUT"
 
 if ! ls -1 $OPENFIDO_INPUT/*.glm; then
-  echo "Input .glm file not found"
-  exit 1
+  echo "ERROR [openfido.sh]: input .glm file not found" > /dev/stderr
+  error
 fi
 
 if ! ls -1 $OPENFIDO_INPUT/config.csv; then
-  echo "Input config.csv file not found"
+  echo "ERROR [openfido.sh]: input config.csv file not found" > /dev/stderr
   exit 1
 fi
 
@@ -42,7 +49,7 @@ python3 csv_prepare.py
 
 if [ $? != 0 ];
 then
-    exit 1 
+    error
 fi
 
 # rows can be in any order
@@ -70,11 +77,11 @@ if [ $WEATHER_STATION_INDEX_NUMBER -eq 1 ] ; then
     WEATHER_STATION_PARSED=$(basename $WEATHER_STATION_LIST .tmy3)
     gawk -i inplace -F ',' '{gsub(find,replace,$2); print}' find="$WEATHER_STATION" replace="$WEATHER_STATION_PARSED" OFS="," config.csv
 elif [ $WEATHER_STATION_INDEX_NUMBER -gt 1 ] ; then
-    echo "ERROR [TARIFF_DESIGN] : Could not find unique weather station. Please specify from list below:\n$WEATHER_STATION_LIST"
-    exit 1
+    echo "ERROR [TARIFF_DESIGN] : Could not find unique weather station. Please specify from list below:\n$WEATHER_STATION_LIST"  > /dev/stderr
+    error
 else 
-    echo "ERROR [TARIFF_DESIGN] : Could not find matching weather stations. Please check capitalization and spelling."
-    exit 1
+    echo "ERROR [TARIFF_DESIGN] : Could not find matching weather stations. Please check capitalization and spelling."  > /dev/stderr
+    error
 fi
 
 

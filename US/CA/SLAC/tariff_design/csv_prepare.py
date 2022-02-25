@@ -13,6 +13,7 @@ import sys
 # submit application to gridabld 
 # currently row index 1,5,6,8 isn't active in OpenEI, 3,7  requires more specificaiton, only 0,2,4,9 works
 # check power - line 274
+# add verbose and stuff
 # TODO: catch exception in Jewel's cdoe
 
 df_column_one_name = "Header" # config.csv column one name 
@@ -143,6 +144,8 @@ def parse_tariff_inclining_block_rate(value, row, df,tariff_index_file):
 def parse_tariff_index_specific(value, row, df, tariff_index_file):
     if (not value.isdigit()):
         raise ValueError(f"{value} must be an integer.")
+def parse_verbose(value,row,df,tariff_index_file):
+    verbose = (value == 'True')
 def default(value, row, df,tariff_index_file): 
     """ Handles unsupported values. Raises warning. 
     """
@@ -164,7 +167,7 @@ def parse_csv_values(df,tariff_index_file):
     "TARIFF_TYPE": parse_tariff_type,
     "TARIFF_REGION":parse_tariff_region,
     "TARIFF_INCLINING_BLOCK_RATE":parse_tariff_inclining_block_rate,
-    "TARIFF_INDEX_SPECIFIC":parse_tariff_index_specific
+    "TARIFF_INDEX_SPECIFIC":parse_tariff_index_specific,
     }
     for index, row in df.iterrows():
         df.at[index, df_column_two_name] = row[df_column_two_name].strip()
@@ -267,7 +270,7 @@ def add_tariff_index_row(df, tariff_index):
 
 def main():
     #gridlabd.set_global("suppress_repeat_messages","FALSE")
-
+    print_verbose(f"Reading {tariff_index} file...")
     try:
         df_tariff_index = pd.read_csv(tariff_index_file)
     except FileNotFoundError:
@@ -276,9 +279,9 @@ def main():
     except pd.errors.EmptyDataError:
         gridlabd.error(f"{tariff_index_file} file empty")
         sys.exit(1)
+    print_verbose(f"Read {tariff_index} file success.")
 
-    gridlabd.output(f"Reading input {config_file}...")
-
+    print_verbose(f"Reading {config_file} file...")
     try:
         df = pd.read_csv(config_file)
     except FileNotFoundError:
@@ -287,15 +290,26 @@ def main():
     except pd.errors.EmptyDataError:
         gridlabd.error(f"{config_file} file not found")
         sys.exit(1)
+    print_verbose(f"Read {config_file} file success.")
+
 
     try:
+        print_verbose("Checking column names...")
         is_column_names_valid(df)
+        print_verbose("Check column names sucess.")
+
+        print_verbose(f"Parsing {config_file} column values...")
         parse_csv_values(df,df_tariff_index)
+        print_verbose(f"Parse {config_file} column values success")
+
+        print_verbose(f"Generating TARIFF_INDEX...")
         df = add_tariff_index_row(df,generate_tariff_index(df, df_tariff_index))
+        print_verbose(f"TARIFF_INDEX generation success")
     except ValueError as e:
         gridlabd.error(str(e))
         sys.exit(1)
     df.to_csv("config.csv", index = False)
+    print_verbose(f"*** INITIAL {config_file} PARSING COMPLETE ***")
 
 if __name__ == "__main__":
     main()
