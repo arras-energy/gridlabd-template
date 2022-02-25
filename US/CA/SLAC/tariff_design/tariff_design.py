@@ -5,6 +5,7 @@ import pandas
 import datetime
 from dateutil import parser
 import re
+import sys
 
 def to_float(x):
 	return float(x.split(' ')[0])
@@ -43,15 +44,14 @@ def read_tariff(pathtocsv, tariff_counter):
 	if df.shape[0] > 1:
 		idx = gridlabd.get_global("TARIFF_INDEX_SPECIFIC") # multiple tariffs match, so get specific one
 		if (idx == None or int(idx) >= df.shape[0]):
-			gridlabd.error("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice below in config.csv.")
 			for i in range(df.shape[0]):
 				print("Index",i,": ", df.iloc[i,3]) # print df name
-			raise Exception()
+			raise ValueError("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice above in config.csv.")
 		idx = int(idx)
 		tariff_data = pandas.DataFrame(data=df.iloc[[idx]]).reset_index(drop=True)
 		# This is currently rasiing errors in docker?
 	elif df.shape[0] == 0:
-		raise Exception("No active tariff found in OpenEi database matching information. Simulation ending") 
+		raise ValueError("No active tariff found in OpenEi database matching information. Simulation ending") 
 		# there are other methods to exit simulation but this makes sense
 	else:
 		tariff_data = df
@@ -166,7 +166,11 @@ def on_init(t):
 	
 	global tariff_df # reads tariff on init 
 	
-	tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
+	try:
+		tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
+	except ValueError as e:
+		print(e)
+		sys.exit(1) 
 
 	return True
 

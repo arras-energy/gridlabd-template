@@ -14564,15 +14564,25 @@
 			"access" : "PUBLIC",
 			"value" : "Pacific Gas & Electric Co"
 		},
+		"TARIFF_NAME" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "hi"
+		},
 		"TARIFF_REGION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "Region T"
+			"value" : "Region R"
+		},
+		"TARIFF_INDEX" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "2"
 		},
 		"tariff_index" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "@\u0012\uFF9D\f\uFFCB\u007F"
+			"value" : "2"
 		},
 		"tape::gnuplot_path" : {
 			"type" : "char1024",
@@ -15239,7 +15249,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "16597",
-			"guid" : "59D5DC2B7DB8950A3E6DBEDD731997E4",
+			"guid" : "169CEF8688755BD318F3F108AB66EE77",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
@@ -15297,7 +15307,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "8E5AA91CDAB7DA41758848B29939D18",
+			"guid" : "4B51A3A30603BB502E48F4A3EF191FB3",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15433,7 +15443,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "4759A19AE1E2DDC2B50F071D2E50428",
+			"guid" : "2FEC3E88A56607792BDC3DB3DFCB295C",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1500 sf",
@@ -15619,7 +15629,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "32738",
-			"guid" : "58C077924974ECB2229F697048CC71C9",
+			"guid" : "F3DE7B905CC8DC2367AA18010582046",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15656,7 +15666,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "57DB7A7CB298E5B749FEE4F2149C38C",
+			"guid" : "203F910E20B7491E3136FC9B35A9080B",
 			"flags" : "0x0",
 			"tariff": "tariff",
 			"meter": "test_meter",

@@ -13,6 +13,7 @@ import sys
 # submit application to gridabld 
 # currently row index 1,5,6,8 isn't active in OpenEI, 3,7  requires more specificaiton, only 0,2,4,9 works
 # check power - line 274
+# TODO: catch exception in Jewel's cdoe
 
 df_column_one_name = "Header" # config.csv column one name 
 df_column_two_name = "Value" # config.csv column two name 
@@ -109,7 +110,7 @@ def parse_tariff_name(value, row, df,tariff_index_file):
     elif len(match_list) > 1:
         raise ValueError(f"Found multiple matches for {value}. On success, ignore warning. On failure, please specify from the list below:\n{match_list}")
     else:
-        raise ValueError(f"Could not match {value} with elements in {unique_utility}.")
+        raise ValueError(f"Could not match {value} with elements in {unique_tariff_name}.")
 def parse_tariff_type(value, row, df,tariff_index_file):
     """ Currently not needed and is just a function stub.
     """
