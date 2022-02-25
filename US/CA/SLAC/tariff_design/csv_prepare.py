@@ -270,7 +270,7 @@ def add_tariff_index_row(df, tariff_index):
 
 def main():
     #gridlabd.set_global("suppress_repeat_messages","FALSE")
-    print_verbose(f"Reading {tariff_index} file...")
+    print_verbose(f"Reading {tariff_index_file} file...")
     try:
         df_tariff_index = pd.read_csv(tariff_index_file)
     except FileNotFoundError:
@@ -279,7 +279,7 @@ def main():
     except pd.errors.EmptyDataError:
         gridlabd.error(f"{tariff_index_file} file empty")
         sys.exit(1)
-    print_verbose(f"Read {tariff_index} file success.")
+    print_verbose(f"Read {tariff_index_file} file success.")
 
     print_verbose(f"Reading {config_file} file...")
     try:
