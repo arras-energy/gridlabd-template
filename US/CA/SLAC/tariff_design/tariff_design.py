@@ -46,7 +46,7 @@ def read_tariff(pathtocsv, tariff_counter):
 		if (idx == None or int(idx) >= df.shape[0]):
 			for i in range(df.shape[0]):
 				print("Index",i,": ", df.iloc[i,3]) # print df name
-			raise ValueError("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice above in config.csv.")
+			raise ValueError("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice in stdout.")
 		idx = int(idx)
 		tariff_data = pandas.DataFrame(data=df.iloc[[idx]]).reset_index(drop=True)
 		# This is currently rasiing errors in docker?

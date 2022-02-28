@@ -13632,7 +13632,7 @@
 		"command_line" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.29-220103-master/bin/gridlabd.bin model.glm tariff_design.glm"
+			"value" : "/usr/local/opt/gridlabd/4.2.29-220103-master/bin/gridlabd.bin model.glm -t tariff_design"
 		},
 		"environment" : {
 			"type" : "char1024",
@@ -14567,17 +14567,17 @@
 		"TARIFF_NAME" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "E-1"
+			"value" : "E-TOU-C3"
 		},
 		"TARIFF_REGION" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "Region T"
+			"value" : "Region R"
 		},
 		"tariff_index" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
-			"value" : "@\"\uFFB3y}\u007F"
+			"value" : "@\u0012"
 		},
 		"tape::gnuplot_path" : {
 			"type" : "char1024",
@@ -15244,7 +15244,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "16597",
-			"guid" : "3729AA94FC0844862067C1FB7F5F0F40",
+			"guid" : "44A41A2C9F788EA24F510378F06A43D0",
 			"flags" : "0x0",
 			"solar_elevation": "0 rad",
 			"solar_azimuth": "0 rad",
@@ -15302,7 +15302,7 @@
 			"rank" : "1",
 			"clock" : "INIT",
 			"rng_state" : "26015",
-			"guid" : "2F66816E0DDFA0394B79AA1CAA563CB5",
+			"guid" : "5FB3A95028FE6976150DF22647BD72EC",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15438,7 +15438,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "17537",
-			"guid" : "7F69780B0CB7138E6F9FA7E489DF66BD",
+			"guid" : "426E7B0C4CBEB3FC6C1500E67FC76C",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1500 sf",
@@ -15624,7 +15624,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "32738",
-			"guid" : "674627C386C1AF01AC52D55AEE7C517",
+			"guid" : "5A6A452C50400ED45B54CEABA3C4D4C4",
 			"flags" : "0x0",
 			"rate_design": "",
 			"peak_tier0": "0 kWh/day",
@@ -15661,7 +15661,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "118",
-			"guid" : "13781520BB8A09072E30C5C15D7B468E",
+			"guid" : "39C759F99B66103A1D75A01E065E900",
 			"flags" : "0x0",
 			"tariff": "tariff",
 			"meter": "test_meter",

@@ -1,0 +1,11 @@
+#define Header=Value
+#define WEATHER_STATION=CA-San_Francisco_Intl_Ap
+#define STARTTIME=2020-01-01T00:00:00-00:00
+#define STOPTIME=2020-01-01T00:00:00-12:00
+#define TIMEZONE=PST+8PDT
+#define MODEL=model.glm
+#define OUTPUT=output.csv
+#define TARIFF_UTILITY=Pacific Gas & Electric Co
+#define TARIFF_NAME=E-TOU-C3
+#define TARIFF_REGION=Region R
+#define TARIFF_INDEX=0
