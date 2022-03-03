@@ -14,13 +14,15 @@ def to_datetime(x,format):
 	return parser.parse(x)
 
 def read_tariff(pathtocsv, tariff_counter):
+
+	__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 	# reads USA tariff csv usurdb.csv from OpenEi
 	pandas.set_option("max_rows",None)
 	pandas.set_option("max_columns",None)
 	data = pandas.read_csv("usurdb.csv",low_memory=False)
 
 	# read in csv file depending on tariff counter value
-	with open(pathtocsv) as fp:
+	with open(os.path.join(__location__, pathtocsv)) as fp:
 		reader = csv.reader(fp, skipinitialspace=True, delimiter=",")
 		next(reader)
 		tariff_input = [row for row in reader]
