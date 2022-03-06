@@ -7,6 +7,11 @@ from dateutil import parser
 import re
 import sys
 
+# Adding graph visualization outline:
+# Goal: Group the four results by month and year.
+# 1) Create list of tuple (. Inner list for the months. Outer lists for the years. Inner list contains tuple of month and 
+# 2) Grab clock and check for date. First date
+
 def to_float(x):
 	return float(x.split(' ')[0])
 
@@ -167,6 +172,22 @@ def on_init(t):
 	#t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
 	
 	global tariff_df # reads tariff on init 
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
+	print(clock.year)
+	print(clock.month)
+	# For graphing
+	global results_list
+	global prev_year
+	global prev_month
+	global current_results_dict 
+	current_results_dict = {"charges" : 0, "usage" : 0, "duration" : 0, "power" : 0}
+
+	# Will hold a triple nested list. Inner most list contains 12 elements for the results of each month. Middle list holds 4 elements, 1 for each result type. Outer list
+	# holds years of the element. Can get year by seeing how many elements in biggest list and subtract from end of simulation. 
+	results_list = []
+	results_list.append([[0 for j in range (12)] for i in range(4)])
+	prev_year = clock.year
+	prev_month = clock.month
 	
 	try:
 		tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
@@ -179,11 +200,22 @@ def on_init(t):
 def on_commit(t):
 
 	# TEST THIS CODE
-	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
 	hour = clock.hour
+	year = clock.year 
+	month = clock.month
+
+
+
+
 
 	if seconds % 3600 == 0: # can add error flag if it skips an hour just assume it works
+
+		global prev_year
+		global prev_month
+		global current_results_dict
+
 
 		bill = gridlabd.get_object("test_bill")
 		bill_name = bill["name"]
@@ -191,6 +223,43 @@ def on_commit(t):
 		meter_name = meter["name"]
 		tariff = gridlabd.get_object("tariff")
 		tariff_name = tariff["name"]
+
+
+		if prev_month != month:
+			
+			total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
+			total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
+			total_duration = to_float(gridlabd.get_value(bill_name,"billing_hrs"))
+			total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
+
+			charges_current_month = total_charges - current_results_dict["charges"]
+			usage_current_month = total_usage - current_results_dict["usage"]
+			hrs_current_month = total_duration - current_results_dict["duration"]
+			power_current_month = total_power - current_results_dict["power"]
+
+			current_results_dict["charges"] = total_charges
+			current_results_dict["usage"] = total_usage
+			current_results_dict["duration"] = total_duration
+			current_results_dict["power"] = total_power
+
+
+			# print(charges_current_month)
+			# print(usage_current_month)
+			# print(hrs_current_month)
+			# print(power_current_month)
+
+			results_list[-1][0][prev_month-1] = charges_current_month
+			results_list[-1][1][prev_month-1] = usage_current_month
+			results_list[-1][2][prev_month-1] = hrs_current_month
+			results_list[-1][3][prev_month-1] = power_current_month
+			print(results_list)
+			prev_month = month
+		if prev_year != year:
+			prev_year = year
+			new_year_list = [[0 for j in range (12)] for i in range(4)] # 12 for number of months, 4 for the number of results
+			results_list.append(new_year_list)
+
+		
 
 		# 7/19 TESTING MOVING THIS CODE TO ON_INIT TO SPEED UP RUN TIME
 		#path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
@@ -298,10 +367,45 @@ def on_commit(t):
 	return gridlabd.NEVER
 
 def on_term(t):
+	#remember to graph remaining of a month
+
+
+
 	bill = gridlabd.get_object("test_bill")
 	bill_name = bill["name"]
 	triplex_meter = gridlabd.get_object("test_meter")
 	meter_name = triplex_meter["name"]
+
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
+	year = clock.year 
+	month = clock.month
+
+	total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
+	total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
+	total_duration = to_float(gridlabd.get_value(bill_name,"billing_hrs"))
+	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
+
+	charges_current_month = total_charges - current_results_dict["charges"]
+	usage_current_month = total_usage - current_results_dict["usage"]
+	hrs_current_month = total_duration - current_results_dict["duration"]
+	power_current_month = total_power - current_results_dict["power"]
+
+	current_results_dict["charges"] = total_charges
+	current_results_dict["usage"] = total_usage
+	current_results_dict["duration"] = total_duration
+	current_results_dict["power"] = total_power
+
+
+	# print(charges_current_month)
+	# print(usage_current_month)
+	# print(hrs_current_month)
+	# print(power_current_month)
+
+	results_list[-1][0][month-1] = charges_current_month
+	results_list[-1][1][month-1] = usage_current_month
+	results_list[-1][2][month-1] = hrs_current_month
+	results_list[-1][3][month-1] = power_current_month
+	print(results_list)
 	# Search for floating point 
 	# total_charges = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_charges")))
 	# total_usage = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_usage")))
