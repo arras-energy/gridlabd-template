@@ -6,11 +6,13 @@ import datetime
 from dateutil import parser
 import re
 import sys
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
-# Adding graph visualization outline:
-# Goal: Group the four results by month and year.
-# 1) Create list of tuple (. Inner list for the months. Outer lists for the years. Inner list contains tuple of month and 
-# 2) Grab clock and check for date. First date
+# global constants for indecies of results_list 
+CHARGES_INDEX = 0 
+USAGE_INDEX = 1
+POWER_INDEX = 2
 
 def to_float(x):
 	return float(x.split(' ')[0])
@@ -138,6 +140,8 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 
 	return rates, schedule
 
+
+
 def on_init(t):
 	# downloads csv file from OpenEi database if not already downloaded
 	if not os.path.exists('usurdb.csv'):
@@ -173,19 +177,21 @@ def on_init(t):
 	
 	global tariff_df # reads tariff on init 
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
-	print(clock.year)
-	print(clock.month)
 	# For graphing
-	global results_list
+
+	# Will hold a triple nested list. Inner most list contains 12 elements for the results of each month. Middle list holds 3 elements, 1 for each result type. Outer list
+	# holds years of the element. Can get year by seeing how many elements in biggest list and subtract from end of simulation. 
+	global results_list 
 	global prev_year
 	global prev_month
+	
+	# Holds cumulative values. 
 	global current_results_dict 
-	current_results_dict = {"charges" : 0, "usage" : 0, "duration" : 0, "power" : 0}
+	current_results_dict = {"charges" : 0, "usage" : 0, "power" : 0}
 
-	# Will hold a triple nested list. Inner most list contains 12 elements for the results of each month. Middle list holds 4 elements, 1 for each result type. Outer list
-	# holds years of the element. Can get year by seeing how many elements in biggest list and subtract from end of simulation. 
+	# Initilaization 
 	results_list = []
-	results_list.append([[0 for j in range (12)] for i in range(4)])
+	results_list.append([[0 for j in range (12)] for i in range(3)])
 	prev_year = clock.year
 	prev_month = clock.month
 	
@@ -199,7 +205,6 @@ def on_init(t):
 
 def on_commit(t):
 
-	# TEST THIS CODE
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
 	hour = clock.hour
@@ -227,19 +232,17 @@ def on_commit(t):
 
 		if prev_month != month:
 			
+			# Update values for graphing when month changes 
 			total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
 			total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
-			total_duration = to_float(gridlabd.get_value(bill_name,"billing_hrs"))
 			total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
 
 			charges_current_month = total_charges - current_results_dict["charges"]
 			usage_current_month = total_usage - current_results_dict["usage"]
-			hrs_current_month = total_duration - current_results_dict["duration"]
 			power_current_month = total_power - current_results_dict["power"]
 
 			current_results_dict["charges"] = total_charges
 			current_results_dict["usage"] = total_usage
-			current_results_dict["duration"] = total_duration
 			current_results_dict["power"] = total_power
 
 
@@ -248,15 +251,15 @@ def on_commit(t):
 			# print(hrs_current_month)
 			# print(power_current_month)
 
-			results_list[-1][0][prev_month-1] = charges_current_month
-			results_list[-1][1][prev_month-1] = usage_current_month
-			results_list[-1][2][prev_month-1] = hrs_current_month
-			results_list[-1][3][prev_month-1] = power_current_month
-			print(results_list)
+			results_list[-1][CHARGES_INDEX][prev_month-1] = charges_current_month
+			results_list[-1][USAGE_INDEX][prev_month-1] = usage_current_month
+			results_list[-1][POWER_INDEX][prev_month-1] = power_current_month
+			
 			prev_month = month
 		if prev_year != year:
+			# Add element to results_list 
 			prev_year = year
-			new_year_list = [[0 for j in range (12)] for i in range(4)] # 12 for number of months, 4 for the number of results
+			new_year_list = [[0 for j in range (12)] for i in range(3)] # 12 for number of months, 3 for the number of results
 			results_list.append(new_year_list)
 
 		
@@ -366,6 +369,31 @@ def on_commit(t):
 
 	return gridlabd.NEVER
 
+def plot_graphs(current_year_results, current_year):
+	# Outputs a pdf of 3 graphs (charges, usage, power) for a certain year. 
+
+	def multiple_plot(X,Y, y_label):
+		fig = plt.figure()
+		fig.set_size_inches(15, 8)
+		plt.clf()
+		ax = fig.add_axes([0,0,1,1])
+		ax.bar(X,Y)
+		plt.xlabel('Months')
+		plt.ylabel(y_label)
+		plt.title(current_year)
+		pdf.savefig(bbox_inches="tight", dpi=150)
+	months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+	results_charges = current_year_results[CHARGES_INDEX]
+	results_usage = current_year_results[USAGE_INDEX]
+	results_power = current_year_results[POWER_INDEX]
+	pdf = PdfPages("results" + str(current_year) + ".pdf")
+	multiple_plot(months, results_charges, "Charges ($)")
+	multiple_plot(months, results_usage, "Usage (kWh)")
+	multiple_plot(months, results_power, "Power (W)")
+	pdf.close()
+
+
+
 def on_term(t):
 	#remember to graph remaining of a month
 
@@ -382,17 +410,14 @@ def on_term(t):
 
 	total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
 	total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
-	total_duration = to_float(gridlabd.get_value(bill_name,"billing_hrs"))
 	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
 
 	charges_current_month = total_charges - current_results_dict["charges"]
 	usage_current_month = total_usage - current_results_dict["usage"]
-	hrs_current_month = total_duration - current_results_dict["duration"]
 	power_current_month = total_power - current_results_dict["power"]
 
 	current_results_dict["charges"] = total_charges
-	current_results_dict["usage"] = total_usage
-	current_results_dict["duration"] = total_duration
+	current_results_dict["usage "] = total_usage
 	current_results_dict["power"] = total_power
 
 
@@ -401,11 +426,13 @@ def on_term(t):
 	# print(hrs_current_month)
 	# print(power_current_month)
 
-	results_list[-1][0][month-1] = charges_current_month
-	results_list[-1][1][month-1] = usage_current_month
-	results_list[-1][2][month-1] = hrs_current_month
-	results_list[-1][3][month-1] = power_current_month
-	print(results_list)
+	results_list[-1][CHARGES_INDEX][month-1] = charges_current_month
+	results_list[-1][USAGE_INDEX][month-1] = usage_current_month
+	results_list[-1][POWER_INDEX][month-1] = power_current_month
+
+
+	for i in range(len(results_list)):
+		plot_graphs(results_list[i], year - (len(results_list)-1) + i) # end year - (# of years in results list) = beginning year
 	# Search for floating point 
 	# total_charges = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_charges")))
 	# total_usage = re.search("\d+[\.]?[\d+]*", str(gridlabd.get_value(bill_name,"total_usage")))
@@ -423,6 +450,10 @@ def on_term(t):
 	df = pandas.DataFrame([[total_charges_split[0][1:], total_charges_split[1]], [total_usage_split[0][1:], total_usage_split[1]], [billing_hrs[1:], "hrs"], [total_power_split[0][1:], total_power_split[1]]], ["Total Charges", "Total Usage", "Total Duration", "Total Power"],["Value", "Units"])
 	print(df)
 	df.to_csv('output.csv')
+
+
+
+
 
 
 	# Add writing to own csv here?
