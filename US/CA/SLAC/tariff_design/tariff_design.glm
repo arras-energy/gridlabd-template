@@ -47,16 +47,20 @@ class billing {
 	double total_usage[kWh];
 	double billing_hrs;
 	double total_power[W];
+	double peak_power[W];
 }
 
+#for meter in ${FIND class=triplex_meter}
 object billing {
-	name "test_bill";
-	meter "test_meter";
+	name "bill_${meter}";
+	meter "${meter}";
 	tariff "tariff";
 	billing_hrs "0.0";	
 	total_charges "0.0";
 	usage "0.0";
 	total_usage "0.0";
 	total_power "0.0";
+	peak_power "0.0";
 }
+#done
 
