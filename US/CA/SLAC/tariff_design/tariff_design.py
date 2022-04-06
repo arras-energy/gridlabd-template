@@ -17,9 +17,12 @@ import logging
 # Try to put constraints on histogram to produce nicer looking histograms
 # Put parents for the triplex_meter list and work out the code for that 
 # Cite what i got from online
+# Probably a bug with globals schedule and rates
+# First few hours of everyday seem to work. Sometimes last few hours work too. 
 CHARGES_INDEX = 0 
 USAGE_INDEX = 1
 POWER_INDEX = 2
+
 
 def to_float(x):
 	return float(x.split(' ')[0])
@@ -102,7 +105,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
 
 	lookup = set()
-	global rates
+	#global rates
 	rates = [x for x in schedule if x not in lookup and lookup.add(x) is None]
 
 	# fills in tariff obj with peak and offpeak rates
@@ -234,11 +237,12 @@ def update_bill_values(bill, meter, clock, prev_day):
 
 		gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
 		gridlabd.set_value(bill_name, "peak_power", str(max(to_float(gridlabd.get_value(meter_name, "measured_real_power")), to_float(gridlabd.get_value(bill_name, "peak_power")))))
-		print(bill_name + f" {hr_charge}" )
+		#print(str(day) + f" {hour} " + bill_name + f" {hr_charge}" )
 		# Add if verbose is on print this?
 		#print(clock)
 		#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
 		#print()
+	return hr_charge
 def update_monthly_results_dict_meter(total_charges, total_usage, total_power, index):
 	monthly_results_dict_meter["charges"][index] = total_charges
 	monthly_results_dict_meter["usage"][index] = total_usage
@@ -417,14 +421,21 @@ def on_commit(t):
 				update_meter_results(charges_current_month, usage_current_month, power_current_month, index, prev_month-1)
 			prev_month = month
 		global prev_day
+		big_sum = 0
+		delta = 0
 		for meter_obj in meter_list:
 			meter_bill = gridlabd.get_object("bill_" + meter_obj["name"])
-			update_bill_values(meter_bill, meter_obj, clock, prev_day)
+			big_sum += update_bill_values(meter_bill, meter_obj, clock, prev_day)
 		for triplex_meter_obj in triplex_meter_list:
 			# updates bills of each triplex meter.
 			triplex_bill = gridlabd.get_object("bill_" + triplex_meter_obj["name"])
-			update_bill_values(triplex_bill,triplex_meter_obj,clock, prev_day)
+			delta = update_bill_values(triplex_bill,triplex_meter_obj,clock, prev_day)
+			big_sum -= delta
+			delta *= 0.05
 			#print(str(index) +" " + str(gridlabd.get_value(triplex_bill["name"],"total_charges")) + "\n")
+		if big_sum >= delta:
+			weekday = clock.weekday()
+			#print(str(weekday) + f" {hour} ")
 		prev_day = day 
 	else:
 		d=0
