@@ -234,6 +234,7 @@ def update_bill_values(bill, meter, clock, prev_day):
 
 		gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
 		gridlabd.set_value(bill_name, "peak_power", str(max(to_float(gridlabd.get_value(meter_name, "measured_real_power")), to_float(gridlabd.get_value(bill_name, "peak_power")))))
+		print(bill_name + f" {hr_charge}" )
 		# Add if verbose is on print this?
 		#print(clock)
 		#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
@@ -321,7 +322,9 @@ def on_init(t):
 
 	t_counter = int(gridlabd.get_global("tariff_index"))
 
-	logging.basicConfig(level=logging.DEBUG)
+	#logging.basicConfig(level=logging.DEBUG)
+	logger = logging.getLogger()
+	logger.disabled = True
 	# removed to get rid of terminal input
 	#t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
 	
@@ -414,14 +417,14 @@ def on_commit(t):
 				update_meter_results(charges_current_month, usage_current_month, power_current_month, index, prev_month-1)
 			prev_month = month
 		global prev_day
+		for meter_obj in meter_list:
+			meter_bill = gridlabd.get_object("bill_" + meter_obj["name"])
+			update_bill_values(meter_bill, meter_obj, clock, prev_day)
 		for triplex_meter_obj in triplex_meter_list:
 			# updates bills of each triplex meter.
 			triplex_bill = gridlabd.get_object("bill_" + triplex_meter_obj["name"])
 			update_bill_values(triplex_bill,triplex_meter_obj,clock, prev_day)
 			#print(str(index) +" " + str(gridlabd.get_value(triplex_bill["name"],"total_charges")) + "\n")
-		for meter_obj in meter_list:
-			meter_bill = gridlabd.get_object("bill_" + meter_obj["name"])
-			update_bill_values(meter_bill, meter_obj, clock, prev_day)
 		prev_day = day 
 	else:
 		d=0
@@ -548,7 +551,7 @@ def on_term(t):
 
 	print(peak_power_triplex_meter_list)
 
-	print(charges_triplex_meter_list)
+	print(charges_meter_list)
 
 	print(usage_meter_list)
 
