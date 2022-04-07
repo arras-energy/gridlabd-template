@@ -16,9 +16,9 @@ import logging
 
 # Try to put constraints on histogram to produce nicer looking histograms
 # Put parents for the triplex_meter list and work out the code for that 
-# Cite what i got from online
-# Probably a bug with globals schedule and rates
-# First few hours of everyday seem to work. Sometimes last few hours work too. 
+# Pivots in pandas. Have meter output.csv separated by month. 
+# ICA (Hosting capacity)- Solar - Nodes -> thermal MW, voltage, control, current. Add solar to each until one breaks.
+# Same for baterry and ev charger 
 CHARGES_INDEX = 0 
 USAGE_INDEX = 1
 POWER_INDEX = 2
@@ -242,7 +242,6 @@ def update_bill_values(bill, meter, clock, prev_day):
 		#print(clock)
 		#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
 		#print()
-	return hr_charge
 def update_monthly_results_dict_meter(total_charges, total_usage, total_power, index):
 	monthly_results_dict_meter["charges"][index] = total_charges
 	monthly_results_dict_meter["usage"][index] = total_usage
@@ -365,6 +364,9 @@ def on_init(t):
 	results_list_meter = []
 	for meter in meter_list:
 		results_list_meter.append([[0 for j in range (12)] for i in range(3)]) # Outer list for each meter. Middle list for charges/usage/power. Inner list for months. For bargraph.
+		gridlabd.set_value(meter["name"], "charges", "0,0,0,0,0,0,0,0,0,0,0,0")
+		gridlabd.set_value(meter["name"], "usage", "0,0,0,0,0,0,0,0,0,0,0,0")
+		gridlabd.set_value(meter["name"], "power", "0,0,0,0,0,0,0,0,0,0,0,0")
 		monthly_results_dict_meter["charges"].append(0) # initialize to 0 for each meter. Helps keep track of monthly difference. I don't use bill because it updates every hour. 
 		monthly_results_dict_meter["usage"].append(0)
 		monthly_results_dict_meter["power"].append(0)
@@ -421,21 +423,15 @@ def on_commit(t):
 				update_meter_results(charges_current_month, usage_current_month, power_current_month, index, prev_month-1)
 			prev_month = month
 		global prev_day
-		big_sum = 0
-		delta = 0
 		for meter_obj in meter_list:
 			meter_bill = gridlabd.get_object("bill_" + meter_obj["name"])
-			big_sum += update_bill_values(meter_bill, meter_obj, clock, prev_day)
+			update_bill_values(meter_bill, meter_obj, clock, prev_day)
 		for triplex_meter_obj in triplex_meter_list:
 			# updates bills of each triplex meter.
 			triplex_bill = gridlabd.get_object("bill_" + triplex_meter_obj["name"])
-			delta = update_bill_values(triplex_bill,triplex_meter_obj,clock, prev_day)
-			big_sum -= delta
-			delta *= 0.05
+			update_bill_values(triplex_bill,triplex_meter_obj,clock, prev_day)
 			#print(str(index) +" " + str(gridlabd.get_value(triplex_bill["name"],"total_charges")) + "\n")
-		if big_sum >= delta:
-			weekday = clock.weekday()
-			#print(str(weekday) + f" {hour} ")
+		
 		prev_day = day 
 	else:
 		d=0
