@@ -5,6 +5,9 @@ module revenue;
 
 //py modules
 module tariff_design;
+module powerflow;
+
+
 
 //Define classes here (inputs and outputs)
 
@@ -50,7 +53,21 @@ class billing {
 	double peak_power[W];
 }
 
-#for meter in ${FIND class=triplex_meter}
+#for tri_meter in ${FIND class=triplex_meter}
+object billing {
+	name "bill_${tri_meter}";
+	meter "${tri_meter}";
+	tariff "tariff";
+	billing_hrs "0.0";	
+	total_charges "0.0";
+	usage "0.0";
+	total_usage "0.0";
+	total_power "0.0";
+	peak_power "0.0";
+}
+#done
+
+#for meter in ${FIND class=meter}
 object billing {
 	name "bill_${meter}";
 	meter "${meter}";
