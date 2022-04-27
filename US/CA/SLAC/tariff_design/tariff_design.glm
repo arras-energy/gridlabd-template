@@ -8,45 +8,8 @@ module tariff_design;
 
 //Define classes here (inputs and outputs)
 
-class tariff {
-	double peak_tier0[kWh/day];
-	double peak_rate0[$/kWh];
-	double peak_tier1[kWh/day];
-	double peak_rate1[$/kWh];
-	double peak_tier2[kWh/day];
-	double peak_rate2[$/kWh];
-	double peak_tier3[kWh/day];
-	double peak_rate3[$/kWh];
-	double peak_rate4[$/kWh];
-	double offpeak_tier0[kWh/day];
-	double offpeak_rate0[$/kWh];
-	double offpeak_tier1[kWh/day];
-	double offpeak_rate1[$/kWh];
-	double offpeak_tier2[kWh/day];
-	double offpeak_rate2[$/kWh];
-	double offpeak_tier3[kWh/day];
-	double offpeak_rate3[$/kWh];
-	double offpeak_rate4[$/kWh];
-	double shoulder_tier0[kWh/day];
-	double shoulder_rate0[$/kWh];
-	double shoulder_tier1[kWh/day];
-	double shoulder_rate1[$/kWh];
-	double shoulder_tier2[kWh/day];
-	double shoulder_rate2[$/kWh];
-	double shoulder_tier3[kWh/day];
-	double shoulder_rate3[$/kWh];
-	double shoulder_rate4[$/kWh];
-}
-
 object tariff {
 	name "tariff";
-}
-
-class billing {
-	double usage[kWh];
-	double total_usage[kWh];
-	double billing_hrs;
-	double total_power[W];
 }
 
 object billing {
