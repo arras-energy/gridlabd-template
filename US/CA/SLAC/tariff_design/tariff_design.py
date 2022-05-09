@@ -16,9 +16,9 @@ import logging
 
 # Try to put constraints on histogram to produce nicer looking histograms
 # ICA (Hosting capacity)- Solar - Nodes -> thermal MW, voltage, control, current. Add solar to each until one breaks.
-# Have date the bill/meter was updated. Not sure how it works. 
-# Make new column for date. 
-# test
+# Measured demand. Reset to 0. Duration Column
+# Date column year month day
+# 
 
 
 def to_float(x):
@@ -26,6 +26,10 @@ def to_float(x):
 
 def to_datetime(x,format):
 	return parser.parse(x)
+
+def round_decimals(value):
+	NO_OF_DIGITS = 1
+	return round(value, NO_OF_DIGITS)
 
 def read_tariff(pathtocsv, tariff_counter):
 
@@ -420,7 +424,7 @@ def on_commit(t):
 
 def plot_meter_graphs(meter_name,months_meter_list, charges_meter_list, usage_meter_list, total_power_meter_list):
 	# Outputs 3 png, each with 1 graph (charges, usage, power) for a certain meter. Uses the properties monthly_charges, monthly_usage, monthly_power 
-	def multiple_plot(X,Y, y_label):
+	def multiple_plot(X,Y, y_label, result_name):
 		fig = plt.figure()
 		fig.set_size_inches(15, 8)
 		plt.clf()
@@ -428,9 +432,9 @@ def plot_meter_graphs(meter_name,months_meter_list, charges_meter_list, usage_me
 		ax.bar(X,Y)
 		plt.xlabel('Months')
 		plt.ylabel(y_label)
-		plt.title(meter_name + f" Monthly {y_label}")
+		plt.title(meter_name + f" Month {result_name}")
 		# pdf.savefig(bbox_inches="tight", dpi=150)
-		plt.savefig(meter_name + f" Monthly {y_label}.png", bbox_inches='tight', dpi=150)
+		plt.savefig(meter_name + f"_month_{result_name}.png", bbox_inches='tight', dpi=150)
 	months_meter_list = months_meter_list
 	results_charges = charges_meter_list # remove comma at beginning
 	results_usage = usage_meter_list
@@ -438,14 +442,14 @@ def plot_meter_graphs(meter_name,months_meter_list, charges_meter_list, usage_me
 	#pdf = PdfPages("results_" + str(meter_name) + ".pdf")
 	#pages = convert_from_path("results_" + str(meter_name) + ".pdf", 500)
 	#page.save("results_" + str(meter_name) + ".png", 'PNG')
-	multiple_plot(months_meter_list, results_charges, "Charges ($)")
-	multiple_plot(months_meter_list, results_usage, "Usage (kWh)")
-	multiple_plot(months_meter_list, results_power, "Power (W)")
+	multiple_plot(months_meter_list, results_charges, "Charges ($)","Charges")
+	multiple_plot(months_meter_list, results_usage, "Usage (kWh)","Usage")
+	multiple_plot(months_meter_list, results_power, "Power (W)", "Power")
 	#pdf.close()
 
 def plot_triplex_meter_histograms(charges_triplex_results_list, usage_triplex_results_list, peak_power_triplex_results_list):
 	# Outputs histogram for distribution of all triplex meters for charges, usage, and power. 
-	def multiple_plot_triplex(X, x_label):
+	def multiple_plot_triplex(X, x_label, result_name):
 		fig = plt.figure()
 		plt.clf()
 		NBR_BINS = sturg_rule_number_of_bins(X)
@@ -454,16 +458,16 @@ def plot_triplex_meter_histograms(charges_triplex_results_list, usage_triplex_re
 			axis.set_major_locator(ticker.MaxNLocator(integer=True))
 		ax.hist(X, bins = NBR_BINS, edgecolor = "black")
 		plt.xlabel(x_label)
-		plt.ylabel('Number of triplex meters')
-		plt.title("Distribution of " + x_label + " of Triplex Meters")
-		plt.savefig("Distribution of " + x_label + " of Triplex Meters.png", bbox_inches='tight', dpi=150)
+		plt.ylabel('Number of Triplex Meters')
+		plt.title("Distribution of " + result_name)
+		plt.savefig("distribution_of_" + result_name + ".png", bbox_inches='tight', dpi=150)
 		#pdf.savefig(bbox_inches="tight", dpi=150)
 	#pdf = PdfPages("triplex_results" + ".pdf")
 	#pages = convert_from_path("triplex_results" + ".pdf", 500)
 	#page.save('triplex_results.png', 'PNG')
-	multiple_plot_triplex(charges_triplex_results_list, "Charges ($)")
-	multiple_plot_triplex(usage_triplex_results_list, "Usage (kWh)")
-	multiple_plot_triplex(peak_power_triplex_results_list, "Peak Power (W)")
+	multiple_plot_triplex(charges_triplex_results_list, "Charges ($)", "Charges")
+	multiple_plot_triplex(usage_triplex_results_list, "Usage (kWh)", "Usage")
+	multiple_plot_triplex(peak_power_triplex_results_list, "Peak Power (W)", "Peak_Power")
 	#pdf.close()
 
 def on_term(t):
@@ -495,16 +499,16 @@ def on_term(t):
 	months_meter_list = []
 	
 	for meter_name in meter_name_list:
-		current_meter_monthly_charges = [float(val) for val in gridlabd.get_value(meter_name, "monthly_charges")[1:].split(",")] # first element of list is empty 
-		charges_meter_list.append(to_float(gridlabd.get_value("bill_" + meter_name,"total_charges")))
+		current_meter_monthly_charges = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_charges")[1:].split(",")] # first element of list is empty 
+		charges_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_charges"))))
 		charges_meter_list.extend(current_meter_monthly_charges) # First element will be empty string
 
-		current_meter_monthly_usage = [float(val) for val in gridlabd.get_value(meter_name, "monthly_usage")[1:].split(",")]
-		usage_meter_list.append(to_float(gridlabd.get_value("bill_" + meter_name,"total_usage")))
+		current_meter_monthly_usage = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_usage")[1:].split(",")]
+		usage_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_usage"))))
 		usage_meter_list.extend(current_meter_monthly_usage)
 
-		current_meter_monthly_power = [float(val) for val in gridlabd.get_value(meter_name, "monthly_power")[1:].split(",")]
-		total_power_meter_list.append(to_float(gridlabd.get_value("bill_" + meter_name,"total_power")))
+		current_meter_monthly_power = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_power")[1:].split(",")]
+		total_power_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_power"))))
 		total_power_meter_list.extend(current_meter_monthly_power)
 
 		current_meter_months = []
@@ -519,10 +523,10 @@ def on_term(t):
 		months_meter_list.extend(current_meter_months) 
 
 	# get results for all triplex meters 
-	charges_triplex_meter_list = [to_float(gridlabd.get_value("bill_" + triplex_name,"total_charges")) for triplex_name in triplex_name_list]
-	usage_triplex_meter_list = [to_float(gridlabd.get_value("bill_" + triplex_name,"total_usage")) for triplex_name in triplex_name_list]
-	peak_power_triplex_meter_list = [to_float(gridlabd.get_value("bill_" + triplex_name,"peak_power")) for triplex_name in triplex_name_list]
-	total_power_triplex_meter_list = [to_float(gridlabd.get_value("bill_" + triplex_name,"total_power")) for triplex_name in triplex_name_list]
+	charges_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_charges"))) for triplex_name in triplex_name_list]
+	usage_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_usage"))) for triplex_name in triplex_name_list]
+	peak_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"peak_power"))) for triplex_name in triplex_name_list]
+	total_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_power"))) for triplex_name in triplex_name_list]
 
 	peak_power_meter_list = ["NaN" for x in total_power_meter_list] # meters don't know peak power 
 
