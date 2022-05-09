@@ -3,6 +3,7 @@ import gridlabd
 import csv
 import pandas 
 import datetime
+from datetime import date
 from dateutil import parser
 import re
 import sys
@@ -11,6 +12,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import matplotlib.ticker as ticker
 import numpy as np
 import logging
+from calendar import monthrange
 
 
 
@@ -249,11 +251,34 @@ def update_monthly_cumulative_meter_results(total_charges, total_usage, total_po
 	gridlabd.set_value(meter_name, "monthly_updated_power", str(total_power)) 
 
 
-def update_meter_results(charges_current_month,usage_current_month,power_current_month, meter_name, month):
+def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
 	# updates the string representation of a list of results
 	gridlabd.set_value(meter_name, "monthly_charges",  gridlabd.get_value(meter_name, "monthly_charges") + "," + str(charges_current_month))
 	gridlabd.set_value(meter_name, "monthly_usage",  gridlabd.get_value(meter_name, "monthly_usage") + "," + str(usage_current_month))
 	gridlabd.set_value(meter_name, "monthly_power",  gridlabd.get_value(meter_name, "monthly_power") + "," + str(power_current_month))
+	gridlabd.set_value(meter_name, "monthly_demand",  gridlabd.get_value(meter_name, "monthly_demand") + "," + str(demand_current_month))
+def update_meter_and_bill(meter_name, month):
+	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
+	bill_name = bill["name"]
+
+	total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
+	total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
+	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
+	logging.debug(f"total_charges = {total_charges}")
+
+	charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
+	usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
+	power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
+	logging.debug(f"total_charges_current month = {charges_current_month}")
+
+	demand_current_month = to_float(gridlabd.get_value(meter_name, "measured_demand"))
+	gridlabd.set_value(meter_name, "measured_demand", str(0.0))
+
+	update_monthly_cumulative_meter_results(total_charges, total_usage,total_power,meter_name)
+	update_meter_results(charges_current_month, usage_current_month, power_current_month, demand_current_month, meter_name, month)
+
+
+
 
 
 
@@ -348,6 +373,9 @@ def on_init(t):
 
 	global start_month # For calculation of date column for meters 
 	start_month = clock.month
+
+	global start_day # For calculation of date column for meters
+	start_day = clock.day
 	
 	global prev_month # For determining when simulation has moved on to a new month
 	prev_month = clock.month
@@ -392,22 +420,7 @@ def on_commit(t):
 		if prev_month != month:
 			for index, meter_name in enumerate(meter_name_list):
 				# update meter and meter bill values 
-				bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
-				bill_name = bill["name"]
-
-				total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
-				total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
-				total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
-				logging.debug(f"total_charges = {total_charges}")
-
-				charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
-				usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
-				power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
-				logging.debug(f"total_charges_current month = {charges_current_month}")
-
-				update_monthly_cumulative_meter_results(total_charges, total_usage,total_power,meter_name)
-				update_meter_results(charges_current_month, usage_current_month, power_current_month, meter_name, prev_month-1)
-
+				update_meter_and_bill(meter_name, prev_month-1)
 			prev_month = month
 		global prev_day
 		for meter_name in meter_name_list:
@@ -420,11 +433,14 @@ def on_commit(t):
 			update_bill_values(triplex_bill,triplex_meter_name, prev_day,clock)
 		prev_day = day 
 
+
 	return gridlabd.NEVER
 
 def plot_meter_graphs(meter_name,months_meter_list, charges_meter_list, usage_meter_list, total_power_meter_list):
 	# Outputs 3 png, each with 1 graph (charges, usage, power) for a certain meter. Uses the properties monthly_charges, monthly_usage, monthly_power 
 	def multiple_plot(X,Y, y_label, result_name):
+		print(X)
+		print(Y)
 		fig = plt.figure()
 		fig.set_size_inches(15, 8)
 		plt.clf()
@@ -475,22 +491,11 @@ def on_term(t):
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	year = clock.year 
 	month = clock.month
+	day = clock.day
 	for index, meter_name in enumerate(meter_name_list):
 		# updates each meter for the current month (when simulation ends in middle of month)
-		bill = gridlabd.get_object("bill_" + meter_name)
-		bill_name = bill["name"]
-		total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
-		total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
-		total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
+		update_meter_and_bill(meter_name, month-1)
 
-		charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
-		usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
-		power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
-
-		update_monthly_cumulative_meter_results(total_charges, total_usage,total_power, meter_name)
-		update_meter_results(charges_current_month, usage_current_month, power_current_month, meter_name, month-1)
-
-	MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
 	# get results for all meters
 	charges_meter_list = []
@@ -511,14 +516,30 @@ def on_term(t):
 		total_power_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_power"))))
 		total_power_meter_list.extend(current_meter_monthly_power)
 
-		current_meter_months = []
+		current_meter_monthly_demand = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_demand")[1:].split(",")]
+		print(current_meter_monthly_demand)
 
-		number_of_months = (year - start_year) * 12 + (month - start_month) + 1 # the 1 because we want to count current month as well
-		months_meter_list.append("Total") # Each meter will have total value followed by monthly values 
-		for month in range(number_of_months):
-			year = int(start_year + (month + start_month-1)/12)
-			month = MONTHS[(month + start_month-1)%12]
-			current_meter_months.append(f"{year}-{month}")
+
+		current_meter_months = []
+		days = []
+
+		number_of_months = (year - start_year) * 12 + (month - start_month) + 1  # the 1 because we want to count current month as well
+		#months_meter_list.append("Total") # Each meter will have total value followed by monthly values 
+		delta_days = date(year, month, day) - date(start_year, start_month, start_day) 
+		# todo append the in between days
+		days.append(f"{delta_days.days}")
+		days.append(f"{monthrange(start_year,start_month)[1] - start_day + 1}")
+		months_meter_list.append(f"{year}-{month}-{day}")
+		current_meter_months.append(f"{start_year}-{start_month}-{monthrange(start_year,start_month)[1]}")
+		for num_month in range(1,number_of_months -1):
+			curr_year = int(start_year + (num_month + start_month)/13)
+			curr_month = (num_month + start_month - 1)%12 + 1
+			curr_day = monthrange(curr_year,curr_month)[1]
+			current_meter_months.append(f"{curr_year}-{curr_month}-{curr_day}")
+		current_meter_months.append(f"{year}-{month}-{day}")
+		days.append(f"{day}")
+		print(days)
+		print(current_meter_months)
 		plot_meter_graphs(meter_name, current_meter_months, current_meter_monthly_charges, current_meter_monthly_usage, current_meter_monthly_power)
 		months_meter_list.extend(current_meter_months) 
 
