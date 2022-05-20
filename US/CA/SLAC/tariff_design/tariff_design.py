@@ -15,24 +15,6 @@ import logging
 from calendar import monthrange
 
 
-
-# Try to put constraints on histogram to produce nicer looking histograms
-# ICA (Hosting capacity)- Solar - Nodes -> thermal MW, voltage, control, current. Add solar to each until one breaks.
-# Measured demand. Reset to 0. Duration Column
-# Counting days. Should I count the day the simulation ends? Check what hour it is? Cutoff? 
-# Pull request for multiple meters
-	# create foler called autotests with test-asdfas.glm and any other supporting documents
-	# generate pull request. What PR does and list all issues.
-# nodes have properties called voltage, violation and threshold. Difference of more than 5% is an error [pu]
-	# voltage flunctuation threshold is 3 % [pu]
-# links
-	# violation-rating [A]. Default is 0. don't checked. 
-# powerflow module can set default values for the threshold. Set globals to 0 and just set them for obj youu care about. 
-# Want to see meters, tripelx meters, set> Voltage, DER-value transformers, regulators -> rating
-# look at autotests for link nodes in powerflow. 
-# test negative for batteries. Check DER for EV charging, battery charging. 
-# ICA tet something. Different values for different kinds of charging. 
-# in template, add module_powerflow.glm. Put class definitions in that file. .catalog. 
 def to_float(x):
 	return float(x.split(' ')[0])
 
@@ -338,6 +320,30 @@ def freedman_diaconis_width(data):
 def sturg_rule_number_of_bins(data):
 	return int(1 + round((3.322 * np.log10(len(data)))))
 
+def generate_results_date_and_days(year, month, day, hour, delta_days):
+	result_dates = []
+	days = []
+	number_of_months = (year - start_year) * 12 + (month - start_month) + 1  # the 1 because we want to count current month as well
+	days.append(f"{delta_days}") # first row is total 
+	
+	if number_of_months > 1: 
+		# Only append if simulation does not end in same month
+		days.append(f"{round_decimals(monthrange(start_year,start_month)[1] - start_day - (start_hour/24.0) + 1 )}") # start day to end of month 
+		result_dates.append(f"{start_year}-{start_month}-{monthrange(start_year,start_month)[1]}") # this list is for plotting graph since the graph does not want a total
+	for num_month in range(1,number_of_months - 1):
+		# calculate dates and number of days for the in between months 
+		curr_year = int(start_year + (num_month + start_month)/13)
+		curr_month = (num_month + start_month - 1) % 12 + 1
+		curr_day = monthrange(curr_year,curr_month)[1]
+		result_dates.append(f"{curr_year}-{curr_month}-{curr_day}")
+		days.append(curr_day)
+	result_dates.append(f"{year}-{month}-{day}") # last date is current simulation date
+	if number_of_months > 1:
+		days.append(f"{round_decimals(day - 1 + (hour/24.0))}") # last number of days is current day of simulation 
+	else:
+		days.append(f"{round_decimals(day - start_day + (hour - start_hour)/24)}")
+	return result_dates, days
+
 def update_monthly_demand_triplex(triplex_meter_name):
 	# Updates triplex bill with the max of the current peak power vaule and the current month measured demand generated from the triplex meter. 
 	# Resets measured demand of triplex meter.
@@ -396,6 +402,9 @@ def on_init(t):
 
 	global start_day # For calculation of date column for meters
 	start_day = clock.day
+
+	global start_hour # For calculation of date column for meters
+	start_hour = clock.hour 
 	
 	global prev_month # For determining when simulation has moved on to a new month
 	prev_month = clock.month
@@ -503,6 +512,7 @@ def on_term(t):
 	year = clock.year 
 	month = clock.month
 	day = clock.day
+	hour = clock.hour
 	for index, meter_name in enumerate(meter_name_list):
 		# updates each meter for the current month (when simulation ends in middle of month)
 		update_meter_and_bill(meter_name, month-1)
@@ -511,11 +521,8 @@ def on_term(t):
 
 
 	# get results for all meters for output.csv 
-	charges_meter_list = [] 
-	usage_meter_list = []
-	total_power_meter_list = []
-	months_meter_list = []
-	measured_demand_meter_list = []
+	charges_meter_list, usage_meter_list, total_power_meter_list, months_meter_list, measured_demand_meter_list = ([] for i in range(5))
+
 	
 	for meter_name in meter_name_list:
 
@@ -536,33 +543,20 @@ def on_term(t):
 		measured_demand_meter_list.append(max(current_meter_monthly_demand)) # gets the max of all the monthly demand 
 		measured_demand_meter_list.extend(current_meter_monthly_demand)
 
+		months_meter_list.append(f"{year}-{month}-{day}") # first row is total so date of end of simulation 
+		delta_days = round_decimals((date(year, month, day) - date(start_year, start_month, start_day)).days + (hour/24.0) - (start_hour/24.0))
 
 		# generates the dates of results and number of days in the results
-		current_meter_months = []
-		days = []
+		result_dates, days = generate_results_date_and_days(year, month, day, hour, delta_days)
 
-		number_of_months = (year - start_year) * 12 + (month - start_month) + 1  # the 1 because we want to count current month as well
-		delta_days = round_decimals((date(year, month, day) - date(start_year, start_month, start_day)).days + (clock.hour/24.0))
-		days.append(f"{delta_days}") # first row is total 
-		days.append(f"{monthrange(start_year,start_month)[1] - start_day + 1}") # start day to end of month 
-		months_meter_list.append(f"{year}-{month}-{day}") # first row is total so date of end of simulation 
-		current_meter_months.append(f"{start_year}-{start_month}-{monthrange(start_year,start_month)[1]}") # this list is for plotting graph since the graph does not want a total
-		for num_month in range(1,number_of_months -1):
-			# calculate dates and number of days for the in between months 
-			curr_year = int(start_year + (num_month + start_month)/13)
-			curr_month = (num_month + start_month - 1)%12 + 1
-			curr_day = monthrange(curr_year,curr_month)[1]
-			current_meter_months.append(f"{curr_year}-{curr_month}-{curr_day}")
-			days.append(curr_day)
-		current_meter_months.append(f"{year}-{month}-{day}") # last date is current simulation date
-		days.append(f"{round_decimals(day - 1 + (clock.hour/24.0))}") # last number of days is current day of simulation 
 
-		plot_meter_graph(current_meter_months, current_meter_monthly_charges, "Charges ($)", f"{meter_name} Monthly Charges", f"{meter_name}_month_charges.png")
-		plot_meter_graph(current_meter_months, current_meter_monthly_usage, "Usage (kWh)", f"{meter_name} Monthly Usage", f"{meter_name}_month_usage.png")
-		plot_meter_graph(current_meter_months, current_meter_monthly_power, "Power (W)", f"{meter_name} Monthly Power", f"{meter_name}_month_power.png")
-		plot_meter_graph(current_meter_months, current_meter_monthly_demand, "Demand (W)", f"{meter_name} Monthly Demand", f"{meter_name}_month_demand.png")
 
-		months_meter_list.extend(current_meter_months) 
+		plot_meter_graph(result_dates, current_meter_monthly_charges, "Charges ($)", f"{meter_name} Monthly Charges", f"{meter_name}_month_charges.png")
+		plot_meter_graph(result_dates, current_meter_monthly_usage, "Usage (kWh)", f"{meter_name} Monthly Usage", f"{meter_name}_month_usage.png")
+		plot_meter_graph(result_dates, current_meter_monthly_power, "Power (W)", f"{meter_name} Monthly Power", f"{meter_name}_month_power.png")
+		plot_meter_graph(result_dates, current_meter_monthly_demand, "Demand (W)", f"{meter_name} Monthly Demand", f"{meter_name}_month_demand.png")
+
+		months_meter_list.extend(result_dates) 
 
 	# get results for all triplex meters 
 	charges_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_charges"))) for triplex_name in triplex_name_list]
