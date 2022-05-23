@@ -3,7 +3,17 @@ import gridlabd
 import csv
 import pandas 
 import datetime
+from datetime import date
 from dateutil import parser
+import re
+import sys
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+import matplotlib.ticker as ticker
+import numpy as np
+import logging
+from calendar import monthrange
+
 
 def to_float(x):
 	return float(x.split(' ')[0])
@@ -11,14 +21,20 @@ def to_float(x):
 def to_datetime(x,format):
 	return parser.parse(x)
 
+def round_decimals(value):
+	NO_OF_DIGITS = 1
+	return round(value, NO_OF_DIGITS)
+
 def read_tariff(pathtocsv, tariff_counter):
+
+	__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 	# reads USA tariff csv usurdb.csv from OpenEi
 	pandas.set_option("max_rows",None)
 	pandas.set_option("max_columns",None)
 	data = pandas.read_csv("usurdb.csv",low_memory=False)
 
 	# read in csv file depending on tariff counter value
-	with open(pathtocsv) as fp:
+	with open(os.path.join(__location__, pathtocsv)) as fp:
 		reader = csv.reader(fp, skipinitialspace=True, delimiter=",")
 		next(reader)
 		tariff_input = [row for row in reader]
@@ -40,14 +56,16 @@ def read_tariff(pathtocsv, tariff_counter):
 	df = utility_active[mask].reset_index()
 
 	if df.shape[0] > 1:
-		print("Not enough information provided to define tariff: ", df.shape[0]," tariffs generated.")
-		for i in range(df.shape[0]):
-			print("Index",i,": ", df.iloc[i,3]) # print df name
-		idx = int(input("Enter desired tariff index: "))
+		idx = gridlabd.get_global("TARIFF_INDEX_SPECIFIC") # multiple tariffs match, so get specific one
+		if (idx == None or int(idx) >= df.shape[0]):
+			for i in range(df.shape[0]):
+				print("Index",i,": ", df.iloc[i,3]) # print df name
+			raise ValueError("Please provide row TARIFF_INDEX_SPECIFIC with corresponding int value from a choice in stdout.")
+		idx = int(idx)
 		tariff_data = pandas.DataFrame(data=df.iloc[[idx]]).reset_index(drop=True)
 		# This is currently rasiing errors in docker?
 	elif df.shape[0] == 0:
-		raise Exception("No active tariff found in OpenEi database matching information. Simulation ending") 
+		raise ValueError("No active tariff found in OpenEi database matching information. Simulation ending") 
 		# there are other methods to exit simulation but this makes sense
 	else:
 		tariff_data = df
@@ -57,13 +75,12 @@ def read_tariff(pathtocsv, tariff_counter):
 
 	return tariff_data # returns df of associated tariff
 
-def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates tariff gridlabd obj
+def monthlyschedule_gen(tariff_data, clock): #Inputs tariff df from csv and populates tariff gridlabd obj
 
 	# Finding default tariff obj name from gridlabd	
 	tariff = gridlabd.get_object("tariff")
 	tariff_name = tariff["name"]
 
-	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
 	month = clock.month
 	day = clock.weekday()
 
@@ -82,7 +99,7 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 		schedule = schedule.iloc[0,index1:index2].astype(int).tolist()
 
 	lookup = set()
-	global rates
+	#global rates
 	rates = [x for x in schedule if x not in lookup and lookup.add(x) is None]
 
 	# fills in tariff obj with peak and offpeak rates
@@ -127,7 +144,222 @@ def monthlyschedule_gen(tariff_data): #Inputs tariff df from csv and populates t
 
 	return rates, schedule
 
+
+def update_bill_values(bill, meter_name, prev_day,clock): 
+	""" 
+	Updates the bill values of the specific meter_name. Uses clock and previous day to reset usage in the bill. 
+	This function is called every hour for each meter and triplex meter. 
+	"""
+	hour = clock.hour
+	tariff = gridlabd.get_object("tariff")
+	tariff_name = tariff["name"]
+	bill_name = bill["name"]
+	meter = gridlabd.get_object(meter_name)
+
+	billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
+
+	# energy usage over the hour
+	energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
+
+	# check if in same day/ if timing needs to be updated
+	day = clock.day
+
+	global rates
+	global schedule
+	
+	if billing_hrs == 0.0:
+		rates, schedule = monthlyschedule_gen(tariff_df, clock)
+	elif day != prev_day:
+		rates, schedule = monthlyschedule_gen(tariff_df, clock)
+		gridlabd.set_value(bill_name, "usage", str(0.0))
+	
+	# get previous daily energy usage
+	previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
+
+	# check if if time is peak/shoulder/offpeak
+	type_idx = rates.index(schedule[hour])
+
+	if len(rates) == 3:
+		if type_idx == 0:
+			string = "offpeak"
+		elif type_idx == 1:
+			string = "shoulder"
+		else:
+			string = "peak"
+	else:
+		if type_idx == 0:
+			string = "offpeak"
+		else:
+			string ="peak"   
+
+	global RATE_FLAG
+
+	if RATE_FLAG == "True":
+		# Calculate charge for this hour
+		daily_usage = previous_usage + energy_hr
+
+		tier=[0,0,0,0]
+		rate=[0,0,0,0,0]
+
+		for counter in range(4):
+				tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
+				rate[counter] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter)))
+
+		rate[counter+1] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter+1)))
+		
+		
+		if tier[0] != 0.0:
+			tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
+		else:
+			tier0 = energy_hr
+		if tier[1] != 0.0:
+			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
+		else:
+			tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0, energy_hr-tier0)
+		if tier[2] != 0.0:
+			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
+		else:
+			tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0, energy_hr-tier0-tier1)
+		if tier[3] != 0.0:
+			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0)
+		else:
+			tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0, energy_hr-tier0-tier1-tier2)
+		
+		tier4 = max(energy_hr - tier0 - tier1 - tier2 - tier3, 0)
+
+		hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
+
+		# update bill values of this meter with appropriate values. 
+		gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
+		gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
+		gridlabd.set_value(bill_name, "usage", str(daily_usage))
+		gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
+		gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
+		#gridlabd.set_value(bill_name, "peak_power", str(max(to_float(gridlabd.get_value(meter_name, "measured_real_power")), to_float(gridlabd.get_value(bill_name, "peak_power")))))
+
+def update_monthly_cumulative_meter_results(total_charges, total_usage, total_power, meter_name):
+	# updates monthly cumulative results of meter
+	gridlabd.set_value(meter_name, "monthly_updated_charges", str(total_charges))
+	gridlabd.set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
+	gridlabd.set_value(meter_name, "monthly_updated_power", str(total_power)) 
+
+
+def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
+	# updates the string representation of a list of results
+	gridlabd.set_value(meter_name, "monthly_charges",  gridlabd.get_value(meter_name, "monthly_charges") + "," + str(charges_current_month))
+	gridlabd.set_value(meter_name, "monthly_usage",  gridlabd.get_value(meter_name, "monthly_usage") + "," + str(usage_current_month))
+	gridlabd.set_value(meter_name, "monthly_power",  gridlabd.get_value(meter_name, "monthly_power") + "," + str(power_current_month))
+	gridlabd.set_value(meter_name, "monthly_demand",  gridlabd.get_value(meter_name, "monthly_demand") + "," + str(demand_current_month))
+def update_meter_and_bill(meter_name, month):
+	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
+	bill_name = bill["name"]
+
+	total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
+	total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
+	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
+	logging.debug(f"total_charges = {total_charges}")
+
+	charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
+	usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
+	power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
+	logging.debug(f"total_charges_current month = {charges_current_month}")
+
+	demand_current_month = to_float(gridlabd.get_value(meter_name, "measured_demand"))
+	gridlabd.set_value(meter_name, "measured_demand", str(0.0))
+
+	update_monthly_cumulative_meter_results(total_charges, total_usage,total_power,meter_name)
+	update_meter_results(charges_current_month, usage_current_month, power_current_month, demand_current_month, meter_name, month)
+
+
+
+
+
+
+
+def update_meter_timestep(meter_name, timestep):
+	# sets the time step of meter to timestep 
+	delta = to_float(gridlabd.get_value(meter_name,"measured_energy_delta_timestep"))
+	if delta != timestep:
+		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
+		gridlabd.set_value(meter_name,"measured_energy_delta_timestep", str(timestep))
+
+# Another option to determine number of bins: 
+# Title: Determining Histogram Bin Width using the Freedman-Diaconis Rule
+# Author: James D. Triveri 
+# Date: 03-02-2019
+# Availability: http://www.jtrive.com/determining-histogram-bin-width-using-the-freedman-diaconis-rule.html
+def freedman_diaconis_width(data):
+    """
+    Use Freedman Diaconis rule to compute optimal histogram bin width. 
+    ``returnas`` can be one of "width" or "bins", indicating whether
+    the bin width or number of bins should be returned respectively. 
+
+
+    Parameters
+    ----------
+    data: np.ndarray
+        One-dimensional array.
+
+    returnas: {"width", "bins"}
+        If "width", return the estimated width for each histogram bin. 
+        If "bins", return the number of bins suggested by rule.
+    """
+    data = np.asarray(data, dtype=np.float_)
+    IQR  = stats.iqr(data, rng=(25, 75), scale=1.0, nan_policy="raise")
+    N    = data.size
+    bw   = (2 * IQR) / np.power(N, 1/3)
+    datmin, datmax = data.min(), data.max()
+    datrng = datmax - datmin
+    if IQR==0:
+    	result = 1 # Handles corner case of no spread for IQR. In that case, return 1 bin.
+    else:
+    	result = int((datrng / bw) + 1)
+    return(result)
+
+# Currently used to determine number of bins. 
+def sturg_rule_number_of_bins(data):
+	return int(1 + round((3.322 * np.log10(len(data)))))
+
+def generate_results_date_and_days(year, month, day, hour, delta_days):
+	result_dates = []
+	days = []
+	number_of_months = (year - start_year) * 12 + (month - start_month) + 1  # the 1 because we want to count current month as well
+	days.append(f"{delta_days}") # first row is total 
+	
+	if number_of_months > 1: 
+		# Only append if simulation does not end in same month
+		days.append(f"{round_decimals(monthrange(start_year,start_month)[1] - start_day - (start_hour/24.0) + 1 )}") # start day to end of month 
+		result_dates.append(f"{start_year}-{start_month}-{monthrange(start_year,start_month)[1]}") # this list is for plotting graph since the graph does not want a total
+	for num_month in range(1,number_of_months - 1):
+		# calculate dates and number of days for the in between months 
+		curr_year = int(start_year + (num_month + start_month)/13)
+		curr_month = (num_month + start_month - 1) % 12 + 1
+		curr_day = monthrange(curr_year,curr_month)[1]
+		result_dates.append(f"{curr_year}-{curr_month}-{curr_day}")
+		days.append(curr_day)
+	result_dates.append(f"{year}-{month}-{day}") # last date is current simulation date
+	if number_of_months > 1:
+		days.append(f"{round_decimals(day - 1 + (hour/24.0))}") # last number of days is current day of simulation 
+	else:
+		days.append(f"{round_decimals(day - start_day + (hour - start_hour)/24)}")
+	return result_dates, days
+
+def update_monthly_demand_triplex(triplex_meter_name):
+	# Updates triplex bill with the max of the current peak power vaule and the current month measured demand generated from the triplex meter. 
+	# Resets measured demand of triplex meter.
+	bill_name = gridlabd.get_object("bill_" + triplex_meter_name)["name"]
+	greater = max(to_float(gridlabd.get_value(bill_name, "peak_power")), to_float(gridlabd.get_value(triplex_meter_name, "measured_demand")))
+	gridlabd.set_value(bill_name, "peak_power", str(greater))
+	gridlabd.set_value(triplex_meter_name, "measured_demand", str(0.0))
+
+
 def on_init(t):
+
+	# set up logging
+	# logging.basicConfig(level=logging.DEBUG)
+	# logger = logging.getLogger()
+	# logger.disabled = True
+
 	# downloads csv file from OpenEi database if not already downloaded
 	if not os.path.exists('usurdb.csv'):
 		print("Downloading needed csv file to working directory")
@@ -149,152 +381,218 @@ def on_init(t):
 		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
 			shutil.copyfileobj(f_in, f_out)
 
-	# Sets delta to 1 hr
-	meter = gridlabd.get_object("test_meter")
-	delta = to_float(gridlabd.get_value(meter["name"],"measured_energy_delta_timestep"))
-	if delta != 3600:
-		print("Measured real energy delta was not set to 1 hr. Setting delta to 1 hr")
-		gridlabd.setvalue(meter["measured_energy_delta_timestep"],"measured_energy_delta_timestep", str(3600))
-
 	t_counter = int(gridlabd.get_global("tariff_index"))
+
+	global tariff_df 
+	try:
+		tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
+	except ValueError as e:
+		gridlabd.error(str(e))
+		sys.exit(1) 
+
+
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
+
+	# Set up the needed globals 
+	global start_year # For calculation of date column for meters 
+	start_year = clock.year
+
+	global start_month # For calculation of date column for meters 
+	start_month = clock.month
+
+	global start_day # For calculation of date column for meters
+	start_day = clock.day
+
+	global start_hour # For calculation of date column for meters
+	start_hour = clock.hour 
 	
-	# removed to get rid of terminal input
-	#t_counter = int(input("Enter desired tariff index from tariff_library_config.csv (Note csv is 0 indexed):"))
-	
-	global tariff_df # reads tariff on init 
-	tariff_df = read_tariff("tariff_library_config.csv", t_counter) # Could edit to allow user to input csv path?
+	global prev_month # For determining when simulation has moved on to a new month
+	prev_month = clock.month
+
+	global prev_day # For determining when simulation has moved on to a new day 
+	prev_day = clock.day
+
+	global triplex_name_list # The names of all triplex meters
+	global meter_name_list # The names of all meters
+	obj_list = gridlabd.get("objects")
+	triplex_name_list = [] 
+	meter_name_list = [] 
+	for obj in obj_list:
+		data = gridlabd.get_object(obj)
+		if data["class"] == "triplex_meter":
+			triplex_name_list.append(obj) # appends the name of the triplex meter rather than the actual object 
+			update_meter_timestep(obj, 3600) # meter time step to be an hour 
+		if data["class"] == "meter":
+			meter_name_list.append(obj)
+			# initialize values 
+			gridlabd.set_value(obj, "monthly_updated_charges", "0.0")
+			gridlabd.set_value(obj, "monthly_updated_usage", "0.0")
+			gridlabd.set_value(obj, "monthly_updated_power", "0.0")
+			update_meter_timestep(obj, 3600)
+
+
 
 	return True
 
+
+
 def on_commit(t):
-
-	# TEST THIS CODE
-	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')	
-	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
+	# Update all meters and triplex meters each hour. Also updates monthly values for meters every new month. 
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	hour = clock.hour
-
-	if seconds % 3600 == 0: # can add error flag if it skips an hour just assume it works
-
-		bill = gridlabd.get_object("test_bill")
-		bill_name = bill["name"]
-		meter = gridlabd.get_object("test_meter")
-		meter_name = meter["name"]
-		tariff = gridlabd.get_object("tariff")
-		tariff_name = tariff["name"]
-
-		# 7/19 TESTING MOVING THIS CODE TO ON_INIT TO SPEED UP RUN TIME
-		#path = "tariff_library_config.csv" #EDIT TO ALLOW USER TO CHANGE
-		#t_counter = 0 #EDIT TO ALLOW USER TO CHANGE
-		#tariff_df = read_tariff(path, t_counter)
-
-		# get previous billing_hrs
-		billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
-
-		# energy usage over the hour
-		energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
-
-		# check if in same day/ if timing needs to be updated
+	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
+	if seconds % 3600 == 0: 
+		global prev_month	
+		year = clock.year 
+		month = clock.month
 		day = clock.day
-		global rates
-		global schedule
-		global tariff_df
-		global previous_day
-		if billing_hrs == 0.0:
-			rates, schedule = monthlyschedule_gen(tariff_df)
-			previous_day = day
-		elif day != previous_day:
-			rates, schedule = monthlyschedule_gen(tariff_df)
-			gridlabd.set_value(bill_name, "usage", str(0.0))
-		
-		previous_day = day
+		if prev_month != month:
+			for index, meter_name in enumerate(meter_name_list):
+				# update meter and meter bill values 
+				update_meter_and_bill(meter_name, prev_month-1)
+			for triplex_meter_name in triplex_name_list:
+				update_monthly_demand_triplex(triplex_meter_name)
+			# update measured demand for month for triplex meters
+				
+			prev_month = month
+		global prev_day
+		for meter_name in meter_name_list:
+			# update bill values for each meter
+			meter_bill = gridlabd.get_object("bill_" + meter_name)
+			update_bill_values(meter_bill, meter_name, prev_day,clock)
+		for triplex_meter_name in triplex_name_list:
+			# updates bill values of each triplex meter
+			triplex_bill = gridlabd.get_object("bill_" + triplex_meter_name)
+			update_bill_values(triplex_bill,triplex_meter_name, prev_day,clock)
+		prev_day = day 
 
-		# get previous daily energy usage
-		previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
-
-		# check if if time is peak/shoulder/offpeak
-		type_idx = rates.index(schedule[hour])
-
-		if len(rates) == 3:
-			if type_idx == 0:
-				string = "offpeak"
-			elif type_idx == 1:
-				string = "shoulder"
-			else:
-				string = "peak"
-		else:
-			if type_idx == 0:
-				string = "offpeak"
-			else:
-				string ="peak"   
-
-		global RATE_FLAG
-
-		if RATE_FLAG == "True":
-			daily_usage = previous_usage + energy_hr
-
-			tier=[0,0,0,0]
-			rate=[0,0,0,0,0]
-
-			for counter in range(4):
-					tier[counter] = to_float(gridlabd.get_value(tariff_name, string+'_tier'+str(counter)))
-					rate[counter] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter)))
-
-			rate[counter+1] = to_float(gridlabd.get_value(tariff_name, string+'_rate'+str(counter+1)))
-			
-			# Fixed?
-			if tier[0] != 0.0:
-				tier0 = max(min(daily_usage, tier[0]) - previous_usage, 0) 
-			else:
-				tier0 = energy_hr
-			if tier[1] != 0.0:
-				tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0)
-			else:
-				tier1 = max(min(daily_usage, tier[1]) - previous_usage - tier0, 0, energy_hr-tier0)
-			if tier[2] != 0.0:
-				tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0)
-			else:
-				tier2 = max(min(daily_usage, tier[2]) - previous_usage - tier0 - tier1, 0, energy_hr-tier0-tier1)
-			if tier[3] != 0.0:
-				tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0)
-			else:
-				tier3 = max(min(daily_usage, tier[3]) - previous_usage - tier0 - tier1 - tier2, 0, energy_hr-tier0-tier1-tier2)
-			
-			tier4 = max(energy_hr - tier0 - tier1 - tier2 - tier3, 0)
-
-			hr_charge = rate[0]*tier0+rate[1]*tier1+rate[2]*tier2+rate[3]*tier3+rate[4]*tier4
-
-			gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-			gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
-			gridlabd.set_value(bill_name, "usage", str(daily_usage))
-			gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
-
-			triplex_meter = gridlabd.get_object("test_meter")
-			meter_name = triplex_meter["name"]
-			gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
-
-			# Add if verbose is on print this?
-			#print(clock)
-			#print("KWh:", energy_hr," Total charges:", gridlabd.get_value(bill_name,"total_charges"),"Hr charges", hr_charge, " Daily usage:" , daily_usage, "Total usage:", gridlabd.get_value(bill_name,"total_usage"))
-			#print()
-
-
-		else:
-			print("Implementation for non-inclining block rate in progress") 
-	else:
-		d=0
-		# Add here if verbose is on print this?
-		#print("Time passed was not a complete hour. Billing unchanged")
 
 	return gridlabd.NEVER
 
+def plot_meter_graph(X, Y, y_label, title, result_name):
+	# Outputs 3 png, each with 1 graph (charges, usage, power) for a certain meter. Uses the properties monthly_charges, monthly_usage, monthly_power 
+	fig = plt.figure()
+	fig.set_size_inches(15, 8)
+	plt.clf()
+	ax = fig.add_axes([0,0,1,1])
+	ax.bar(X,Y)
+	plt.xlabel('Months')
+	plt.ylabel(y_label)
+	plt.title(title)
+	# pdf.savefig(bbox_inches="tight", dpi=150)
+	plt.savefig(result_name, bbox_inches='tight', dpi=150)
+	#pdf = PdfPages("results_" + str(meter_name) + ".pdf")
+	#pages = convert_from_path("results_" + str(meter_name) + ".pdf", 500)
+	#page.save("results_" + str(meter_name) + ".png", 'PNG')
+	#pdf.close()
+
+def plot_triplex_meter_histograms(X, x_label, title, result_name):
+	# Outputs histogram for distribution of all triplex meters for charges, usage, and power. 
+	
+	fig = plt.figure()
+	plt.clf()
+	NBR_BINS = sturg_rule_number_of_bins(X)
+	ax = fig.add_axes([0,0,1,1])
+	for axis in [ax.xaxis, ax.yaxis]:
+		axis.set_major_locator(ticker.MaxNLocator(integer=True))
+	ax.hist(X, bins = NBR_BINS, edgecolor = "black")
+	plt.xlabel(x_label)
+	plt.ylabel('Number of Triplex Meters')
+	plt.title(title)
+	plt.savefig(result_name, bbox_inches='tight', dpi=150)
+		#pdf.savefig(bbox_inches="tight", dpi=150)
+	#pdf = PdfPages("triplex_results" + ".pdf")
+	#pages = convert_from_path("triplex_results" + ".pdf", 500)
+	#page.save('triplex_results.png', 'PNG')
+	#pdf.close()
+
 def on_term(t):
-	bill = gridlabd.get_object("test_bill")
-	bill_name = bill["name"]
-	triplex_meter = gridlabd.get_object("test_meter")
-	meter_name = triplex_meter["name"]
+	global prev_month
+	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
+	year = clock.year 
+	month = clock.month
+	day = clock.day
+	hour = clock.hour
+	for index, meter_name in enumerate(meter_name_list):
+		# updates each meter for the current month (when simulation ends in middle of month)
+		update_meter_and_bill(meter_name, month-1)
+	for triplex_meter_name in triplex_name_list:
+		update_monthly_demand_triplex(triplex_meter_name)
 
-	print("Total charges:", gridlabd.get_value(bill_name,"total_charges"), "Total usage:", gridlabd.get_value(bill_name,"total_usage"), "Total hrs:", gridlabd.get_value(bill_name,"billing_hrs"), "Total power:", gridlabd.get_value(bill_name,"total_power"))
 
-	# Add writing to own csv here?
-	# Could use on exit in terminal and look at json file maybe?
+	# get results for all meters for output.csv 
+	charges_meter_list, usage_meter_list, total_power_meter_list, months_meter_list, measured_demand_meter_list = ([] for i in range(5))
+
+	
+	for meter_name in meter_name_list:
+
+		# temp list for graphing without a total for graphing. List with total is for output.csv 
+		current_meter_monthly_charges = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_charges")[1:].split(",")] # first element of list is empty 
+		charges_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_charges"))))
+		charges_meter_list.extend(current_meter_monthly_charges) 
+
+		current_meter_monthly_usage = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_usage")[1:].split(",")]
+		usage_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_usage"))))
+		usage_meter_list.extend(current_meter_monthly_usage)
+
+		current_meter_monthly_power = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_power")[1:].split(",")]
+		total_power_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_power"))))
+		total_power_meter_list.extend(current_meter_monthly_power)
+
+		current_meter_monthly_demand = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_demand")[1:].split(",")]
+		measured_demand_meter_list.append(max(current_meter_monthly_demand)) # gets the max of all the monthly demand 
+		measured_demand_meter_list.extend(current_meter_monthly_demand)
+
+		months_meter_list.append(f"{year}-{month}-{day}") # first row is total so date of end of simulation 
+		delta_days = round_decimals((date(year, month, day) - date(start_year, start_month, start_day)).days + (hour/24.0) - (start_hour/24.0))
+
+		# generates the dates of results and number of days in the results
+		result_dates, days = generate_results_date_and_days(year, month, day, hour, delta_days)
+
+
+
+		plot_meter_graph(result_dates, current_meter_monthly_charges, "Charges ($)", f"{meter_name} Monthly Charges", f"{meter_name}_month_charges.png")
+		plot_meter_graph(result_dates, current_meter_monthly_usage, "Usage (kWh)", f"{meter_name} Monthly Usage", f"{meter_name}_month_usage.png")
+		plot_meter_graph(result_dates, current_meter_monthly_power, "Power (W)", f"{meter_name} Monthly Power", f"{meter_name}_month_power.png")
+		plot_meter_graph(result_dates, current_meter_monthly_demand, "Demand (W)", f"{meter_name} Monthly Demand", f"{meter_name}_month_demand.png")
+
+		months_meter_list.extend(result_dates) 
+
+	# get results for all triplex meters 
+	charges_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_charges"))) for triplex_name in triplex_name_list]
+	usage_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_usage"))) for triplex_name in triplex_name_list]
+	peak_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"peak_power"))) for triplex_name in triplex_name_list]
+	total_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_power"))) for triplex_name in triplex_name_list]
+
+
+
+	meter_name_dupe_list = [val for val in meter_name_list for i in gridlabd.get_value(meter_name, "monthly_charges").split(",")] # duplicate meter name for each month value 
+
+	plot_triplex_meter_histograms(charges_triplex_meter_list, "Charges ($)", "Distribution of Charges", "distribution_of_charges.png")
+	plot_triplex_meter_histograms(usage_triplex_meter_list, "Usage (kWh)", "Distribution of Usage", "distribution_of_usage.png")
+	plot_triplex_meter_histograms(peak_power_triplex_meter_list, "Peak Power (W)", "Distribution of Peak Power", "distribution_of_peak_power.png")
+
+
+	# appends meter list and its results to triplex meter list and its results. Will add these as columns to .csv file 
+	charges_meter_list.extend(charges_triplex_meter_list)
+	usage_meter_list.extend(usage_triplex_meter_list)
+	measured_demand_meter_list.extend(peak_power_triplex_meter_list)
+	meter_name_dupe_list.extend(triplex_name_list)
+	total_power_meter_list.extend(total_power_triplex_meter_list)
+
+	for meter_name in triplex_name_list:
+		# All triplex values are totals, not split by month
+		months_meter_list.append(f"{year}-{month}-{day}") 
+		days.append(delta_days)
+	# add to dataframe by column 
+	df = pandas.DataFrame({"Meter_ID": meter_name_dupe_list})
+	df["Date"] = months_meter_list
+	df["Days"] = days
+	df["Cost ($)"] = charges_meter_list
+	df["Energy (kWh)"] = usage_meter_list
+	df["Peak Power (W)"] = measured_demand_meter_list
+	df = df.set_index('Meter_ID')
+	print(df)
+	df.to_csv('output.csv')
+
 	return None

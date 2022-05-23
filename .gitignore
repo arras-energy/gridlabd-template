@@ -1,3 +1,8 @@
 .DS_Store
 __MACOSX/
 *.pyc
+US/CA/SLAC/tariff_design/usurdb.csv
+US/CA/SLAC/tariff_design/output.csv
+US/CA/SLAC/tariff_design/config.csv
+US/CA/SLAC/tariff_design/model.glm
+US/CA/SLAC/tariff_design/config.glm
