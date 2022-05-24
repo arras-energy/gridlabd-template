@@ -1,0 +1,80 @@
+
+   
+// Model glm for testing
+
+#input "config.csv" -f config -t config
+
+#define tariff_index=${TARIFF_INDEX}
+
+module tape;
+
+#input "${WEATHER_STATION}.tmy3"
+
+
+
+
+module powerflow;
+module residential;
+
+#define PRIMARY_VOLTAGE=4800V
+#define POWER_RATING=500
+#define RESISTANCE=0.011
+#define REACTANCE=0.02
+
+object meter
+{
+	bustype "SWING";
+	name "meter_1";	
+	nominal_voltage "4800V";
+	phases "ABCN";
+}
+
+object meter
+{
+	name "meter_2";	
+	nominal_voltage "4800V";
+	phases "ABCN";
+}
+
+object transformer_configuration {
+	name "transformer_type1";
+	connect_type "SINGLE_PHASE_CENTER_TAPPED";
+  	install_type "PADMOUNT";
+  	power_rating ${POWER_RATING};
+  	primary_voltage ${PRIMARY_VOLTAGE};
+  	secondary_voltage "120V";
+  	resistance ${RESISTANCE};
+  	reactance ${REACTANCE};
+}
+
+#for ID in ${RANGE 1, 2}
+
+object transformer {
+	name transformer_${ID};
+  	phases "AS";
+  	from "meter_1";
+  	to "submeter_${ID}";
+  	configuration "transformer_type1";
+}
+  
+object triplex_meter
+{
+	name "submeter_${ID}";
+	nominal_voltage "120V";
+	phases "AS";
+	object house
+	{
+		floor_area random.triangle(750,2000);
+		thermal_integrity_level "NORMAL";
+		gas_enduses "WATERHEATER|DRYER|RANGE";
+		heating_system_type "HEAT_PUMP";
+	};
+}
+
+#done
+
+
+
+
+
+

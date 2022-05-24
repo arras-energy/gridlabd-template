@@ -1,0 +1,5 @@
+Recreate error for multi-meter segmentation fault starting from fix-multimeter-segmentation-fault branch by running these commands: 
+
+cd autotest 
+sh setup.sh
+gridlabd model.glm clock.glm test-tariff_design.glm

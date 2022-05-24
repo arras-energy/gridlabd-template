@@ -1,0 +1,8 @@
+
+// Clock 
+clock {
+	timezone "PST+8PDT";
+	starttime "2020-12-08 16:00:00 PST";
+	stoptime "2021-1-09 12:00:00 PST";
+}
+
