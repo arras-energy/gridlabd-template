@@ -33,7 +33,7 @@ def parse_user_DER(der_value) -> str:
     if not der_value:
         return None
     try:
-        if "kW" in der_value:
+        if "kw" in der_value.lower():
             return str(float(der_value.split(" ")[0].strip()[1:]) * 1000)
         else:
             return str(float(der_value.strip()))
