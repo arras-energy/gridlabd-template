@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import gridlabd 
-
+import pandas
 """
 Created on Tue June 21 2020
 
@@ -32,18 +32,53 @@ def parse_user_DER(der_value) -> str:
     # Parse user input for der_value. Expected input is "<float> <optional unit>". 
     if not der_value:
         return None
+    conver_to_W = 1 
     try:
         if "kw" in der_value.lower():
-            return str(float(der_value.split(" ")[0].strip()[1:]) * 1000)
-        else:
-            return str(float(der_value.strip()))
+            conver_to_W = 1000
+        return str(float(der_value.split(" ")[0].strip().replace('"', '')) * conver_to_W)
     except ValueError:
         gridlabd.error(f"DER_VALUE not in valid format.")
+def find_first_comma(value) -> int:
+    for i, ch in enumerate(value):
+        if ch == ",":
+            return i
+    return -1 
 
 def on_init(t):
     obj_list = gridlabd.get("objects")
-    der_value = parse_user_DER(gridlabd.get_global("DER_VALUE"))
-    violation_rating = gridlabd.get_global("VIOLATION_RATING")
+
+    is_config_exist = False
+    try:
+        df = pandas.read_fwf('config.csv', header=None)
+        is_config_exist = True
+    except FileNoteFoundError: 
+        gridlabd.warning("config.csv not found. Proceeding with default values.")
+
+    config_values = {} 
+    if is_config_exist:
+        for index in df.index:
+            row_string = df.iloc[:,0][index]
+            i = find_first_comma(row_string)
+            config_values[row_string[:i]] = row_string[i+1:].strip()
+        for key in config_values.keys():
+            print(f"{key} : {config_values[key]}")
+
+    der_value = parse_user_DER(config_values.get("DER_VALUE", None))
+    violation_rating = config_values.get("VIOLATION_RATING", None)
+    load_list = [] 
+    is_set_DER_for_all = False 
+    str_load_list = config_values.get("LOAD_LIST", None)
+    if str_load_list:
+        if str_load_list == "*" :
+            is_set_DER_for_all = True
+        else:
+            delimeter = " "
+            if "," in str_load_list:
+                delimeter = ","
+            load_list = [load.strip() for load in str_load_list.split(delimeter)]
+                
+
     for obj in obj_list:
         # Iterate through all objects and set needed values based on its class. 
         data = gridlabd.get_object(obj)
@@ -59,8 +94,8 @@ def on_init(t):
                 # Set violation rating of link if it is 0, only if violation rating is provided. 
                 gridlabd.set_value(obj, "violation_rating", violation_rating)
     
-    global_voltage_threshold = gridlabd.get_global("VOLTAGE_VIOLATION_THRESHOLD")
-    global_voltage_fluctuation_threshold = gridlabd.get_global("VOLTAGE_FLUCTUATION_THRESHOLD")
+    global_voltage_threshold = config_values.get("VOLTAGE_VIOLATION_THRESHOLD", None)
+    global_voltage_fluctuation_threshold = config_values.get("VOLTAGE_FLUCTUATION_THRESHOLD", None)
 
     if (global_voltage_threshold):
         # Set default voltage threshold if exists within config.csv. 
