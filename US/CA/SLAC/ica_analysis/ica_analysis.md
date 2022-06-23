@@ -23,29 +23,28 @@ The analysis is currently run from the docker image `slacgismo/gridlabd:develop`
 docker run -itv "<path_to_template>":/model slacgismo/gridlabd:develop
 ```
 ### ica-analysis.py
-This script runs an ICA analysis on the given network model. It sets minimum and maximum thresholds for all the objects and their tracked properties. It then checks the real-time values of those properties on each iteration of the power flow simulation, recording any violations in a dataframe that is written to a csv upon termination of the simulation. A description of each of its functions is included below. 
-
-#### def on_init(t):
-Processes each object in the model and sets up default violation values using config.csv. 
-
+This script runs an ICA analysis on the given network model. It sets minimum and maximum thresholds for all the objects and their tracked properties. It then checks the real-time values of those properties on each iteration of the power flow simulation, recording any violations in a dataframe that is written to a csv upon termination of the simulation. 
 
 ### ica-analysis.glm
 Reads in  `config.csv` and runs the `ica-analysis.py` script. 
 
 ### config.csv
-Optional. User provided csv file to specify default values globals `VOLTAGE_VIOLATION_THRESHOLD` and `VOLTAGE_FLUCTUATION_THRESHOLD`, along with `DER_VALUE` of the list of loads `LOAD_LIST`, and `VIOLATION_RATING` of links. Example config.csv is provided below:
+Optional. User provided csv file to specify default values globals `VOLTAGE_VIOLATION_THRESHOLD` and `VOLTAGE_FLUCTUATION_THRESHOLD`, set `DER_VALUE` of the list of loads `LOAD_LIST`and `VIOLATION_RATING` of all links. Example config.csv is provided below:
 
 ```
-DER_VALUE,-10000
-LOAD_LIST, R1-12_47-1_load_4 R1-12_47-1_load_11 R1-12_47-1_load_15 
-VOLTAGE_VIOLATION_THRESHOLD, 0.03
-VOLTAGE_FLUCTUATION_THRESHOLD, 0.05
-VIOLATION_RATING, 0.03
+DER_VALUE,-10 kW
+LOAD_LIST, load1, load2, load3
+VOLTAGE_VIOLATION_THRESHOLD, 0.03 pu
+VOLTAGE_FLUCTUATION_THRESHOLD, 0.05 pu
+VIOLATION_RATING, 0.03 A
 ```
+## Notes 
+LOAD_LIST value can be delimited by ` ` or `,` and expects names of objects in `model.glm`. Input `*` to indicate all loads should have their `DER_VALUE` set. 
+All rows are optional. If not provided, default values of globals will be used: `VOLTAGE_VIOLATION_THRESHOLD` : `0.05 pu`, `VOLTAGE_FLUCTUATION_THRESHOLD` : `0.03 pu`.
+### model.glm
+The network model to process. 
 
+### Output
 
-## Next Directions
-
-1. Generalize - test ICA methodology on other IEEE networks (IEEE4, IEEE13, IEEE57, IEEE8500) 
-2. Validate - confirm that this ICA methodology produces similar results to CYME. Conduct sensitivity analyses.
-3. Enhance - work with utilities to identify ways in which ICA methodology could be improved upon. Ex) applying ML to replace iterative methodology
+## model_violations.csv
+Csv file of all model objects violations including timestamp of violation, name of violating object, type of violation, and description.  
