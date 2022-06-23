@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import gridlabd 
-import pandas
+from csv import reader
 """
 Created on Tue June 21 2020
 
@@ -39,53 +39,56 @@ def parse_user_DER(der_value) -> str:
         return str(float(der_value.split(" ")[0].strip().replace('"', '')) * conver_to_W)
     except ValueError:
         gridlabd.error(f"DER_VALUE not in valid format.")
-def find_first_comma(value) -> int:
-    for i, ch in enumerate(value):
-        if ch == ",":
-            return i
-    return -1 
+ 
 
 def on_init(t):
+    # List of all objects for model processing. 
     obj_list = gridlabd.get("objects")
 
-    is_config_exist = False
+    # Dictionary of config.csv values. First column maps to second column.
+    config_values = {} 
+
+    # The list of loads to set DER_value. 
+    load_list = [] 
+
+    # Boolean to indicate of all loads' DER_value should be set. 
+    is_set_DER_for_all = False
+
     try:
-        df = pandas.read_fwf('config.csv', header=None)
-        is_config_exist = True
-    except FileNoteFoundError: 
+        with open('config.csv', 'r') as read_obj:
+            csv_reader = reader(read_obj)
+            for row in csv_reader:
+                if row[0] == "LOAD_LIST":
+                    # Splits load list value into a list using "," or " "
+                    if row[1].strip() == "*" :
+                        # Star indicates all loads should be set. 
+                        is_set_DER_for_all = True
+                    elif len(row) == 2:
+                        load_list = [load.strip() for load in row[1].split()]
+                    else:
+                        load_list = [load.strip() for load in row[1:]]
+                else:
+                    # Put key-value into dictonary for all other rows. 
+                    config_values[row[0]] = row[1].strip()
+    except FileNotFoundError:
         gridlabd.warning("config.csv not found. Proceeding with default values.")
 
-    config_values = {} 
-    if is_config_exist:
-        for index in df.index:
-            row_string = df.iloc[:,0][index]
-            i = find_first_comma(row_string)
-            config_values[row_string[:i]] = row_string[i+1:].strip()
-        for key in config_values.keys():
-            print(f"{key} : {config_values[key]}")
+    # Convert to set for constant look-up. 
+    load_set = set(load_list)
 
+    # Converts number to W if units kW provided.
     der_value = parse_user_DER(config_values.get("DER_VALUE", None))
+
     violation_rating = config_values.get("VIOLATION_RATING", None)
-    load_list = [] 
-    is_set_DER_for_all = False 
-    str_load_list = config_values.get("LOAD_LIST", None)
-    if str_load_list:
-        if str_load_list == "*" :
-            is_set_DER_for_all = True
-        else:
-            delimeter = " "
-            if "," in str_load_list:
-                delimeter = ","
-            load_list = [load.strip() for load in str_load_list.split(delimeter)]
-                
 
     for obj in obj_list:
         # Iterate through all objects and set needed values based on its class. 
         data = gridlabd.get_object(obj)
         if is_load(data):
-            if der_value and gridlabd.get_value(obj, "DER_value") == "+0+0i VA": 
-                # Set the DER_value of a load if it is 0. Currently cannot differentiate between default 0 and user-set 0. 
+            if (der_value and data["name"] in load_set) or is_set_DER_for_all: 
+                # Set the DER_value of a load if listed or "*".
                 gridlabd.set_value(obj, "DER_value", der_value)
+                print(f'{data["name"]} DER : {gridlabd.get_value(obj, "DER_value")}')
         if is_node(data):
             # Might need to do something to nodes in the future. 
             pass
