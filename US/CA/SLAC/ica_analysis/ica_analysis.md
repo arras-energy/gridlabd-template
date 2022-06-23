@@ -15,146 +15,34 @@ The 4 files needed to run an ICA analysis are summarized as follows:
 | ---------------- | --------------------------- | ----------------------------------------------------------------------------------------------- |
 | ica-analysis.py  | slacgismo/gridlabd-template | Applies ICA process to network model, checking for constraint violations at every time step     |
 | ica-analysis.glm | slacgismo/gridlabd-template | Modifies network model by importing ica_analysis.py and ica_analysis.csv                        |
-| ica-config.csv   | slacgismo/gridlabd-models   | Contains default values for setting violation threshold on network objects. Modifiable by user  |
+| config.csv       |                             | Containers user-specified values to test network objects. Default is used if not provided       |
 | model.glm        | slacgismo/gridlabd-models   | Generic network model                                                                           |
 
-The analysis should be run from `slacgismo/gridlabd-models using` the following command:
+The analysis is currently run from the docker image `slacgismo/gridlabd:develop` with the following command:
 ```
-host% gridlabd template get ica-analysis
-host% gridlabd /usr/local/share/gridlabd/template/US/CA/SLAC/ica_analysis.glm model.glm
+docker run -itv "<path_to_template>":/model slacgismo/gridlabd:develop
 ```
 ### ica-analysis.py
 This script runs an ICA analysis on the given network model. It sets minimum and maximum thresholds for all the objects and their tracked properties. It then checks the real-time values of those properties on each iteration of the power flow simulation, recording any violations in a dataframe that is written to a csv upon termination of the simulation. A description of each of its functions is included below. 
 
-#### def check_phases(obj):
-
-Determines the voltage properties that should be checked for the given meter by considering its phases and configuration.
-```
-Args: meter
-
-Returns: list of commit properties to check for that meter
-```
-
-#### def get_commit_val(obj, obj_class, commit_prop):
-Accounts for complex number formats and variations in string formatting to return the real-time standardized float value for a given commit property and object.
-```
-Args: object, object class, commit property
-
-Returns: real-time value (float) of the object's commit property 
-```
-
 #### def on_init(t):
-Sets thresholds for all tracked properties for all tracked objects included in `ica-config.csv`. Creates a dataframe with properties to check on each commit and their associated thresholds. Sets thresholds by retrieving the library value of each property and adjusting it according to user inputs in `ica-config.csv`. For example, if the library value is 1000A, and the user input a 90% threshold, the max threshold would be set to 900A. A table of the tracked classes, the properties that are used to set thresholds (Init Properties), and the properties that are compared against the thresholds (Commit Properties) is included below.
-```
-Args: timestep
+Processes each object in the model and sets up default violation values using config.csv. 
 
-Returns: True
-```
-
-|       Class      |       Init Property         | Commit Property              |
-| ---------------- | --------------------------- |------------------------------|
-| underground_line | rating.summer.continuous    | current_out_A                |
-|                  |                             | current_out_B                |
-|                  |                             | current_out_C                |
-|                  |                             | current_in_A                 |
-|                  |                             | current_in_B                 |
-|                  |                             | current_in_C                 |
-|                  | rating.winter.continuous    | current_out_A                |
-|                  |                             | current_out_B                |
-|                  |                             | current_out_C                |
-|                  |                             | current_in_A                 |
-|                  |                             | current_in_B                 |
-|                  |                             | current_in_C                 |
-|   overhead_line  | rating.summer.continuous    | current_out_A                |
-|                  |                             | current_out_B                |
-|                  |                             | current_out_C                |
-|                  |                             | current_in_A                 |
-|                  |                             | current_in_B                 |
-|                  |                             | current_in_C                 |
-|                  | rating.winter.continuous    | current_out_A                |
-|                  |                             | current_out_B                |
-|                  |                             | current_out_C                |
-|                  |                             | current_in_A                 |
-|                  |                             | current_in_B                 |
-|                  |                             | current_in_C                 |
-|    transformer   | power_rating                | power_in                     |
-|                  |                             | power_out                    |
-|                  | powerA_rating               | power_in_A                   |
-|                  |                             | power_out_A                  |
-|                  | powerB_rating               | power_in_B                   |
-|                  |                             | power_out_B                  |
-|                  | powerC_rating               | power_in_C                   |
-|                  |                             | power_out_C                  |
-|                  | rated_top_oil_rise          | top_oil_hot_spot_temperature |
-|                  | rated_winding_hot_spot_rise | winding_hot_spot_temperature |
-|     regulator    | raise_taps                  | tap_A                        |
-|                  |                             | tap_B                        |
-|                  |                             | tap_C                        |
-|                  | lower_taps                  | tap_A                        |
-|                  |                             | tap_B                        |
-|                  |                             | tap_C                        |
-|                  | continuous_rating           | current_out_A                |
-|                  |                             | current_out_B                |
-|                  |                             | current_out_C                |
-|                  |                             | current_in_A                 |
-|                  |                             | current_in_B                 |
-|                  |                             | current_in_C                 |
-|   triplex_meter  | 2* nominal_voltage          | measured_voltage_12          |
-|                  | nominal_voltage             | measured_voltage_1           |
-|                  |                             | measured_voltage_2           |
-|       meter      |       nominal_voltage       | measured_voltage_A           |
-|                  |                             | measured_voltage_B           |
-|                  |                             | measured_voltage_C           |
-|                  |                             | measured_voltage_AB          |
-|                  |                             | measured_voltage_BC          |
-|                  |                             | measured_voltage_CA          |
-
-#### def on_commit(t):
-Checks real-time values for all tracked properties for all tracked objects included in `ica-config.csv`. If the min or max threshold is exceeded, it records the object, violated property, value of property, and time of violation in the violation dataframe.
-```
-Args: timestep
-
-Returns: True
-```
-
-#### def on_term(t):
-Writes the violation dataframe to a csv. The structure of the csv is determined by the user in `ica-config.csv`.
-```
-Args: timestep
-
-Returns: True
-```
 
 ### ica-analysis.glm
-Modifies the network model to read in the `ica-config.csv` and to run the `ica-analysis.py` script. 
+Reads in  `config.csv` and runs the `ica-analysis.py` script. 
 
-### ica-config.csv
-Includes information to set default thresholds for all tracked objects and properties in ICA. User can overwrite default values. Properties that are left blank have their thresholds set to their library value. Properties for which the user inputs an X are ignored, and not tracked during ICA. Properties for which the user inputs a percentage have their thresholds set either as a percent deviation from their library value (ex. +- 5%) or as a maximum rating (ex. up to 90% of their library value), in accordance with the table below. Properties for which the user inputs a fixed number have their thresholds set to that number. 
+### config.csv
+Optional. User provided csv file to specify default values globals `VOLTAGE_VIOLATION_THRESHOLD` and `VOLTAGE_FLUCTUATION_THRESHOLD`, along with `DER_VALUE` of the list of loads `LOAD_LIST`, and `VIOLATION_RATING` of links. Example config.csv is provided below:
 
-|       Class      |        Init Property        | Interpretation of %     |
-| ---------------- | --------------------------- |-------------------------|
-| underground_line | rating.summer.continuous    | Rating                  |
-|                  | rating.winter.continuous    | Rating                  |
-| overhead_line    | rating.summer.continuous    | Rating                  |
-|                  | rating.winter.continuous    | Rating                  |
-| transformer      | power_rating                | Rating                  |
-|                  | powerA_rating               | Rating                  |
-|                  | powerB_rating               | Rating                  |
-|                  | powerC_rating               | Rating                  |
-|                  | rated_top_oil_rise          | Rating                  |
-|                  | rated_winding_hot_spot_rise | Rating                  |
-| regulator        | raise_taps                  | Error - cannot enter %  |
-|                  | lower_taps                  | Error - cannot enter %  |
-|                  | continuous_rating           | Rating                  |
-| triplex_meter    | 2* nominal_voltage          | Deviation               |
-|                  | nominal_voltage             | Deviation               |
-| meter            | nominal_voltage             | Deviation               |
+```
+DER_VALUE,-10000
+LOAD_LIST, R1-12_47-1_load_4 R1-12_47-1_load_11 R1-12_47-1_load_15 
+VOLTAGE_VIOLATION_THRESHOLD, 0.03
+VOLTAGE_FLUCTUATION_THRESHOLD, 0.05
+VIOLATION_RATING, 0.03
+```
 
-`ica-config.csv` also includes 2 user options: (1) `input_option`, and (2) `violation_option`:
-
-1. `input_option`: Can be set to 1 or 2. If 1, `ica-config.csv` is automatically read in through a csv converter. If 2, `ica-config.csv` is read in directly through the python script, allowing for greater flexibility in the format of the csv file.
-
-2. `violation_option`: Can be set to 1, 2, or 3. If 1, the script records the first violation of each object within the violation dataframe. The entire dataframe, with all objects (violated or not) is saved to a csv. If 2, the script records the first violation of each object in a *new* dataframe. This dataframe is saved to a csv, and only includes objects that incurred violations. If 3, the script behaves the same as 2, except *all* violations are recorded, rather than just the first.
 
 ## Next Directions
 
