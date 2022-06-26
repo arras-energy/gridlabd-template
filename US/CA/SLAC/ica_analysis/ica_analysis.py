@@ -27,19 +27,7 @@ def is_link(data) -> bool:
     # Checks to see if data is a link by checking the existence of property "from" and "to". This takes into account objects of a class extending the link class. 
     if data.get("from") and data.get("to"):
         return True
-    return False
-def parse_user_DER(der_value) -> str:
-    # Parse user input for der_value. Expected input is "<float> <optional unit>". 
-    if not der_value:
-        return None
-    conver_to_W = 1 
-    try:
-        if "kw" in der_value.lower():
-            conver_to_W = 1000
-        return str(float(der_value.split(" ")[0].strip().replace('"', '')) * conver_to_W)
-    except ValueError:
-        gridlabd.error(f"DER_VALUE not in valid format.")
- 
+    return False 
 
 def on_init(t):
     # List of all objects for model processing. 
@@ -54,6 +42,8 @@ def on_init(t):
     # Boolean to indicate of all loads' DER_value should be set. 
     is_set_DER_for_all = False
 
+    # Set of loads to set DER_VALUE. 
+    load_set = set()
     try:
         with open('config.csv', 'r') as read_obj:
             csv_reader = reader(read_obj)
@@ -64,20 +54,21 @@ def on_init(t):
                         # Star indicates all loads should be set. 
                         is_set_DER_for_all = True
                     elif len(row) == 2:
-                        load_list = [load.strip() for load in row[1].split()]
+                        load_set = set([load.strip() for load in row[1].split()])
                     else:
-                        load_list = [load.strip() for load in row[1:]]
+                        load_set = set([load.strip() for load in row[1:]])
                 else:
                     # Put key-value into dictonary for all other rows. 
                     config_values[row[0]] = row[1].strip()
     except FileNotFoundError:
         gridlabd.warning("config.csv not found. Proceeding with default values.")
 
-    # Convert to set for constant look-up. 
-    load_set = set(load_list)
 
     # Converts number to W if units kW provided.
-    der_value = parse_user_DER(config_values.get("DER_VALUE", None))
+    der_value = config_values.get("DER_VALUE", None)
+
+    if (not load_set and der_value):
+        gridlabd.warning("DER_VALUE provided with no loads specified.")
 
     violation_rating = config_values.get("VIOLATION_RATING", None)
 
