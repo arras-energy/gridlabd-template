@@ -30,6 +30,7 @@ module resilience
 	metrics_cost_data "test_metrics_cost_data.csv";
 }
 
+// triplex meter
 object metrics
 {
       object cost
@@ -45,8 +46,23 @@ object metrics
    
 }
 
+// meter
+object metrics
+{
+      object cost
+      {
+            asset_class meter;
+            value 0;
+      };
 
-// TO DO
+      object outage
+      {
+            asset_class meter;     
+      };
+   
+}
+
+// TO DO Causes segmentation error
 //#for METER in ${FIND class=triplex_meter}
 //object impact
 //{

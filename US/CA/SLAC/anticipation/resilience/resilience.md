@@ -10,6 +10,10 @@ How to run
 - Run `gridlabd <model_file>.glm resilience.glm`
 
 To do 
-- Verification: test template works with larger network models
-- Validation: compare cost.cpp code with hand calculations
+- Verification:
+	- Test template works with larger network models
+- Validation:
+	- Compare cost.cpp code results with expected model outputs
+	- Compare impact.cpp code results with expected model outputs
+	- Unsure how to best validate outage metric
 - Add functionality for impact metric using Python on create event handler to avoid segmentation error
