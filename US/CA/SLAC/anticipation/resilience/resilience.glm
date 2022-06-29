@@ -1,0 +1,58 @@
+// Set up modules
+module powerflow;
+module climate;
+module tape; 
+
+// Load py module
+//script on_init "resilience_py.py";
+
+// convert CSV configuration file, if any
+#ifexist "resilience_config.csv"
+#exec strings <resilience_config.csv | awk 'BEGIN {FS=","} {print "#define",$1 "=" $2}' >resilience_config.glm
+#endif
+
+// load configuration file, if any
+#ifexist "resilience_config.glm"
+#include "resilience_config.glm"
+#endif
+
+// Set up clock
+clock {
+      starttime ${STARTTIME};
+      stoptime ${STOPTIME};
+      timezone ${TIMEZONE};
+}
+
+// Set up resilience mod
+module resilience 
+{
+	default_impact_duration ${IMPACT_DURATION};
+	metrics_cost_data "test_metrics_cost_data.csv";
+}
+
+object metrics
+{
+      object cost
+      {
+            asset_class triplex_meter;
+            value 0;
+      };
+
+      object outage
+      {
+            asset_class triplex_meter;     
+      };
+   
+}
+
+
+// TO DO
+//#for METER in ${FIND class=triplex_meter}
+//object impact
+//{
+//    node ${METER}; 
+//}
+//#done
+
+
+
