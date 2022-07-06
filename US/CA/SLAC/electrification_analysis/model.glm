@@ -1,11 +1,11 @@
-//Model for testing
+// Model for testing
 
-module electrification;
+// module electrification;
 
 #input "config.csv" -f config -t config
 //
 
-//Climate
+// Climate
 #input "${WEATHER}" 
 
 //Clock
@@ -39,7 +39,7 @@ object triplex_meter
          gas_enduses ${GASENDUSES};
     };
     nominal_voltage 120V;
-    phases ${PHASE}S;
+    phases S${PHASE};
     measured_energy_delta_timestep 3600s;
     object recorder
     {
