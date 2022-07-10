@@ -1,22 +1,29 @@
-SUFFIXES=
+# Makefile
 
-INSTALL=$(shell gridlabd --version=install)
-TARGET=$(shell gridlabd template config get DATADIR)
-SOURCE=$(subst $(INSTALL)/share/gridlabd/template,.,$(TARGET))
+.NOTPARALLEL:
 
-TEMPLATES=ica_analysis
-FILES=$(foreach template,$(TEMPLATES),$(wildcard $(SOURCE)/$(template)/*))
+help:
+	@echo "Syntax: make TARGETS ... [OPTIONS ...]"
+	@echo "Targets:"
+	@echo "  validate   perform validation tests"
+	@echo "Options:"
+	@echo "  LIMIT='timeout TIME'"
+	@echo "  VERBOSE=yes"
 
-build:
-	./compile
-	
-install: $(subst ./,$(INSTALL)/share/gridlabd/template/,$(FILES))
-	@echo Installed $(TEMPLATES) ok
-# 	@echo TARGET=$(TARGET)
-# 	@echo INSTALL=$(INSTALL)
-# 	@echo SOURCE=$(SOURCE)
-# 	@echo TEMPLATES=$(TEMPLATES)
-# 	@echo FILES=$(FILES)
+OPTIONS=
+ifeq ($(VERBOSE),yes)
+OPTIONS += --debug
+endif
 
-$(TARGET)/%: $(SOURCE)/%
-	@mkdir -p $(dir $@) && cp -R $< $@
+TEMPLATES=$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune))
+TESTDIR=autotest/models/gridlabd-4
+TESTFILES=$(foreach GLM,$(shell find $(TESTDIR) -name '*.glm' -print),$(TESTDIR)/$(GLM))
+
+validate: clean $(TESTFILES)
+	@cat validate.txt
+
+clean:
+	@rm -rf test validate.txt
+
+$(TESTDIR)/%.glm: %.glm
+	@$(foreach TEMPLATE,$(TEMPLATES),$(LIMIT) ./validate.sh $(OPTIONS) "$<" "$(TEMPLATE)") >> validate.txt
