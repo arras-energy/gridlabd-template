@@ -7,6 +7,8 @@ SOURCE=$(subst $(INSTALL)/share/gridlabd/template,.,$(TARGET))
 TEMPLATES=ica_analysis
 FILES=$(foreach template,$(TEMPLATES),$(wildcard $(SOURCE)/$(template)/*))
 
+help:
+
 build:
 	./compile
 	
@@ -20,3 +22,14 @@ install: $(subst ./,$(INSTALL)/share/gridlabd/template/,$(FILES))
 
 $(TARGET)/%: $(SOURCE)/%
 	@mkdir -p $(dir $@) && cp -R $< $@
+
+#!/bin/bash
+
+TEMPLATES=$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune))
+TESTDIR=autotest/models/gridlabd-4
+TESTFILES=$(foreach GLM,$(shell find $(TESTDIR) -name '*.glm' -print),$(TESTDIR)/$(GLM))
+
+validate: $(TESTFILES)
+
+$(TESTDIR)/%.glm: %.glm
+	$(foreach TEMPLATE,$(TEMPLATES),. validate.sh "$<" "$(TEMPLATE)")
