@@ -4,3 +4,7 @@ clock
     starttime "2020-01-01 00:00:00 PDT";
     stoptime "2020-02-01 00:00:00 PDT";
 }
+
+#define TARIFF_UTILITY=Pacific Gas & Electric Co
+#define TARIFF_NAME=E-TOU-C3
+#define TARIFF_REGION=Region R
