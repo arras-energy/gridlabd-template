@@ -1,0 +1,18 @@
+name: develop
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: slacgismo/gridlabd:develop
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Validate build
+      run: make validate
