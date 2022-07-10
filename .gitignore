@@ -3,3 +3,6 @@ __MACOSX/
 __pycache__/
 *.pyc
 test/
+gridlabd-pmap-*
+validate
+validate.txt
