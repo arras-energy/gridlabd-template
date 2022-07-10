@@ -1,7 +1,10 @@
 #!/bin/bash
 
-set -x
-set -e
+if [ $1 == "--debug" ]; then
+    set -x
+    set -e
+    shift 1
+fi
 
 for TEMPLATE in $(cat $2/.index); do
     GLMNAME=$(basename "$1")
@@ -16,7 +19,7 @@ for TEMPLATE in $(cat $2/.index); do
         gridlabd template get "$TEMPLATE" 1>stdout 2>stderr
         gridlabd "$GLMNAME" $AUTOTESTGLM -t "$TEMPLATE" --redirect all 1>>stdout 2>>stderr
         ok="OK"
-        for FILE in $(find "$CHECKDIR" -type f -print); do
+        for FILE in $(find . -type f -print); do
             if [ ! "$(basename $FILE)" == "autotest" ]; then
                 diff "$FILE" $(basename "$FILE") >> gridlabd.diff || ok="FAIL"
             fi
