@@ -14,5 +14,5 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Validate build
-      run: make validate
+    - name: Validation
+      run: make validate LIMIT='timeout 60s'
