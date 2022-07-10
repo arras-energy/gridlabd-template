@@ -14,6 +14,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Get test files
+      run: |
+        git submodule sync
+        git submodule update --init --recursive
     - name: Validation
       run: |
         make validate LIMIT='timeout 60s' || tar czf validate.tar.gz test
