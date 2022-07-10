@@ -25,10 +25,7 @@ $(TARGET)/%: $(SOURCE)/%
 
 #!/bin/bash
 
-COUNTRY=US
-STATE=CA
-ORG=SLAC
-TEMPLATES=$(shell find $(COUNTRY)/$(STATE)/$(ORG) -type d -print -prune)
+TEMPLATES=$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune))
 TESTDIR=autotest/models/gridlabd-4
 TESTFILES=$(foreach GLM,$(shell find $(TESTDIR) -name '*.glm' -print),$(TESTDIR)/$(GLM))
 
