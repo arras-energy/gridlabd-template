@@ -22,22 +22,24 @@ for TEMPLATE in $(cat $2/.index); do
         gridlabd template config set GITREPO $(basename $(git rev-parse --show-toplevel))
         gridlabd template config set GITBRANCH $(git rev-parse --abbrev-ref HEAD)
         gridlabd template get "$TEMPLATE" 1>stdout 2>stderr
-        gridlabd "$GLMNAME" $AUTOTESTGLM -t "$TEMPLATE" --redirect all 1>>stdout 2>>stderr
         ok="OK"
-        for FILE in $(find $ROOTDIR/$CHECKDIR -type f -print); do
-            TARGET=$(basename "$FILE")
-            if [ ! "${TARGET%.*}" == "autotest" ]; then
-                if [ ! -f "$TARGET" ]; then
-                    echo "ERROR: '$CHECKDIR/$TARGET' not found" > /dev/stderr
-                else
-                    diff -w "$FILE" "$TARGET" >> gridlabd.diff || ok="FAIL"
-                    if [ "$ok" == "FAIL" ]; then
-                        result="FAIL"
-                        echo "ERROR: '$CHECKDIR/$TARGET' is different" >/dev/stderr
+        gridlabd "$GLMNAME" $AUTOTESTGLM -t "$TEMPLATE" --redirect all 1>>stdout 2>>stderr || ok="FAIL"
+        if [ "$ok" == "ok" ]; then
+            for FILE in $(find $ROOTDIR/$CHECKDIR -type f -print); do
+                TARGET=$(basename "$FILE")
+                if [ ! "${TARGET%.*}" == "autotest" ]; then
+                    if [ ! -f "$TARGET" ]; then
+                        echo "ERROR: '$CHECKDIR/$TARGET' not found" > /dev/stderr
+                    else
+                        diff -w "$FILE" "$TARGET" >> gridlabd.diff || ok="FAIL"
+                        if [ "$ok" == "FAIL" ]; then
+                            result="FAIL"
+                            echo "ERROR: '$CHECKDIR/$TARGET' is different" >/dev/stderr
+                        fi
                     fi
                 fi
-            fi
-        done
+            done
+        fi
         echo ${CHECKDIR/autotest\/models\/gridlabd-4/...}/$TARGET: $ok
     fi
 done
