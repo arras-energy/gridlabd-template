@@ -1,1 +1,0 @@
-autotest/models/gridlabd-4/IEEE/13.glm: OK
