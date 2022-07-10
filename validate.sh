@@ -18,6 +18,9 @@ for TEMPLATE in $(cat $2/.index); do
         cp "$1" $CHECKDIR/autotest.* "$TESTDIR"
         cd "$ROOTDIR/$TESTDIR"
         AUTOTESTGLM=$(find . -name autotest.glm -type f -print)
+        gridlabd template config set GITUSER $(basename $(dirname $(git rev-parse --show-toplevel)))
+        gridlabd template config set GITREPO $(basename $(git rev-parse --show-toplevel))
+        gridlabd template config set GITBRANCH $(git rev-parse --abbrev-ref HEAD)
         gridlabd template get "$TEMPLATE" 1>stdout 2>stderr
         gridlabd "$GLMNAME" $AUTOTESTGLM -t "$TEMPLATE" --redirect all 1>>stdout 2>>stderr
         ok="OK"

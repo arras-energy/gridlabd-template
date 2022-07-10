@@ -15,15 +15,18 @@ ifeq ($(VERBOSE),yes)
 OPTIONS += --debug
 endif
 
-TEMPLATES=$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune))
 TESTDIR=autotest/models/gridlabd-4
 TESTFILES=$(foreach GLM,$(shell find $(TESTDIR) -name '*.glm' -print),$(TESTDIR)/$(GLM))
 
-validate: clean $(TESTFILES)
+validate: clean models $(TESTFILES)
 	@cat validate.txt
+
+models:
+	@git submodule sync
+	@git submodule update --init --recursive
 
 clean:
 	@rm -rf test validate.txt
 
 $(TESTDIR)/%.glm: %.glm
-	@$(foreach TEMPLATE,$(TEMPLATES),$(LIMIT) ./validate.sh $(OPTIONS) "$<" "$(TEMPLATE)") >> validate.txt
+	@$(foreach TEMPLATE,$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune)),$(LIMIT) ./validate.sh $(OPTIONS) "$<" "$(TEMPLATE)") >> validate.txt
