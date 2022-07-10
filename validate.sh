@@ -35,7 +35,7 @@ for TEMPLATE in $(cat $2/.index); do
                 fi
             fi
         done
-        echo $1: $ok
+        echo ${CHECKDIR/autotest\/models\/gridlabd-4/...}/$TARGET: $ok
     fi
 done
 
