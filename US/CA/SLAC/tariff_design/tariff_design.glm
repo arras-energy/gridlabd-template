@@ -1,4 +1,8 @@
 // GridLAB-D tariff design model file
+//#input "config.csv" -f config -t config
+
+//#define tariff_index=${TARIFF_INDEX}
+//#input "${WEATHER_STATION}.tmy3"
 
 #ifexist "config.csv"
 #input "config.csv" -f config -t config
