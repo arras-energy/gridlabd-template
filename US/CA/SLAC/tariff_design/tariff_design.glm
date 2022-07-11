@@ -4,14 +4,22 @@
 //#define tariff_index=${TARIFF_INDEX}
 //#input "${WEATHER_STATION}.tmy3"
 
+#ifexist "config.csv"
+#input "config.csv" -f config -t config
+#endif
+
+#define tariff_index=${TARIFF_INDEX}
+
+#ifexist "${WEATHER_STATION}.tmy3" 
+#input "${WEATHER_STATION}.tmy3"
+#endif
+
 //GridLAB-D modules
 module revenue;
 
 //py modules
 module tariff_design;
 module powerflow;
-
-
 
 //Define classes here (inputs and outputs)
 

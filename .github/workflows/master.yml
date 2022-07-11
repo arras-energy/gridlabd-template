@@ -1,0 +1,28 @@
+name: master
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    container: slacgismo/gridlabd:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Sync submodules
+      run: make models
+    - name: Validation
+      run: make validate LIMIT='timeout 60s' || tar czf validate.tar.gz test
+    - name: Save results
+      uses: actions/upload-artifact@v2
+      if: failure()
+      with:
+        name: validate-result
+        path: |
+          validate.txt
+          validate.tar.gz

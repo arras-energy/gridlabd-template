@@ -1,30 +1,83 @@
+[![master](https://github.com/slacgismo/gridlabd-template/actions/workflows/master.yml/badge.svg)](https://github.com/slacgismo/gridlabd-template/actions/workflows/master.yml)
+[![develop](https://github.com/slacgismo/gridlabd-template/actions/workflows/develop.yml/badge.svg)](https://github.com/slacgismo/gridlabd-template/actions/workflows/develop.yml)
+
+To view the online documentation please use the [Docs Browser](https://docs.gridlabd.us/) and select the `gridlabd-template` project.
 # GridLAB-D Analysis Templates
 
-This repository contains the HiPAS GridLAB-D analysis templates.  Templates are published by organizations, which are specified by country and region.  Published organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organization's `.index` file.  Templates are contained in folders, the contents of which are published in `.zip` folders.
+This repository contains the HiPAS GridLAB-D analysis templates.  To use a template in GridLAB-D you must first download the template from the template repository. To see the list of available templates, use the `template index` subcommand, e.g.,
 
-## Example
+~~~
+% gridlabd template index
+ica_analysis
+~~~
 
-The organization `US/CA/SLAC` is listed in `.orgs` and publishes the template for integrated capacity analysis in the folder `US/CA/SLAC/ica_analysis`.  The template is compiled in the file `US/CA/SLAC/ica_analysis.zip`, which is listed in the index file `US/CA/SLAC/.index`.
+To download a template, use the `template get` subcommand, e.g.,
+
+~~~
+% gridlabd template get ica_analysis
+~~~
+
+To use a template, simply include it on the gridlabd command line using the `-t|--template` option after the model you want it to be applied to, e.g.,
+
+~~~
+% gridlabd my_model.glm --template ica_analysis
+~~~
+
+You can embed a template in a GLM model using the following macros:
+
+~~~
+#template get ica_analysis
+#option template ica_analysis
+~~~
 
 # Publishing Templates
 
-When a change is made to a template or a new template is created, the `publish.sh` script updates the templates from the indexes.
+Templates are published by organizations, which are specified by country and region.  Published organizations are listed in the `.orgs` file.  Each organization publishes templates by listing them in the organization's `.index` file.  Templates are contained in folders, the contents of which are published in `.catalog` files.
 
-## Example
+# Template Repository Structure
 
-The following example illustrates how the ICA template was first published
+Each organization must be listed in the `.orgs` file to be scanned by the `template` subcommand, e.g., `US/CA/SLAC` is listed. There is no provision for a hierarchy. 
 
-~~~
-bash$ ./compile
-Creating US/CA/SLAC/ica_analysis.zip...done
-~~~
+Each template must be listed in the organization's `.index` file. 
 
-The following exmaple illustrates how the ICA template is updated when a file changes
+The files listed in the `.catalog` file will be downloaded when the user gets the template.
 
 ~~~
-bash$ touch US/CA/SLAC/ica_analysis/ica_analysis.glm
-bash$ ./compile
-Updating US/CA/SLAC/ica_analysis.zip...done
++- .orgs
++- <COUNTRY1>/
+|  +- <REGION1>/
+|  |  +- <ORG1>/
+|  |  |  +- .index
+|  |  |  +- <TEMPLATE1>/
+|  |  |  |  +- .catalog
+|  |  |  |  +- <FILE1>
+|  |  |  |  +- <FILE2>
+|  |  |  |  +- ...
+|  |  |  |  +- <FILEn>
+|  |  |  |- <TEMPLATE2>/
+|  |  |  |- ...
+|  |  |  |- <TEMPLATEn>/
+|  |  +- <ORG2>/
+|  |  +- ...
+|  |  +- <ORGn>/
+|  +- <REGION2>/
+|  +- ...
+|  +- <REGIONn>/
++- <COUNTRY2>/
++- ...
++- <COUNTRYn>/
 ~~~
 
-Note that after the `compile` script is run, you must push that changes to the main repository.  Please observe the usual convention for creating pull requests, as pushing directly to `master` is not permitted.
+# Template Catalogs
+
+Each file in a template must be listed in the template's `.catalog` file. The catalog format is
+
+~~~
+<FILE1>:a=<PERMISSIONS>
+<FILE2>:a=<PERMISSIONS>
+...
+<FILEn>:a=<PERMISSIONS>
+~~~
+
+where `<PERMISSIONS>` can be any combination of 'r' and 'x'.
+
