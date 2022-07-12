@@ -45,6 +45,8 @@ def on_init(t):
         if LOG_FILE:
             LOG = open(LOG_FILE,"w")
             print("class,name,property,nominal.real,nominal.reactive,actual.real,actual.reactive",file=LOG)
+        else:
+            LOG = None
 
         # get load factor to apply
         LOAD_FACTOR = float(gridlabd.get_global("LOAD_FACTOR"))
@@ -64,7 +66,8 @@ def on_init(t):
                                 else:
                                     update = f"{str(complex(modify))[1:-1]}"
                                 gridlabd.set_value(obj,name,update)
-                                print(f"{data['class']},{obj},{name},{value.real},{value.imag},{modify.real},{modify.imag}",file=LOG)
+                                if LOG:
+                                    print(f"{data['class']},{obj},{name},{value.real},{value.imag},{modify.real},{modify.imag}",file=LOG)
     except Exception as err:
         gridlabd.warning(f"{obj}.{name}: {err}")
     return True
