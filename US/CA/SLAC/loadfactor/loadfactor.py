@@ -45,6 +45,8 @@ def on_init(t):
         if LOG_FILE:
             LOG = open(LOG_FILE,"w")
             print("class,name,property,nominal.real,nominal.reactive,actual.real,actual.reactive",file=LOG)
+        else:
+            LOG = None
 
         # get load factor to apply
         LOAD_FACTOR = float(gridlabd.get_global("LOAD_FACTOR"))
