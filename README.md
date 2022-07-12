@@ -81,3 +81,18 @@ Each file in a template must be listed in the template's `.catalog` file. The ca
 
 where `<PERMISSIONS>` can be any combination of 'r' and 'x'.
 
+# Validation
+
+This repository automatic validates the templates with models in the `autotest` submodule. Every template with a matching subfolder in `autotest` will run a copy in the `test` folder.  The `autotest` GLM file is copied to the same folder in the `test` tree, and all `autotest.*` files are copied from the template `autotest`.  All results are posted in the `validate.txt` file upon completion.
+
+The run folder used is:
+
+~~~
+test/COUNTRY/REGION/ORGANIZATION/TEMPLATE/autotest/models/gridlabd-4/COLLECTION/MODELNAME
+~~~
+
+The run command used is:
+
+~~~
+gridlabd MODELNAME.glm [autotest.glm] -t TEMPLATENAME --redirect all
+~~~
