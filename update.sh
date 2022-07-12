@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Update test result files
+# Syntax: update.sh TEMPLATE
+#
+# Update test result files in autotest/models folders of TEMPLATE
 #
 
 if [ $# -lt 1 -o ! -d "$1/autotest" ]; then
