@@ -20,7 +20,7 @@ Options
 
     DER_PROPERTIES - List of properties to save in results (default is 'DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected')
 
-    DER_RESULTS - the file to record results in (default is MODELNAME.csv)
+    DER_RESULTS - the file to record results in (default is hosting_capacity.csv)
 """
 import sys, os
 import gridlabd
@@ -69,7 +69,7 @@ def on_term(t):
     # get file to store result
     DER_RESULTS = gridlabd.get_global("DER_RESULTS")
     if not DER_RESULTS:
-        DER_RESULTS = gridlabd.get_global("modelname").replace(".glm",".csv")
+        DER_RESULTS = "hosting_capacity.csv"
     RESULTS = open(DER_RESULTS,"w")
 
     # save results
