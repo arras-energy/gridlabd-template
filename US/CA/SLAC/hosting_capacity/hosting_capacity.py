@@ -52,8 +52,9 @@ def on_init(t):
                         gridlabd.set_value(obj,name,DER_VALUE)
     except:
         e_type,e_value,e_trace = sys.exc_info()
-        gridlabd.error(f"{e_type.__name__}: {e_value}")
-        raise
+        e_file = os.path.basename(e_trace.tb_frame.f_code.co_filename)
+        e_line = e_trace.tb_lineno
+        gridlabd.error(f"{e_type.__name__} ({e_file}:{e_line}): {e_value}")
         return False
     return True
 
