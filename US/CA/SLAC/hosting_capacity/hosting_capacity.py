@@ -41,9 +41,6 @@ def on_init(t):
         if not DER_PROPERTIES:
             DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
 
-        # get file to store result
-        DER_RESULTS = gridlabd.get_global("DER_RESULTS")
-
         # get load factor to apply
         if DER_VALUE:
             objects = gridlabd.get("objects")
@@ -59,6 +56,8 @@ def on_init(t):
     return True
 
 def on_term(t):
+    # get file to store result
+    DER_RESULTS = gridlabd.get_global("DER_RESULTS")
     if DER_RESULTS:
         RESULTS = open(DER_RESULTS,"w")
         print("class,object,"+DER_PROPERTIES,file=RESULTS)
