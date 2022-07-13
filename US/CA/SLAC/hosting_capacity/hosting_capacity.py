@@ -42,6 +42,7 @@ def on_init(t):
             DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
 
         # get load factor to apply
+        DER_VALUE = gridlabd.get_global("DER_VALUE")
         if DER_VALUE:
             objects = gridlabd.get("objects")
             for obj in objects:
@@ -52,6 +53,8 @@ def on_init(t):
     except:
         e_type,e_value,e_trace = sys.exc_info()
         gridlabd.error(f"{e_type.__name__}: {e_value}")
+        if gridlabd.get_global("debug") == "TRUE":
+            raise
         return False
     return True
 
