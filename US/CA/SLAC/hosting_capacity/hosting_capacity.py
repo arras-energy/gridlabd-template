@@ -25,23 +25,30 @@ Options
 import sys, os
 import gridlabd
 
+DER_CLASS = [
+    "load",
+    "triplex_load",
+]
+DER_PROPERTIES = [
+    "DER_value",
+    "voltage_violation_threshold",
+    "undervoltage_violation_threshold",
+    "overvoltage_violation_threshold",
+    "voltage_fluctuation_threshold",
+    "violation_detected",
+]
+
 def on_init(t):
     try:
         # get class of object to modify
         global DER_CLASS
-        DER_CLASS = gridlabd.get_global("DER_CLASS")
-        if not DER_CLASS:
-            DER_CLASS = ["load","triplex_load"]
-        if "," in OBJECT_CLASS:
-            DER_CLASS = DER_CLASS.split(",")
-        elif type(OBJECT_CLASS) is str:
-            DER_CLASS = [DER_CLASS]
+        if "DER_CLASS" in gridlabd.get("globals"):
+            DER_CLASS = gridlabd.get_global("DER_CLASS").split(",")
 
         # get properties
         global DER_PROPERTIES
-        DER_PROPERTIES = gridlabd.get_global("DER_PROPERTIES")
-        if not DER_PROPERTIES:
-            DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
+        if "DER_PROPERTIES" in gridlabd.get("globals"):
+            DER_PROPERTIES = gridlabd.get_global("DER_PROPERTIES").split(",")
 
         # get load factor to apply
         DER_VALUE = gridlabd.get_global("DER_VALUE").strip('"').split()
@@ -73,17 +80,17 @@ def on_term(t):
     RESULTS = open(DER_RESULTS,"w")
 
     # save results
-    print("class,object,"+DER_PROPERTIES,file=RESULTS)
+    print("class,object,"+",".join(DER_PROPERTIES),file=RESULTS)
     objects = gridlabd.get("objects")
     for obj in objects:
         data = gridlabd.get_object(obj)
         if data["class"] in DER_CLASS:
-            for prop in DER_PROPERTIES.split(","):
+            for prop in DER_PROPERTIES:
                 if prop in data.keys():
                     print(","+gridlabd.get_value(obj,prop),end='',file=RESULTS)
                 else:
                     raise Exception(f"property '{prop}' not found in object '{obj}'")
         print('',file=RESULTS)
 
-    close(RESULTS)
+    RESULTS.close()
 
