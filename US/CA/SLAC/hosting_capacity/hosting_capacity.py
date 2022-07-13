@@ -63,11 +63,19 @@ def on_init(t):
     return True
 
 def on_term(t):
+
     # get file to store result
     DER_RESULTS = gridlabd.get_global("DER_RESULTS")
     if not DER_RESULTS:
         DER_RESULTS = gridlabd.get_global("modelname")[-4:] + ".csv"
     RESULTS = open(DER_RESULTS,"w")
+
+    # get properties
+    DER_PROPERTIES = gridlabd.get_global("DER_PROPERTIES")
+    if not DER_PROPERTIES:
+        DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
+
+    # save results
     print("class,object,"+DER_PROPERTIES,file=RESULTS)
     objects = gridlabd.get("objects")
     for obj in objects:
@@ -79,3 +87,6 @@ def on_term(t):
                 else:
                     raise Exception(f"property '{prop}' not found in object '{obj}'")
         print('',file=RESULTS)
+
+    close(RESULTS)
+
