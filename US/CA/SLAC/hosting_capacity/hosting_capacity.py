@@ -22,7 +22,7 @@ Options
 
     DER_RESULTS - the file to record results in (default is MODELNAME.csv)
 """
-import sys
+import sys, os
 import gridlabd
 
 def on_init(t):
@@ -48,8 +48,7 @@ def on_init(t):
             for obj in objects:
                 data = gridlabd.get_object(obj)
                 if data["class"] in OBJECT_CLASS:
-                    if "DER_value" in data.keys():
-                        gridlabd.set_value(obj,name,DER_VALUE)
+                    gridlabd.set_value(obj,"DER_value",DER_VALUE)
     except:
         e_type,e_value,e_trace = sys.exc_info()
         e_file = os.path.basename(e_trace.tb_frame.f_code.co_filename)
