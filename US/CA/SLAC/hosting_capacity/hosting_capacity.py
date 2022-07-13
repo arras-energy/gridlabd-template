@@ -28,15 +28,17 @@ import gridlabd
 def on_init(t):
     try:
         # get class of object to modify
-        OBJECT_CLASS = gridlabd.get_global("DER_CLASS")
-        if not OBJECT_CLASS:
-            OBJECT_CLASS = ["load","triplex_load"]
+        global DER_CLASS
+        DER_CLASS = gridlabd.get_global("DER_CLASS")
+        if not DER_CLASS:
+            DER_CLASS = ["load","triplex_load"]
         if "," in OBJECT_CLASS:
-            OBJECT_CLASS = OBJECT_CLASS.split(",")
+            DER_CLASS = DER_CLASS.split(",")
         elif type(OBJECT_CLASS) is str:
-            OBJECT_CLASS = [OBJECT_CLASS]
+            DER_CLASS = [DER_CLASS]
 
         # get properties
+        global DER_PROPERTIES
         DER_PROPERTIES = gridlabd.get_global("DER_PROPERTIES")
         if not DER_PROPERTIES:
             DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
@@ -52,7 +54,7 @@ def on_init(t):
             objects = gridlabd.get("objects")
             for obj in objects:
                 data = gridlabd.get_object(obj)
-                if data["class"] in OBJECT_CLASS:
+                if data["class"] in DER_CLASS:
                     gridlabd.set_value(obj,"DER_value",str(value))
     except:
         e_type,e_value,e_trace = sys.exc_info()
@@ -67,20 +69,15 @@ def on_term(t):
     # get file to store result
     DER_RESULTS = gridlabd.get_global("DER_RESULTS")
     if not DER_RESULTS:
-        DER_RESULTS = gridlabd.get_global("modelname")[-4:] + ".csv"
+        DER_RESULTS = gridlabd.get_global("modelname").replace(".glm",".csv")
     RESULTS = open(DER_RESULTS,"w")
-
-    # get properties
-    DER_PROPERTIES = gridlabd.get_global("DER_PROPERTIES")
-    if not DER_PROPERTIES:
-        DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
 
     # save results
     print("class,object,"+DER_PROPERTIES,file=RESULTS)
     objects = gridlabd.get("objects")
     for obj in objects:
         data = gridlabd.get_object(obj)
-        if data["class"] in OBJECT_CLASS:
+        if data["class"] in DER_CLASS:
             for prop in DER_PROPERTIES.split(","):
                 if prop in data.keys():
                     print(","+gridlabd.get_value(obj,prop),end='',file=RESULTS)
