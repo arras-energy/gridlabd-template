@@ -22,7 +22,8 @@ Options
 
     DER_RESULTS - the file to record results in (default is MODELNAME.csv)
 """
-import gridlabd;
+import sys
+import gridlabd
 
 def on_init(t):
     try:
@@ -44,7 +45,6 @@ def on_init(t):
         DER_RESULTS = gridlabd.get_global("DER_RESULTS")
 
         # get load factor to apply
-        DER_VALUE = float(gridlabd.get_global("DER_VALUE"))
         if DER_VALUE:
             objects = gridlabd.get("objects")
             for obj in objects:
@@ -52,8 +52,10 @@ def on_init(t):
                 if data["class"] in OBJECT_CLASS:
                     if "DER_value" in data.keys():
                         gridlabd.set_value(obj,name,DER_VALUE)
-    except Exception as err:
-        gridlabd.warning(f"{obj}.{name}: {err}")
+    except:
+        e_type,e_value,e_trace = sys.exc_info()
+        gridlabd.error(f"{e_type.__name__}: {e_value}")
+        return False
     return True
 
 def on_term(t):
