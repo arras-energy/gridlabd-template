@@ -53,8 +53,7 @@ def on_init(t):
     except:
         e_type,e_value,e_trace = sys.exc_info()
         gridlabd.error(f"{e_type.__name__}: {e_value}")
-        if gridlabd.get_global("debug") == "TRUE":
-            raise
+        raise
         return False
     return True
 
