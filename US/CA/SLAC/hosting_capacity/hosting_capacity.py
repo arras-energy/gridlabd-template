@@ -3,7 +3,7 @@
 Synopsis
 --------
 
-    sh$ gridlabd MODELNAME.glm -D DER_VALUE='POWER [UNIT]' [-D OPTION=VALUE] -t hosting_capacity
+    sh$ gridlabd MODELNAME.glm -D DER_VALUE='POWER' [-D OPTION=VALUE] -t hosting_capacity
 
 Description
 -----------
@@ -42,13 +42,18 @@ def on_init(t):
             DER_PROPERTIES = "DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected"
 
         # get load factor to apply
-        DER_VALUE = gridlabd.get_global("DER_VALUE")
+        DER_VALUE = gridlabd.get_global("DER_VALUE").strip('"').split()
         if DER_VALUE:
+            value = str(complex(DER_VALUE[0])).strip("()")
+            if len(DER_VALUE) > 1:
+                units = DER_VALUE[1]
+            else:
+                units = ""
             objects = gridlabd.get("objects")
             for obj in objects:
                 data = gridlabd.get_object(obj)
                 if data["class"] in OBJECT_CLASS:
-                    gridlabd.set_value(obj,"DER_value",DER_VALUE)
+                    gridlabd.set_value(obj,"DER_value",str(value))
     except:
         e_type,e_value,e_trace = sys.exc_info()
         e_file = os.path.basename(e_trace.tb_frame.f_code.co_filename)
