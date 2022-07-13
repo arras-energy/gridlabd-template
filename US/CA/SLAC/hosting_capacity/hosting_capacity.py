@@ -27,7 +27,7 @@ import gridlabd
 
 DER_CLASS = [
     "load",
-    "triplex_load",
+#    "triplex_load",
 ]
 DER_PROPERTIES = [
     "DER_value",
