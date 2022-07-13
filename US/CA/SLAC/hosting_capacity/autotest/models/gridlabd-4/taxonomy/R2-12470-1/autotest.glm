@@ -1,2 +1,1 @@
-#define LOAD_FACTOR=0.5
-#define LOAD_FACTOR_LOGFILE=loads.csv
+#define DER_VALUE=6700 W
