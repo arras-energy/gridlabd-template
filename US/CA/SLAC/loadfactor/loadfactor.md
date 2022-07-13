@@ -8,7 +8,7 @@ Synopsis
 Description
 -----------
 
-    Applies a load factor to object of class in LOAD_FACTOR_CLASS with property
+    Applies a load factor to objects of class in LOAD_FACTOR_CLASS with property
     names starting with LOAD_FACTOR_PROPERTY.  Logs updates in LOAD_FACTOR_LOGFILE.
 
 Options
