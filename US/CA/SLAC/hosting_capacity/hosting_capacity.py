@@ -18,7 +18,7 @@ Options
 
     DER_CLASS - the object class to modify (default is 'load,triplex_load')
 
-    DER_PROPERTIES - List of properties to save in results (default is '')
+    DER_PROPERTIES - List of properties to save in results (default is 'DER_value,voltage_violation_threshold,undervoltage_violation_threshold,overvoltage_violation_threshold,voltage_fluctuation_threshold,violation_detected')
 
     DER_RESULTS - the file to record results in (default is MODELNAME.csv)
 """
@@ -65,16 +65,17 @@ def on_init(t):
 def on_term(t):
     # get file to store result
     DER_RESULTS = gridlabd.get_global("DER_RESULTS")
-    if DER_RESULTS:
-        RESULTS = open(DER_RESULTS,"w")
-        print("class,object,"+DER_PROPERTIES,file=RESULTS)
-        objects = gridlabd.get("objects")
-        for obj in objects:
-            data = gridlabd.get_object(obj)
-            if data["class"] in OBJECT_CLASS:
-                for prop in DER_PROPERTIES.split(","):
-                    if prop in data.keys():
-                        print(","+gridlabd.get_value(obj,prop),end='',file=RESULTS)
-                    else:
-                        raise Exception(f"property '{prop}' not found in object '{obj}'")
-            print('',file=RESULTS)
+    if not DER_RESULTS:
+        DER_RESULTS = gridlabd.get_global("modelname")[-4:] + ".csv"
+    RESULTS = open(DER_RESULTS,"w")
+    print("class,object,"+DER_PROPERTIES,file=RESULTS)
+    objects = gridlabd.get("objects")
+    for obj in objects:
+        data = gridlabd.get_object(obj)
+        if data["class"] in OBJECT_CLASS:
+            for prop in DER_PROPERTIES.split(","):
+                if prop in data.keys():
+                    print(","+gridlabd.get_value(obj,prop),end='',file=RESULTS)
+                else:
+                    raise Exception(f"property '{prop}' not found in object '{obj}'")
+        print('',file=RESULTS)
