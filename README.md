@@ -83,7 +83,7 @@ where `<PERMISSIONS>` can be any combination of 'r' and 'x'.
 
 # Validation
 
-This repository automatic validates the templates with models in the `autotest` submodule. Every template with a matching subfolder in `autotest` will run a copy in the `test` folder.  The `autotest` GLM file is copied to the same folder in the `test` tree, and all `autotest.*` files are copied from the template `autotest`.  All results are posted in the `validate.txt` file upon completion.
+This repository automatically validates the templates with models in the `autotest` submodule. Every template with a matching subfolder in `autotest` will run a copy in the `test` folder.  The `autotest` GLM file is copied to the same folder in the `test` tree, and all `autotest.*` files are copied from the template `autotest`.  All results are posted in the `validate.txt` file upon completion.
 
 The run folder used is:
 
@@ -96,3 +96,13 @@ The run command used is:
 ~~~
 gridlabd MODELNAME.glm [autotest.glm] -t TEMPLATENAME --redirect all
 ~~~
+
+## Preparation of validation
+
+The `update.sh` script can be used to prepare the validation results.  The general syntax is
+
+~~~
+	sh$ ./update.sh [--get-template] [-debug] TEMPLATE [FOLDER]
+~~~
+
+This script runs the simulation in the template validation folder to generate the reference output files used by the `validate.sh` script. The `autotest.glm` and any other `autotest.*` support files must exist in the validate folder for this command to function properly. If the `--get-template` option is include, the template will be refreshed from the template repository. If `--debug` is included, each script command is shown before it is executed.  The TEMPLATE folder must the relative to the TEMPLATE.  If FOLDER is included, only the folders matching in `autotest/models/gridlabd-4` will be updated.  

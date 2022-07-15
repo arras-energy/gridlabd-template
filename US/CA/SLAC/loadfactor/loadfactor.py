@@ -8,7 +8,7 @@ Synopsis
 Description
 -----------
 
-    Applies a load factor to object of class in LOAD_FACTOR_CLASS with property
+    Applies a load factor to objects of class in LOAD_FACTOR_CLASS with property
     names starting with LOAD_FACTOR_PROPERTY.  Logs updates in LOAD_FACTOR_LOGFILE.
 
 Options
@@ -40,7 +40,7 @@ def on_init(t):
         if not OBJECT_PROPERTY:
             OBJECT_PROPERTY = "constant_power_"
 
-        # get file to load changes
+        # get file to log changes
         LOG_FILE = gridlabd.get_global("LOAD_FACTOR_LOGFILE")
         if LOG_FILE:
             LOG = open(LOG_FILE,"w")

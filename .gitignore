@@ -6,3 +6,7 @@ test/
 gridlabd-pmap-*
 validate
 validate.txt
+gridlabd.json
+*/*/*/*/autotest/models/gridlabd-4/*/*/gridlabd.*
+stderr
+stdout
