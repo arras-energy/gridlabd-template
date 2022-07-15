@@ -51,8 +51,9 @@ def on_init(t):
             DER_PROPERTIES = gridlabd.get_global("DER_PROPERTIES").split(",")
 
         # get load factor to apply
-        DER_VALUE = gridlabd.get_global("DER_VALUE").strip('"').split()
+        DER_VALUE = gridlabd.get_global("DER_VALUE")
         if DER_VALUE:
+            DER_VALUE = DER_VALUE.strip('"').split()
             value = str(complex(DER_VALUE[0])).strip("()")
             if len(DER_VALUE) > 1:
                 units = DER_VALUE[1]
