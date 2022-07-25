@@ -37,6 +37,8 @@ object triplex_meter
          thermal_integrity_level ${THERMALINTEGRITYLEVEL};
          floor_area ${FLOORAREA};
          gas_enduses ${GASENDUSES};
+         heating_setpoint ${HEATINGSETPOINT};
+         cooling_setpoint ${COOLINGSETPOINT};
     };
     nominal_voltage 120V;
     phases S${PHASE};
