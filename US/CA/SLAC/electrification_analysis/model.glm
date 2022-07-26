@@ -23,7 +23,7 @@ module tape
 
 module residential
 {
-	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
+	implicit_enduses LIGHTS;
 	implicit_enduse_source EIA2015;
 }
 
