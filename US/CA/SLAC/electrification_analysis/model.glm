@@ -24,7 +24,7 @@ module tape
 module residential
 {
 	implicit_enduses LIGHTS;
-	implicit_enduse_source EIA2015;
+	implicit_enduse_source RBSA2014;
 }
 
 module powerflow;
@@ -32,7 +32,7 @@ module powerflow;
 #for PHASE in A B C
 object triplex_meter 
 {
-    object house:..${NHOUSES} 
+    object house:..${NHOUSES_ELECTRIC} 
     {
          thermal_integrity_level ${THERMALINTEGRITYLEVEL};
          floor_area ${FLOORAREA};
@@ -40,6 +40,16 @@ object triplex_meter
          heating_setpoint ${HEATINGSETPOINT};
          cooling_setpoint ${COOLINGSETPOINT};
     };
+
+    object house:..${NHOUSES_GAS} 
+    {
+         thermal_integrity_level ${THERMALINTEGRITYLEVEL};
+         floor_area ${FLOORAREA};
+         gas_enduses ${GASENDUSES};
+         heating_setpoint ${HEATINGSETPOINT};
+         cooling_setpoint ${COOLINGSETPOINT};
+    };
+
     nominal_voltage 120V;
     phases S${PHASE};
     measured_energy_delta_timestep 3600s;
