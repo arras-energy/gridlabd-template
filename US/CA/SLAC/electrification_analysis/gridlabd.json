@@ -13411,7 +13411,7 @@
 		"command_line" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "/usr/local/opt/gridlabd/4.2.31-220408-master/bin/gridlabd.bin old_model.glm"
+			"value" : "/usr/local/opt/gridlabd/4.2.31-220408-master/bin/gridlabd.bin new_model.glm"
 		},
 		"environment" : {
 			"type" : "char1024",
@@ -13572,7 +13572,7 @@
 		"modelname" : {
 			"type" : "char1024",
 			"access" : "REFERENCE",
-			"value" : "old_model.glm"
+			"value" : "new_model.glm"
 		},
 		"execdir" : {
 			"type" : "char1024",
@@ -14313,6 +14313,16 @@
 			"access" : "PUBLIC",
 			"value" : "CA-San_Jose_Intl_Ap.tmy3"
 		},
+		"NHOUSES_ELECTRIC" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "2"
+		},
+		"NHOUSES_GAS" : {
+			"type" : "char1024",
+			"access" : "PUBLIC",
+			"value" : "1"
+		},
 		"NHOUSES" : {
 			"type" : "char1024",
 			"access" : "PUBLIC",
@@ -15047,7 +15057,7 @@
 			"rank" : "0",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "1804289383",
-			"guid" : "510BC6AAF44F2CCE4FBB89C9A582D0DA",
+			"guid" : "28014F703D0DD055D2DE2362289B258",
 			"flags" : "0x100",
 			"solar_elevation": "0.156241 rad",
 			"solar_azimuth": "2.3514 rad",
@@ -15105,7 +15115,7 @@
 			"rank" : "1",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "846930886",
-			"guid" : "70F6D902DA26CAC04A67AA5729311DDC",
+			"guid" : "42A6B1CA59A68AA71A7C745DE930243D",
 			"flags" : "0x100",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15241,7 +15251,7 @@
 			"rank" : "0",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "3705446561",
-			"guid" : "7128B84C75A060902F0760B216EB1E07",
+			"guid" : "407534DFD52E27564DBC37D9005CB6B2",
 			"flags" : "0x120",
 			"weather": "climate:0",
 			"floor_area": "1000 sf",
@@ -15433,10 +15443,10 @@
 			"rank" : "0",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "1957747793",
-			"guid" : "26DF6504B2532CDF4900FC7324AF4346",
+			"guid" : "604CC421018F9E3F52DCBDABB89BEC21",
 			"flags" : "0x100",
 			"trigger": "",
-			"file": "phase_A_old.csv",
+			"file": "phase_A.csv",
 			"filetype": "txt",
 			"mode": "file",
 			"multifile": "",
@@ -15459,7 +15469,7 @@
 			"rank" : "1",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "424238335",
-			"guid" : "31811E0C16BDB48C411EE9E40452442B",
+			"guid" : "23B3563BE237C101AF8B1CB7EF57757",
 			"flags" : "0x100",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15595,7 +15605,7 @@
 			"rank" : "0",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "1060359418",
-			"guid" : "7AE4BE1424324D7E338F425503E3E11F",
+			"guid" : "4491782B9114BD7D1FD719BE72736AC7",
 			"flags" : "0x120",
 			"weather": "climate:0",
 			"floor_area": "1000 sf",
@@ -15787,10 +15797,10 @@
 			"rank" : "0",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "596516649",
-			"guid" : "3BBB1E5E02C6455E2681EEBCDC8E2776",
+			"guid" : "449579E084AFFC6AD1A9105B3AC655",
 			"flags" : "0x100",
 			"trigger": "",
-			"file": "phase_B_old.csv",
+			"file": "phase_B.csv",
 			"filetype": "txt",
 			"mode": "file",
 			"multifile": "",
@@ -15813,7 +15823,7 @@
 			"rank" : "1",
 			"clock" : "2019-12-01 00:00:00 PST",
 			"rng_state" : "1189641421",
-			"guid" : "5F1FACAE8631265A485B82856C2C52F3",
+			"guid" : "178F554D748F58A97816C56FC716F0EB",
 			"flags" : "0x0",
 			"measured_real_energy": "0 Wh",
 			"measured_real_energy_delta": "0 Wh",
@@ -15949,7 +15959,7 @@
 			"rank" : "0",
 			"clock" : "INIT",
 			"rng_state" : "1025202362",
-			"guid" : "68413287B6F24C2A449B04AAB514BE0A",
+			"guid" : "406FCE31A7A59F82374DC4996F7D1083",
 			"flags" : "0x0",
 			"weather": "",
 			"floor_area": "1000 sf",

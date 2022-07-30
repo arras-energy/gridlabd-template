@@ -8,7 +8,7 @@
 // Climate
 #input "${WEATHER}" 
 
-//Clock
+// Clock
 clock 
 {
 	timezone ${TIMEZONE};
@@ -32,13 +32,26 @@ module powerflow;
 #for PHASE in A B C
 object triplex_meter 
 {
-    object house:..${NHOUSES} 
+    object house:..${NHOUSES_ELECTRIC} 
     {
          thermal_integrity_level ${THERMALINTEGRITYLEVEL};
          floor_area ${FLOORAREA};
          gas_enduses ${GASENDUSES};
          heating_setpoint ${HEATINGSETPOINT};
          cooling_setpoint ${COOLINGSETPOINT};
+         heating_system_type "HEAT_PUMP";
+         cooling_system_type "HEAT_PUMP";
+    };
+
+    object house:..${NHOUSES_GAS} 
+    {
+         thermal_integrity_level ${THERMALINTEGRITYLEVEL};
+         floor_area ${FLOORAREA};
+         gas_enduses ${GASENDUSES};
+         heating_setpoint ${HEATINGSETPOINT};
+         cooling_setpoint ${COOLINGSETPOINT};
+         heating_system_type "NONE";
+         cooling_system_type "ELECTRIC";
     };
 
     nominal_voltage 120V;
