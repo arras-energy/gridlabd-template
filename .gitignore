@@ -6,3 +6,6 @@ test/
 gridlabd-pmap-*
 validate
 validate.txt
+gridlabd.*
+stdout
+stderr
