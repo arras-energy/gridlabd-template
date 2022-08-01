@@ -74,6 +74,8 @@ def read_tariff(pathtocsv, tariff_counter):
 	# SETS ALL NaN to 0.0
 	tariff_data.fillna(0.0, inplace=True)
 
+	tariff_data.to_csv("tariff_data.csv",header=True,index=True)
+
 	return tariff_data # returns df of associated tariff
 
 def monthlyschedule_gen(tariff_data, clock): #Inputs tariff df from csv and populates tariff gridlabd obj
@@ -382,7 +384,7 @@ def on_init(t):
 		with gzip.open(filename, 'r') as f_in, open('usurdb.csv', 'wb') as f_out:
 			shutil.copyfileobj(f_in, f_out)
 
-	t_counter = int(gridlabd.get_global("tariff_index"))
+	t_counter = int(gridlabd.get_global("TARIFF_INDEX"))
 
 	global tariff_df 
 	try:
