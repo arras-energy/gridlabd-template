@@ -14,6 +14,7 @@ import numpy as np
 import logging
 from calendar import monthrange
 
+meter_name_list = None
 
 def to_float(x):
 	return float(x.split(' ')[0])
