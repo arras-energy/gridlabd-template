@@ -24,6 +24,8 @@ Options
 """
 import gridlabd;
 
+LOG = None
+
 def on_init(t):
     try:
         # get class of object to modify
@@ -64,6 +66,7 @@ def on_init(t):
                                 else:
                                     update = f"{str(complex(modify))[1:-1]}"
                                 gridlabd.set_value(obj,name,update)
+                                if LOG_FILE:
                                 print(f"{data['class']},{obj},{name},{value.real},{value.imag},{modify.real},{modify.imag}",file=LOG)
     except Exception as err:
         gridlabd.warning(f"{obj}.{name}: {err}")
