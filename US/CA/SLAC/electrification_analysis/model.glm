@@ -1,14 +1,11 @@
 // Model for testing
 
-// module electrification;
-
-#input "new_config.csv" -f config -t config
-//
+#input "config.csv" -f config -t config
 
 // Climate
 #input "${WEATHER}" 
 
-//Clock
+// Clock
 clock 
 {
 	timezone ${TIMEZONE};
@@ -25,6 +22,8 @@ module residential
 {
 	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
 	implicit_enduse_source EIA2015;
+    paneldump_filename "paneldump.csv";
+    paneldump_interval 3600;
 }
 
 module powerflow;
@@ -34,11 +33,11 @@ object triplex_meter
 {
     object house:..${NHOUSES} 
     {
-         thermal_integrity_level ${THERMALINTEGRITYLEVEL};
-         floor_area ${FLOORAREA};
-         gas_enduses ${GASENDUSES};
-         heating_setpoint ${HEATINGSETPOINT};
-         cooling_setpoint ${COOLINGSETPOINT};
+        thermostat_control "NONE";
+        floor_area ${FLOORAREA};
+        gas_enduses ${GASENDUSES};
+        heating_setpoint ${HEATINGSETPOINT};
+        cooling_setpoint ${COOLINGSETPOINT};
     };
 
     nominal_voltage 120V;

@@ -1,7 +1,6 @@
 #define WEATHER=CA-San_Jose_Intl_Ap.tmy3
 #define NHOUSES_ELECTRIC=2
 #define NHOUSES_GAS=1
-#define NHOUSES=1
 #define TIMEZONE=PST+8PDT
 #define STARTTIME=2019-12-01 00:00:00 PST
 #define STOPTIME=2021-01-01 00:00:00 PST
