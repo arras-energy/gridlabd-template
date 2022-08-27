@@ -15,7 +15,7 @@ gridlabd template get tariff_design
 
 Run template:
 ~~~
-gridlabd {MODEL_NAME}.glm -t tariff_design
+gridlabd model.glm -t tariff_design
 ~~~
 
 
@@ -63,7 +63,7 @@ Below is an example of `config.csv`:
 | TARIFF_NAME             | E-TOU-C3
 | TARIFF_REGION           | Region R
 
-An optional `clock.glm` file can also be uploaded containing a clock object. The clock object must have the following properties:
+An optional `clock.glm` file can also be uploaded containing a clock object using this command `gridlabd model.glm clock.glm -t tariff_design`. The clock object must have the following properties:
 
 * `STARTTIME`: Specifies the starting time for the tariff simulation. Recommended to use ISO8601 format. No default (subject to change). 
 
@@ -81,6 +81,101 @@ clock {
 }
 ~~~
 
+The `model.glm` file also requires various definitions and module declarations currently:
+
+```
+module powerflow;
+module residential;
+
+#input "config.csv" -f config -t config
+
+#define tariff_index=${TARIFF_INDEX}
+
+clock {
+	timezone ${TIMEZONE};
+	starttime ${STARTTIME};
+	stoptime ${STOPTIME};
+}
+
+#input "${WEATHER_STATION}.tmy3"
+```
+An example of a complete `model.glm` file is shown below:
+```
+module powerflow;
+module residential;
+
+#input "config.csv" -f config -t config
+
+#define tariff_index=${TARIFF_INDEX}
+
+clock {
+	timezone ${TIMEZONE};
+	starttime ${STARTTIME};
+	stoptime ${STOPTIME};
+}
+
+#input "${WEATHER_STATION}.tmy3"
+
+#define PRIMARY_VOLTAGE=4800V
+#define POWER_RATING=500
+#define RESISTANCE=0.011
+#define REACTANCE=0.02
+
+class meter 
+{
+	string monthly_charges;
+	string monthly_usage;
+	string monthly_power;
+	double monthly_updated_charges[$];
+	double monthly_updated_usage[kWh];
+	double monthly_updated_power[W];
+}
+
+object meter
+{
+	bustype "SWING";
+	name "meter_1";	
+	nominal_voltage "4800V";
+	phases "ABCN";
+}
+
+object transformer_configuration {
+	name "transformer_type1";
+	connect_type "SINGLE_PHASE_CENTER_TAPPED";
+  	install_type "PADMOUNT";
+  	power_rating ${POWER_RATING};
+  	primary_voltage ${PRIMARY_VOLTAGE};
+  	secondary_voltage "120V";
+  	resistance ${RESISTANCE};
+  	reactance ${REACTANCE};
+}
+
+#for ID in ${RANGE 1, 20}
+
+object transformer {
+	name transformer_${ID};
+  	phases "AS";
+  	from "meter_1";
+  	to "submeter_${ID}";
+  	configuration "transformer_type1";
+}
+  
+object triplex_meter
+{
+	name "submeter_${ID}";
+	nominal_voltage "120V";
+	phases "AS";
+	object house
+	{
+		floor_area random.triangle(1000,2000);
+		thermal_integrity_level "NORMAL";
+		gas_enduses "WATERHEATER|DRYER|RANGE";
+		heating_system_type "HEAT_PUMP";
+	};
+}
+
+#done
+```
 ## Outputs
 
 `output.csv` or the name specified in `OUTPUT` of `config.csv` is generated in the output folder.  It will contain the following data by column:
