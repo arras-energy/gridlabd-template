@@ -21,9 +21,9 @@ gridlabd model.glm -t tariff_design
 
 # Description
 
-The tariff design template calculating customer costs and utility revenues based on tariffs associated with meter objects. The template calculates bills using tariff rate information from the [OpenEI database](https://openei.org/wiki/Utility_Rate_Database) developed and maintained by NREL. 
+The tariff design template calculating customer costs and utility revenues based on tariffs associated with meter and triplex meter objects. The template calculates bills using tariff rate information from the [OpenEI database](https://openei.org/wiki/Utility_Rate_Database) developed and maintained by NREL. 
 
-Currently the tariff billing calculations are designed for residential tariffs and the OpenEI database tariff formatting. The billing function calculates the tariff bill hourly, including three tier TOU rates.
+Currently the tariff billing calculations are designed for residential tariffs and the OpenEI database tariff formatting. The billing function calculates the tariff bill hourly, including three tier TOU rates. These results are displayed on .png graphs along with a .csv file. This template runs in the gridlabd:develop docker container. 
 
 ## Inputs
 
@@ -201,3 +201,4 @@ sh$ gridlabd model.glm clock.glm -t tariff_design`
 # See also
 
 * https://docs.gridlabd.us/index.html?&org=hipas&project=gridlabd&doc=/Subcommand/Template.md
+* https://github.com/openfido/tariff_design/blob/main/README.md
