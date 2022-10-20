@@ -246,10 +246,10 @@ def update_monthly_cumulative_meter_results(total_charges, total_usage, total_po
 
 def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
 	# updates the string representation of a list of results
-	gridlabd.set_value(meter_name, "monthly_charges",  gridlabd.get_value(meter_name, "monthly_charges") + "," + str(charges_current_month))
-	gridlabd.set_value(meter_name, "monthly_usage",  gridlabd.get_value(meter_name, "monthly_usage") + "," + str(usage_current_month))
-	gridlabd.set_value(meter_name, "monthly_power",  gridlabd.get_value(meter_name, "monthly_power") + "," + str(power_current_month))
-	gridlabd.set_value(meter_name, "monthly_demand",  gridlabd.get_value(meter_name, "monthly_demand") + "," + str(demand_current_month))
+	gridlabd.set_value(meter_name, "monthly_charges",  str(gridlabd.get_value(meter_name, "monthly_charges")) + "," + str(charges_current_month))
+	gridlabd.set_value(meter_name, "monthly_usage",  str(gridlabd.get_value(meter_name, "monthly_usage")) + "," + str(usage_current_month))
+	gridlabd.set_value(meter_name, "monthly_power",  str(gridlabd.get_value(meter_name, "monthly_power")) + "," + str(power_current_month))
+	gridlabd.set_value(meter_name, "monthly_demand",  str(gridlabd.get_value(meter_name, "monthly_demand")) + "," + str(demand_current_month))
 def update_meter_and_bill(meter_name, month):
 	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
 	bill_name = bill["name"]
@@ -524,19 +524,19 @@ def on_term(t):
 	for meter_name in meter_name_list:
 
 		# temp list for graphing without a total for graphing. List with total is for output.csv 
-		current_meter_monthly_charges = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_charges")[1:].split(",")] # first element of list is empty 
+		current_meter_monthly_charges = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_charges").split(",")][1:] # first element of list is zero 
 		charges_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_charges"))))
 		charges_meter_list.extend(current_meter_monthly_charges) 
 
-		current_meter_monthly_usage = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_usage")[1:].split(",")]
+		current_meter_monthly_usage = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_usage").split(",")][1:]
 		usage_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_usage"))))
 		usage_meter_list.extend(current_meter_monthly_usage)
 
-		current_meter_monthly_power = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_power")[1:].split(",")]
+		current_meter_monthly_power = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_power").split(",")][1:]
 		total_power_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_power"))))
 		total_power_meter_list.extend(current_meter_monthly_power)
 
-		current_meter_monthly_demand = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_demand")[1:].split(",")]
+		current_meter_monthly_demand = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_demand").split(",")][1:]
 		measured_demand_meter_list.append(max(current_meter_monthly_demand)) # gets the max of all the monthly demand 
 		measured_demand_meter_list.extend(current_meter_monthly_demand)
 
