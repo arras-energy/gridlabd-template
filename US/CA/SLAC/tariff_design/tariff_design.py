@@ -30,8 +30,8 @@ def read_tariff(pathtocsv, tariff_counter):
 
 	__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 	# reads USA tariff csv usurdb.csv from OpenEi
-	pandas.set_option("max_rows",None)
-	pandas.set_option("max_columns",None)
+	pandas.options.display.max_rows = None
+	pandas.options.display.max_rows = None
 	data = pandas.read_csv("usurdb.csv",low_memory=False)
 
 	# read in csv file depending on tariff counter value
@@ -123,7 +123,6 @@ def monthlyschedule_gen(tariff_data, clock): #Inputs tariff df from csv and popu
 
 				# SETS ALL OBJ PROPERTY FOR RATE 4
 				gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
-
 				pcounter = 0
 				type_idx = type_idx + 1
 	else: # handles 1-2 rates per day
@@ -141,7 +140,6 @@ def monthlyschedule_gen(tariff_data, clock): #Inputs tariff df from csv and popu
 
 				# SETS ALL OBJ PROPERTY FOR RATE 4
 				gridlabd.set_value(tariff_name, types[type_idx]+"_rate"+str(counter+1), str(tariff_data.at[0,"energyratestructure/period"+str(pcounter)+"/tier"+str(counter+1)+"rate"]))
-
 				pcounter = 0
 				type_idx = type_idx + 1
 
@@ -158,7 +156,6 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 	tariff_name = tariff["name"]
 	bill_name = bill["name"]
 	meter = gridlabd.get_object(meter_name)
-
 	billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
 
 	# energy usage over the hour
@@ -420,7 +417,7 @@ def on_init(t):
 	obj_list = gridlabd.get("objects")
 	triplex_name_list = [] 
 	meter_name_list = [] 
-	for obj in obj_list:
+	for obj in obj_list:	
 		data = gridlabd.get_object(obj)
 		if data["class"] == "triplex_meter":
 			triplex_name_list.append(obj) # appends the name of the triplex meter rather than the actual object 
@@ -432,9 +429,6 @@ def on_init(t):
 			gridlabd.set_value(obj, "monthly_updated_usage", "0.0")
 			gridlabd.set_value(obj, "monthly_updated_power", "0.0")
 			update_meter_timestep(obj, 3600)
-
-
-
 	return True
 
 
