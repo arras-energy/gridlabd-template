@@ -152,29 +152,40 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 	This function is called every hour for each meter and triplex meter. 
 	"""
 	hour = clock.hour
-	tariff = gridlabd.get_object("tariff")
-	tariff_name = tariff["name"]
+	# print("hour: "+ str(hour) + "prev day: " + str(prev_day))
+	# tariff = gridlabd.get_object("tariff")
+	# print("test")
+	tariff_name = "tariff" # tariff["name"]
 	bill_name = bill["name"]
+	# print(meter_name)
 	meter = gridlabd.get_object(meter_name)
-	billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
-
+	# print("test_0")
+	# billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
+	billing_hrs = gridlabd.get_double(gridlabd.get_property(bill_name,"billing_hrs"))
+	# print("test_1")
 	# energy usage over the hour
-	energy_hr =(to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
-
+	# energy_hr = (to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
+	energy_hr = gridlabd.get_double(gridlabd.get_property(meter_name,"measured_real_energy_delta"))/1000.0
+	# print('test_2')
 	# check if in same day/ if timing needs to be updated
 	day = clock.day
 
 	global rates
 	global schedule
 	
+	usage_addr = gridlabd.get_property(bill_name,"usage")
 	if billing_hrs == 0.0:
 		rates, schedule = monthlyschedule_gen(tariff_df, clock)
+		previous_usage = gridlabd.get_double(usage_addr)
 	elif day != prev_day:
 		rates, schedule = monthlyschedule_gen(tariff_df, clock)
-		gridlabd.set_value(bill_name, "usage", str(0.0))
+		# gridlabd.set_value(bill_name, "usage", str(0.0))
+		previous_usage = 0.0
+	else:		
 	
-	# get previous daily energy usage
-	previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
+		# get previous daily energy usage
+		# previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
+		previous_usage = gridlabd.get_double(usage_addr)
 
 	# check if if time is peak/shoulder/offpeak
 	type_idx = rates.index(schedule[hour])
@@ -232,7 +243,8 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 		# update bill values of this meter with appropriate values. 
 		gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
 		gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
-		gridlabd.set_value(bill_name, "usage", str(daily_usage))
+		# gridlabd.set_value(bill_name, "usage", str(daily_usage))
+		gridlabd.set_double(usage_addr,daily_usage)
 		gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
 		gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
 		#gridlabd.set_value(bill_name, "peak_power", str(max(to_float(gridlabd.get_value(meter_name, "measured_real_power")), to_float(gridlabd.get_value(bill_name, "peak_power")))))
@@ -245,11 +257,20 @@ def update_monthly_cumulative_meter_results(total_charges, total_usage, total_po
 
 
 def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
+	print(f"update_meter_results <-- '{charges_current_month,usage_current_month,power_current_month, demand_current_month}'")
 	# updates the string representation of a list of results
-	gridlabd.set_value(meter_name, "monthly_charges",  str(gridlabd.get_value(meter_name, "monthly_charges")) + "," + str(charges_current_month))
-	gridlabd.set_value(meter_name, "monthly_usage",  str(gridlabd.get_value(meter_name, "monthly_usage")) + "," + str(usage_current_month))
-	gridlabd.set_value(meter_name, "monthly_power",  str(gridlabd.get_value(meter_name, "monthly_power")) + "," + str(power_current_month))
-	gridlabd.set_value(meter_name, "monthly_demand",  str(gridlabd.get_value(meter_name, "monthly_demand")) + "," + str(demand_current_month))
+	try:
+		gridlabd.set_value(meter_name, "monthly_charges",  f"{gridlabd.get_value(meter_name, 'monthly_charges')},{charges_current_month}")
+		gridlabd.set_value(meter_name, "monthly_usage",  f"{gridlabd.get_value(meter_name, 'monthly_usage')},{usage_current_month}")
+		gridlabd.set_value(meter_name, "monthly_power", f"{gridlabd.get_value(meter_name, 'monthly_power')},{power_current_month}")
+		gridlabd.set_value(meter_name, "monthly_demand", f"{gridlabd.get_value(meter_name, 'monthly_demand')},{demand_current_month}")
+		print(f"Month {month} done")
+	except:
+		print(gridlabd.get_value(meter_name, 'monthly_charges'))
+		print(gridlabd.get_value(meter_name, 'monthly_usage'))
+		print(gridlabd.get_value(meter_name, 'monthly_power'))
+		print(gridlabd.get_value(meter_name, 'monthly_demand'))
+		
 def update_meter_and_bill(meter_name, month):
 	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
 	bill_name = bill["name"]
@@ -264,8 +285,10 @@ def update_meter_and_bill(meter_name, month):
 	power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
 	logging.debug(f"total_charges_current month = {charges_current_month}")
 
-	demand_current_month = to_float(gridlabd.get_value(meter_name, "measured_demand"))
-	gridlabd.set_value(meter_name, "measured_demand", str(0.0))
+	measured_demand = gridlabd.get_property(meter_name,"measured_demand")
+	demand_current_month = gridlabd.get_double(measured_demand) #to_float(gridlabd.get_value(meter_name, "measured_demand"))
+	#gridlabd.set_value(meter_name, "measured_demand", str(0.0))
+	gridlabd.set_double(measured_demand,0.0)
 
 	update_monthly_cumulative_meter_results(total_charges, total_usage,total_power,meter_name)
 	update_meter_results(charges_current_month, usage_current_month, power_current_month, demand_current_month, meter_name, month)
@@ -434,7 +457,7 @@ def on_init(t):
 
 
 def on_commit(t):
-	# Update all meters and triplex meters each hour. Also updates monthly values for meters every new month. 
+	# Update all meters and triplex meters each hour. Also updates monthly values for meters every new month.
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	hour = clock.hour
 	seconds = (clock.hour * 60 + clock.minute) * 60 + clock.second
@@ -453,13 +476,17 @@ def on_commit(t):
 				
 			prev_month = month
 		global prev_day
+
 		for meter_name in meter_name_list:
 			# update bill values for each meter
+
 			meter_bill = gridlabd.get_object("bill_" + meter_name)
 			update_bill_values(meter_bill, meter_name, prev_day,clock)
+
 		for triplex_meter_name in triplex_name_list:
 			# updates bill values of each triplex meter
 			triplex_bill = gridlabd.get_object("bill_" + triplex_meter_name)
+			# print("month: " + str(month))
 			update_bill_values(triplex_bill,triplex_meter_name, prev_day,clock)
 		prev_day = day 
 
