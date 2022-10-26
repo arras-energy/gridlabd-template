@@ -4,3 +4,4 @@ tariff_design.md:a=r
 tariff_library_config.csv:a=r
 default_billing.py:a=rx
 module_powerflow.glm:a=r
+module_revenue.glm:a=r

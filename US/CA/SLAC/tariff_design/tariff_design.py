@@ -14,6 +14,33 @@ import numpy as np
 import logging
 from calendar import monthrange
 
+#
+# Local data model
+#
+
+data_model = {}
+
+def get_value(obj,prop):
+	global data_model
+	try:
+		return data_model[obj][prop]
+	except:
+		return None
+
+def set_value(obj,prop,value):
+	global data_model
+	try:
+		old = data_model[obj][prop]
+		data_model[obj][prop] = value
+		return old
+	except:
+		data_model[obj] = {prop:value}
+		return None
+
+#
+# Analysis
+#
+
 meter_name_list = None
 
 def to_float(x):
@@ -251,26 +278,26 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 def update_monthly_cumulative_meter_results(total_charges, total_usage, total_power, meter_name):
 	# updates monthly cumulative results of meter
-	gridlabd.set_value(meter_name, "monthly_updated_charges", str(total_charges))
-	gridlabd.set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
-	gridlabd.set_value(meter_name, "monthly_updated_power", str(total_power)) 
+	set_value(meter_name, "monthly_updated_charges", str(total_charges))
+	set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
+	set_value(meter_name, "monthly_updated_power", str(total_power)) 
 
 
 def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
 	print(f"update_meter_results <-- '{charges_current_month,usage_current_month,power_current_month, demand_current_month}'")
 	# updates the string representation of a list of results
 	try:
-		gridlabd.set_value(meter_name, "monthly_charges",  f"{gridlabd.get_value(meter_name, 'monthly_charges')},{charges_current_month}")
-		gridlabd.set_value(meter_name, "monthly_usage",  f"{gridlabd.get_value(meter_name, 'monthly_usage')},{usage_current_month}")
-		gridlabd.set_value(meter_name, "monthly_power", f"{gridlabd.get_value(meter_name, 'monthly_power')},{power_current_month}")
-		gridlabd.set_value(meter_name, "monthly_demand", f"{gridlabd.get_value(meter_name, 'monthly_demand')},{demand_current_month}")
+		set_value(meter_name, "monthly_charges",  f"{get_value(meter_name, 'monthly_charges')},{charges_current_month}")
+		set_value(meter_name, "monthly_usage",  f"{get_value(meter_name, 'monthly_usage')},{usage_current_month}")
+		set_value(meter_name, "monthly_power", f"{get_value(meter_name, 'monthly_power')},{power_current_month}")
+		set_value(meter_name, "monthly_demand", f"{get_value(meter_name, 'monthly_demand')},{demand_current_month}")
 		print(f"Month {month} done")
 	except:
-		print(gridlabd.get_value(meter_name, 'monthly_charges'))
-		print(gridlabd.get_value(meter_name, 'monthly_usage'))
-		print(gridlabd.get_value(meter_name, 'monthly_power'))
-		print(gridlabd.get_value(meter_name, 'monthly_demand'))
-		
+		print(get_value(meter_name, 'monthly_charges'))
+		print(get_value(meter_name, 'monthly_usage'))
+		print(get_value(meter_name, 'monthly_power'))
+		print(get_value(meter_name, 'monthly_demand'))
+
 def update_meter_and_bill(meter_name, month):
 	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
 	bill_name = bill["name"]
@@ -280,15 +307,15 @@ def update_meter_and_bill(meter_name, month):
 	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
 	logging.debug(f"total_charges = {total_charges}")
 
-	charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
-	usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
-	power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
+	charges_current_month = total_charges - to_float(get_value(meter_name, "monthly_updated_charges"))
+	usage_current_month = total_usage - to_float(get_value(meter_name, "monthly_updated_usage"))
+	power_current_month = total_power - to_float(get_value(meter_name, "monthly_updated_power"))
 	logging.debug(f"total_charges_current month = {charges_current_month}")
 
-	measured_demand = gridlabd.get_property(meter_name,"measured_demand")
-	demand_current_month = gridlabd.get_double(measured_demand) #to_float(gridlabd.get_value(meter_name, "measured_demand"))
+	measured_demand = get_value(meter_name,"measured_demand")
+	demand_current_month = get_value(measured_demand) #to_float(gridlabd.get_value(meter_name, "measured_demand"))
 	#gridlabd.set_value(meter_name, "measured_demand", str(0.0))
-	gridlabd.set_double(measured_demand,0.0)
+	set_value(meter_name, measured_demand,0.0)
 
 	update_monthly_cumulative_meter_results(total_charges, total_usage,total_power,meter_name)
 	update_meter_results(charges_current_month, usage_current_month, power_current_month, demand_current_month, meter_name, month)
@@ -377,7 +404,6 @@ def update_monthly_demand_triplex(triplex_meter_name):
 
 
 def on_init(t):
-
 	# set up logging
 	# logging.basicConfig(level=logging.DEBUG)
 	# logger = logging.getLogger()
@@ -448,9 +474,9 @@ def on_init(t):
 		if data["class"] == "meter":
 			meter_name_list.append(obj)
 			# initialize values 
-			gridlabd.set_value(obj, "monthly_updated_charges", "0.0")
-			gridlabd.set_value(obj, "monthly_updated_usage", "0.0")
-			gridlabd.set_value(obj, "monthly_updated_power", "0.0")
+			set_value(obj, "monthly_updated_charges", "0.0")
+			set_value(obj, "monthly_updated_usage", "0.0")
+			set_value(obj, "monthly_updated_power", "0.0")
 			update_meter_timestep(obj, 3600)
 	return True
 

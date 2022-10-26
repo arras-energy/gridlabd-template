@@ -1,9 +1,9 @@
 class meter 
 {
-	string monthly_charges;
-	string monthly_usage;
-	string monthly_power;
-	string monthly_demand; 
+	char1024 monthly_demand;
+	char1024 monthly_charges;
+	char1024 monthly_usage;
+	char1024 monthly_power;
 	double monthly_updated_charges[$];
 	double monthly_updated_usage[kWh];
 	double monthly_updated_power[W];
