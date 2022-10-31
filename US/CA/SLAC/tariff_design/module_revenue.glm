@@ -28,10 +28,3 @@ class tariff {
     double shoulder_rate3[$/kWh];
     double shoulder_rate4[$/kWh];
 }
-
-class billing {
-    double usage[kWh];
-    double total_usage[kWh];
-    double billing_hrs;
-    double total_power[W];
-}

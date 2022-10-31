@@ -19,6 +19,7 @@ from calendar import monthrange
 #
 
 data_model = {}
+# bill_model = {}
 
 def get_value(obj,prop):
 	global data_model
@@ -39,6 +40,12 @@ def set_value(obj,prop,value):
 	# data_model[obj] = {prop:value}
 	data_model[obj][prop]=value
 	return old
+
+
+# def get_bill_value(obj, prop) : 
+# 	global bill_model 
+# 	return str(bill_model[obj, prop])
+
 
 #
 # Analysis
@@ -202,6 +209,7 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 	global rates
 	global schedule
+	global data_model
 	
 	usage_addr = gridlabd.get_property(bill_name,"usage")
 	if billing_hrs == 0.0:
@@ -272,11 +280,11 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 		# update bill values of this meter with appropriate values. 
 		gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-		gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
+		set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
 		# gridlabd.set_value(bill_name, "usage", str(daily_usage))
 		gridlabd.set_double(usage_addr,daily_usage)
-		gridlabd.set_value(bill_name, "total_usage", str(energy_hr + to_float(gridlabd.get_value(bill_name, "total_usage"))))
-		gridlabd.set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(gridlabd.get_value(bill_name, "total_power"))))
+		set_value(bill_name, "total_usage", str(energy_hr + to_float(get_value(bill_name, "total_usage"))))
+		set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(get_value(bill_name, "total_power"))))
 		#gridlabd.set_value(bill_name, "peak_power", str(max(to_float(gridlabd.get_value(meter_name, "measured_real_power")), to_float(gridlabd.get_value(bill_name, "peak_power")))))
 
 def update_monthly_cumulative_meter_results(total_charges, total_usage, total_power, meter_name):
@@ -303,8 +311,8 @@ def update_meter_and_bill(meter_name, month):
 	bill_name = bill["name"]
 
 	total_charges = to_float(gridlabd.get_value(bill_name,"total_charges"))
-	total_usage = to_float(gridlabd.get_value(bill_name,"total_usage"))
-	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
+	total_usage = to_float(get_value(bill_name,"total_usage"))
+	total_power = to_float(get_value(bill_name,"total_power"))
 	logging.debug(f"total_charges = {total_charges}")
 
 	charges_current_month = total_charges - to_float(get_value(meter_name, "monthly_updated_charges"))
@@ -474,11 +482,13 @@ def on_init(t):
 		if data["class"] == "triplex_meter":
 			triplex_name_list.append(obj) # appends the name of the triplex meter rather than the actual object 
 			update_meter_timestep(obj, 3600) # meter time step to be an hour 
+			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0", "usage" : "0.0"}
 		if data["class"] == "meter":
 			meter_name_list.append(obj)
 			# initialize values 
 			update_meter_timestep(obj, 3600)
 			data_model[obj] = {"monthly_charges" : "0.0", "monthly_usage" : "0.0", "monthly_power" : "0.0", "monthly_demand" : "0.0", "monthly_updated_charges" : "0.0", "monthly_updated_usage" : "0.0", "monthly_updated_power" : "0.0"}
+			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0", "usage" : "0.0"}
 	return True
 
 
@@ -585,11 +595,11 @@ def on_term(t):
 		charges_meter_list.extend(current_meter_monthly_charges) 
 
 		current_meter_monthly_usage = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_usage").split(",")][1:]
-		usage_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_usage"))))
+		usage_meter_list.append(round_decimals(to_float(get_value("bill_" + meter_name,"total_usage"))))
 		usage_meter_list.extend(current_meter_monthly_usage)
 
 		current_meter_monthly_power = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_power").split(",")][1:]
-		total_power_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_power"))))
+		total_power_meter_list.append(round_decimals(to_float(get_value("bill_" + meter_name,"total_power"))))
 		total_power_meter_list.extend(current_meter_monthly_power)
 
 		current_meter_monthly_demand = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_demand").split(",")][1:]
@@ -613,9 +623,9 @@ def on_term(t):
 
 	# get results for all triplex meters 
 	charges_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_charges"))) for triplex_name in triplex_name_list]
-	usage_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_usage"))) for triplex_name in triplex_name_list]
+	usage_triplex_meter_list = [round_decimals(to_float(get_value("bill_" + triplex_name,"total_usage"))) for triplex_name in triplex_name_list]
 	peak_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"peak_power"))) for triplex_name in triplex_name_list]
-	total_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_power"))) for triplex_name in triplex_name_list]
+	total_power_triplex_meter_list = [round_decimals(to_float(get_value("bill_" + triplex_name,"total_power"))) for triplex_name in triplex_name_list]
 
 
 
