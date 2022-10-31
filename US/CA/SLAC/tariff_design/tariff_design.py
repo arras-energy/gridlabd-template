@@ -281,9 +281,9 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 def update_monthly_cumulative_meter_results(total_charges, total_usage, total_power, meter_name):
 	# updates monthly cumulative results of meter
-	gridlabd.set_value(meter_name, "monthly_updated_charges", str(total_charges))
-	gridlabd.set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
-	gridlabd.set_value(meter_name, "monthly_updated_power", str(total_power)) 
+	set_value(meter_name, "monthly_updated_charges", str(total_charges))
+	set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
+	set_value(meter_name, "monthly_updated_power", str(total_power)) 
 
 
 def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
@@ -307,9 +307,9 @@ def update_meter_and_bill(meter_name, month):
 	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
 	logging.debug(f"total_charges = {total_charges}")
 
-	charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
-	usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
-	power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
+	charges_current_month = total_charges - to_float(get_value(meter_name, "monthly_updated_charges"))
+	usage_current_month = total_usage - to_float(get_value(meter_name, "monthly_updated_usage"))
+	power_current_month = total_power - to_float(get_value(meter_name, "monthly_updated_power"))
 	logging.debug(f"total_charges_current month = {charges_current_month}")
 
 	# measured_demand = gridlabd.get_property(meter_name,"measured_demand")
@@ -477,11 +477,8 @@ def on_init(t):
 		if data["class"] == "meter":
 			meter_name_list.append(obj)
 			# initialize values 
-			gridlabd.set_value(obj, "monthly_updated_charges", "0.0")
-			gridlabd.set_value(obj, "monthly_updated_usage", "0.0")
-			gridlabd.set_value(obj, "monthly_updated_power", "0.0")
 			update_meter_timestep(obj, 3600)
-			data_model[obj] = {"monthly_charges" : 0.0, "monthly_usage" : 0.0, "monthly_power" : 0.0, "monthly_demand" : 0.0}
+			data_model[obj] = {"monthly_charges" : "0.0", "monthly_usage" : "0.0", "monthly_power" : "0.0", "monthly_demand" : "0.0", "monthly_updated_charges" : "0.0", "monthly_updated_usage" : "0.0", "monthly_updated_power" : "0.0"}
 	return True
 
 
