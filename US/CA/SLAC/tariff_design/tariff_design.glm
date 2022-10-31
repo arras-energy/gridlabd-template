@@ -1,17 +1,15 @@
 // GridLAB-D tariff design model file
-
-
-
 #ifexist "config.csv"
 #input "config.csv" -f config -t config
 #endif
 
-#ifexist "${WEATHER_STATION}.tmy3" 
-#input "${WEATHER_STATION}.tmy3"
-#else 
-#weather get "${WEATHER_STATION}.tmy3"
-#input "${WEATHER_STATION}.tmy3"
-#endif
+
+//#ifexist "${WEATHER_STATION}.tmy3" 
+//#input "${WEATHER_STATION}.tmy3"
+//#else 
+//#weather get "${WEATHER_STATION}.tmy3"
+//#input "${WEATHER_STATION}.tmy3"
+//#endif
 
 //GridLAB-D modules
 module revenue;

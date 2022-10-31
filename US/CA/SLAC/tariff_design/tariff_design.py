@@ -22,20 +22,23 @@ data_model = {}
 
 def get_value(obj,prop):
 	global data_model
-	try:
-		return data_model[obj][prop]
-	except:
-		return None
+	# try:
+	return str(data_model[obj][prop])
+	# except:
+		# data_model[obj] = {prop:0.0}
+		# return data_model[obj][prop]
 
 def set_value(obj,prop,value):
 	global data_model
-	try:
-		old = data_model[obj][prop]
-		data_model[obj][prop] = value
-		return old
-	except:
-		data_model[obj] = {prop:value}
-		return None
+	# try:
+	old = data_model[obj][prop]
+	# data_model[obj][prop] = value
+	# 	print(data_model)
+	# 	return old
+	# except:
+	# data_model[obj] = {prop:value}
+	data_model[obj][prop]=value
+	return old
 
 #
 # Analysis
@@ -278,25 +281,22 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 def update_monthly_cumulative_meter_results(total_charges, total_usage, total_power, meter_name):
 	# updates monthly cumulative results of meter
-	set_value(meter_name, "monthly_updated_charges", str(total_charges))
-	set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
-	set_value(meter_name, "monthly_updated_power", str(total_power)) 
+	gridlabd.set_value(meter_name, "monthly_updated_charges", str(total_charges))
+	gridlabd.set_value(meter_name, "monthly_updated_usage", str(total_usage)) 
+	gridlabd.set_value(meter_name, "monthly_updated_power", str(total_power)) 
 
 
 def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
 	print(f"update_meter_results <-- '{charges_current_month,usage_current_month,power_current_month, demand_current_month}'")
+	global data_model
 	# updates the string representation of a list of results
-	try:
-		set_value(meter_name, "monthly_charges",  f"{get_value(meter_name, 'monthly_charges')},{charges_current_month}")
-		set_value(meter_name, "monthly_usage",  f"{get_value(meter_name, 'monthly_usage')},{usage_current_month}")
-		set_value(meter_name, "monthly_power", f"{get_value(meter_name, 'monthly_power')},{power_current_month}")
-		set_value(meter_name, "monthly_demand", f"{get_value(meter_name, 'monthly_demand')},{demand_current_month}")
-		print(f"Month {month} done")
-	except:
-		print(get_value(meter_name, 'monthly_charges'))
-		print(get_value(meter_name, 'monthly_usage'))
-		print(get_value(meter_name, 'monthly_power'))
-		print(get_value(meter_name, 'monthly_demand'))
+	set_value(meter_name, "monthly_charges",  f"{get_value(meter_name, 'monthly_charges')},{charges_current_month}")
+	set_value(meter_name, "monthly_usage",  f"{get_value(meter_name, 'monthly_usage')},{usage_current_month}")
+	set_value(meter_name, "monthly_power", f"{get_value(meter_name, 'monthly_power')},{power_current_month}")
+	set_value(meter_name, "monthly_demand", f"{get_value(meter_name, 'monthly_demand')},{demand_current_month}")
+	print(data_model)
+	print(f"Month {month} done")
+
 
 def update_meter_and_bill(meter_name, month):
 	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
@@ -307,15 +307,17 @@ def update_meter_and_bill(meter_name, month):
 	total_power = to_float(gridlabd.get_value(bill_name,"total_power"))
 	logging.debug(f"total_charges = {total_charges}")
 
-	charges_current_month = total_charges - to_float(get_value(meter_name, "monthly_updated_charges"))
-	usage_current_month = total_usage - to_float(get_value(meter_name, "monthly_updated_usage"))
-	power_current_month = total_power - to_float(get_value(meter_name, "monthly_updated_power"))
+	charges_current_month = total_charges - to_float(gridlabd.get_value(meter_name, "monthly_updated_charges"))
+	usage_current_month = total_usage - to_float(gridlabd.get_value(meter_name, "monthly_updated_usage"))
+	power_current_month = total_power - to_float(gridlabd.get_value(meter_name, "monthly_updated_power"))
 	logging.debug(f"total_charges_current month = {charges_current_month}")
 
-	measured_demand = get_value(meter_name,"measured_demand")
-	demand_current_month = get_value(measured_demand) #to_float(gridlabd.get_value(meter_name, "measured_demand"))
-	#gridlabd.set_value(meter_name, "measured_demand", str(0.0))
-	set_value(meter_name, measured_demand,0.0)
+	# measured_demand = gridlabd.get_property(meter_name,"measured_demand")
+	# demand_current_month = gridlabd.get_double(measured_demand) #to_float(gridlabd.get_value(meter_name, "measured_demand"))
+	demand_current_month = to_float(gridlabd.get_value(meter_name, "measured_demand"))
+	print("DEMAND: " + str(demand_current_month))
+	gridlabd.set_value(meter_name, "measured_demand", str(0.0))
+	
 
 	update_monthly_cumulative_meter_results(total_charges, total_usage,total_power,meter_name)
 	update_meter_results(charges_current_month, usage_current_month, power_current_month, demand_current_month, meter_name, month)
@@ -404,6 +406,7 @@ def update_monthly_demand_triplex(triplex_meter_name):
 
 
 def on_init(t):
+
 	# set up logging
 	# logging.basicConfig(level=logging.DEBUG)
 	# logger = logging.getLogger()
@@ -474,10 +477,11 @@ def on_init(t):
 		if data["class"] == "meter":
 			meter_name_list.append(obj)
 			# initialize values 
-			set_value(obj, "monthly_updated_charges", "0.0")
-			set_value(obj, "monthly_updated_usage", "0.0")
-			set_value(obj, "monthly_updated_power", "0.0")
+			gridlabd.set_value(obj, "monthly_updated_charges", "0.0")
+			gridlabd.set_value(obj, "monthly_updated_usage", "0.0")
+			gridlabd.set_value(obj, "monthly_updated_power", "0.0")
 			update_meter_timestep(obj, 3600)
+			data_model[obj] = {"monthly_charges" : 0.0, "monthly_usage" : 0.0, "monthly_power" : 0.0, "monthly_demand" : 0.0}
 	return True
 
 
@@ -558,6 +562,8 @@ def plot_triplex_meter_histograms(X, x_label, title, result_name):
 
 def on_term(t):
 	global prev_month
+	global data_model
+	print(data_model)
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	year = clock.year 
 	month = clock.month
@@ -577,19 +583,19 @@ def on_term(t):
 	for meter_name in meter_name_list:
 
 		# temp list for graphing without a total for graphing. List with total is for output.csv 
-		current_meter_monthly_charges = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_charges").split(",")][1:] # first element of list is zero 
+		current_meter_monthly_charges = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_charges").split(",")][1:] # first element of list is zero 
 		charges_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_charges"))))
 		charges_meter_list.extend(current_meter_monthly_charges) 
 
-		current_meter_monthly_usage = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_usage").split(",")][1:]
+		current_meter_monthly_usage = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_usage").split(",")][1:]
 		usage_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_usage"))))
 		usage_meter_list.extend(current_meter_monthly_usage)
 
-		current_meter_monthly_power = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_power").split(",")][1:]
+		current_meter_monthly_power = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_power").split(",")][1:]
 		total_power_meter_list.append(round_decimals(to_float(gridlabd.get_value("bill_" + meter_name,"total_power"))))
 		total_power_meter_list.extend(current_meter_monthly_power)
 
-		current_meter_monthly_demand = [round_decimals(float(val)) for val in gridlabd.get_value(meter_name, "monthly_demand").split(",")][1:]
+		current_meter_monthly_demand = [round_decimals(float(val)) for val in get_value(meter_name, "monthly_demand").split(",")][1:]
 		measured_demand_meter_list.append(max(current_meter_monthly_demand)) # gets the max of all the monthly demand 
 		measured_demand_meter_list.extend(current_meter_monthly_demand)
 
@@ -616,7 +622,7 @@ def on_term(t):
 
 
 
-	meter_name_dupe_list = [val for val in meter_name_list for i in gridlabd.get_value(meter_name, "monthly_charges").split(",")] # duplicate meter name for each month value 
+	meter_name_dupe_list = [val for val in meter_name_list for i in get_value(meter_name, "monthly_charges").split(",")] # duplicate meter name for each month value 
 
 	plot_triplex_meter_histograms(charges_triplex_meter_list, "Charges ($)", "Distribution of Charges", "distribution_of_charges.png")
 	plot_triplex_meter_histograms(usage_triplex_meter_list, "Usage (kWh)", "Distribution of Usage", "distribution_of_usage.png")
