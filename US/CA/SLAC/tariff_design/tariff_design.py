@@ -77,7 +77,8 @@ def read_tariff(pathtocsv, tariff_counter):
 		next(reader)
 		tariff_input = [row for row in reader]
 
-	# get inputs from csv
+	# get inputs from csv (TARIFF_INDEX in config.csv determines the tariff to run)
+	# TO DO: change this so all the tariff are run from file and compared 
 	utility_name = tariff_input[tariff_counter][0]
 	sector_type = tariff_input[tariff_counter][1]
 	name = tariff_input[tariff_counter][2]
