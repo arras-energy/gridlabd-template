@@ -19,33 +19,16 @@ from calendar import monthrange
 #
 
 data_model = {}
-# bill_model = {}
 
 def get_value(obj,prop):
 	global data_model
-	# try:
 	return str(data_model[obj][prop])
-	# except:
-		# data_model[obj] = {prop:0.0}
-		# return data_model[obj][prop]
 
 def set_value(obj,prop,value):
 	global data_model
-	# try:
 	old = data_model[obj][prop]
-	# data_model[obj][prop] = value
-	# 	print(data_model)
-	# 	return old
-	# except:
-	# data_model[obj] = {prop:value}
 	data_model[obj][prop]=value
 	return old
-
-
-# def get_bill_value(obj, prop) : 
-# 	global bill_model 
-# 	return str(bill_model[obj, prop])
-
 
 #
 # Analysis
@@ -190,17 +173,11 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 	This function is called every hour for each meter and triplex meter. 
 	"""
 	hour = clock.hour
-	# print("hour: "+ str(hour) + "prev day: " + str(prev_day))
-	# tariff = gridlabd.get_object("tariff")
-	# print("test")
 	tariff_name = "tariff" # tariff["name"]
 	bill_name = bill["name"]
-	# print(meter_name)
 	meter = gridlabd.get_object(meter_name)
-	# print("test_0")
 	# billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
 	billing_hrs = gridlabd.get_double(gridlabd.get_property(bill_name,"billing_hrs"))
-	# print("test_1")
 	# energy usage over the hour
 	# energy_hr = (to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
 	energy_hr = gridlabd.get_double(gridlabd.get_property(meter_name,"measured_real_energy_delta"))/1000.0
@@ -281,7 +258,7 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 		# update bill values of this meter with appropriate values. 
 		gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-		set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
+		gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
 		# gridlabd.set_value(bill_name, "usage", str(daily_usage))
 		gridlabd.set_double(usage_addr,daily_usage)
 		set_value(bill_name, "total_usage", str(energy_hr + to_float(get_value(bill_name, "total_usage"))))

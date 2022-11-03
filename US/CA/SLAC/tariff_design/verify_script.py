@@ -23,12 +23,12 @@ def import_energy_meter () :
 # 	return None 
 
 def tou_C() :
-	offpeak_price_summer_tier_max = 18.6/24
+	offpeak_price_summer_tier_max = 18.6
 	offpeak_price_summer_tier0 = 0.23882
 	offpeak_price_summer_tier1 = 0.32068
 	offpeak_price_winter_tier0 = 0.19784
 	offpeak_price_winter_tier1 = 0.2797
-	offpeak_price_winter_tier_max = 11.3/24
+	offpeak_price_winter_tier_max = 11.3
 	peak_price_summer_tier0 = 0.30226
 	peak_price_summer_tier1 = 0.38412
 	peak_price_winter_tier0 = 0.21517
@@ -45,17 +45,19 @@ def tou_C() :
 	winter_day_prices_tier1 = [offpeak_price_winter_tier1] *16 + [peak_price_winter_tier1] *5 +  [offpeak_price_winter_tier1] *3
 	summer_day_prices_tier1 = [offpeak_price_summer_tier1] *16 + [peak_price_summer_tier1] *5 +  [offpeak_price_summer_tier1] *3
 
-	tier_energy = np.array(list([offpeak_price_winter_tier_max]*first_day_of_summer*24 + [offpeak_price_summer_tier_max]*(last_day_of_summer - first_day_of_summer)*24 + [offpeak_price_winter_tier_max] * (365-last_day_of_summer)*24))
+	tier_energy = np.array(list([offpeak_price_winter_tier_max]*first_day_of_summer + [offpeak_price_summer_tier_max]*(last_day_of_summer - first_day_of_summer) + [offpeak_price_winter_tier_max] * (365-last_day_of_summer)))
 	price_array_tier0 = winter_day_prices_tier0 * first_day_of_summer + summer_day_prices_tier0*(last_day_of_summer - first_day_of_summer)+  winter_day_prices_tier0 * (365-last_day_of_summer)
 	price_array_tier1 = winter_day_prices_tier1 * first_day_of_summer + summer_day_prices_tier1*(last_day_of_summer - first_day_of_summer)+  winter_day_prices_tier1 * (365-last_day_of_summer)
 	# df = pd.DataFrame(price_array, columns=["prices"])
 	# print( df )
 
 	yr_energy = np.array(import_energy_meter())
-	tier1_energy = np.subtract(yr_energy,tier_energy)
+
+	yr_energy_per_day = np.add.reduceat(yr_energy, np.arange(0, len(yr_energy), 24))
+	tier1_energy = np.subtract(yr_energy_per_day,tier_energy)
 
 	
-	tier_energy[tier1_energy<0]=yr_energy[tier1_energy<0]
+	tier_energy[tier1_energy<0]=yr_energy_per_day[tier1_energy<0]
 
 	tier1_energy[tier1_energy<0]=0
 	annual_bill = sum([a*b for a,b in zip(tier_energy,price_array_tier0)]) + sum([a*b for a,b in zip(tier1_energy,price_array_tier1)])
