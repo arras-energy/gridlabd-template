@@ -24,13 +24,6 @@ object tariff {
 	name "tariff";
 }
 
-class billing {
-	double usage[kWh];
-	double total_usage[kWh];
-	double billing_hrs;
-	double total_power[W];
-	double peak_power[W];
-}
 
 #for tri_meter in ${FIND class=triplex_meter}
 object billing {
@@ -38,7 +31,6 @@ object billing {
 	meter "${tri_meter}";
 	tariff "tariff";
 	total_charges "0.0";
-	peak_power "0.0";
 }
 #done
 
@@ -48,7 +40,6 @@ object billing {
 	meter "${meter}";
 	tariff "tariff";
 	total_charges "0.0";
-	peak_power "0.0";
 }
 #done
 

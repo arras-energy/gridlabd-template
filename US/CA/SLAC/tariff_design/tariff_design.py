@@ -177,7 +177,8 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 	bill_name = bill["name"]
 	meter = gridlabd.get_object(meter_name)
 	# billing_hrs = to_float(gridlabd.get_value(bill_name, "billing_hrs"))
-	billing_hrs = gridlabd.get_double(gridlabd.get_property(bill_name,"billing_hrs"))
+
+	billing_hrs = float(get_value(bill_name,"billing_hrs"))
 	# energy usage over the hour
 	# energy_hr = (to_float(gridlabd.get_value(meter_name, 'measured_real_energy_delta')))/1000 #kWh
 	energy_hr = gridlabd.get_double(gridlabd.get_property(meter_name,"measured_real_energy_delta"))/1000.0
@@ -189,10 +190,10 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 	global schedule
 	global data_model
 	
-	usage_addr = gridlabd.get_property(bill_name,"usage")
+	# usage_addr = gridlabd.get_property(bill_name,"usage")
 	if billing_hrs == 0.0:
 		rates, schedule = monthlyschedule_gen(tariff_df, clock)
-		previous_usage = gridlabd.get_double(usage_addr)
+		previous_usage = float(get_value(bill_name,"usage"))
 	elif day != prev_day:
 		rates, schedule = monthlyschedule_gen(tariff_df, clock)
 		# gridlabd.set_value(bill_name, "usage", str(0.0))
@@ -201,7 +202,7 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 	
 		# get previous daily energy usage
 		# previous_usage = to_float(gridlabd.get_value(bill_name, 'usage'))
-		previous_usage = gridlabd.get_double(usage_addr)
+		previous_usage = float(get_value(bill_name,"usage"))
 
 	# check if if time is peak/shoulder/offpeak
 	type_idx = rates.index(schedule[hour])
@@ -258,9 +259,9 @@ def update_bill_values(bill, meter_name, prev_day,clock):
 
 		# update bill values of this meter with appropriate values. 
 		gridlabd.set_value(bill_name,"total_charges",str(to_float(bill["total_charges"])+hr_charge))
-		gridlabd.set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
+		set_value(bill_name,"billing_hrs",str(billing_hrs + 1))
 		# gridlabd.set_value(bill_name, "usage", str(daily_usage))
-		gridlabd.set_double(usage_addr,daily_usage)
+		set_value(bill_name,"usage",daily_usage)
 		set_value(bill_name, "total_usage", str(energy_hr + to_float(get_value(bill_name, "total_usage"))))
 		set_value(bill_name, "total_power", str(to_float(gridlabd.get_value(meter_name, "measured_real_power")) + to_float(get_value(bill_name, "total_power"))))
 		#gridlabd.set_value(bill_name, "peak_power", str(max(to_float(gridlabd.get_value(meter_name, "measured_real_power")), to_float(gridlabd.get_value(bill_name, "peak_power")))))
@@ -386,8 +387,8 @@ def update_monthly_demand_triplex(triplex_meter_name):
 	# Updates triplex bill with the max of the current peak power vaule and the current month measured demand generated from the triplex meter. 
 	# Resets measured demand of triplex meter.
 	bill_name = gridlabd.get_object("bill_" + triplex_meter_name)["name"]
-	greater = max(to_float(gridlabd.get_value(bill_name, "peak_power")), to_float(gridlabd.get_value(triplex_meter_name, "measured_demand")))
-	gridlabd.set_value(bill_name, "peak_power", str(greater))
+	greater = max(to_float(get_value(bill_name, "peak_power")), to_float(gridlabd.get_value(triplex_meter_name, "measured_demand")))
+	set_value(bill_name, "peak_power", str(greater))
 	gridlabd.set_value(triplex_meter_name, "measured_demand", str(0.0))
 
 
@@ -460,13 +461,14 @@ def on_init(t):
 		if data["class"] == "triplex_meter":
 			triplex_name_list.append(obj) # appends the name of the triplex meter rather than the actual object 
 			update_meter_timestep(obj, 3600) # meter time step to be an hour 
-			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0", "usage" : "0.0"}
+			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0.0", "usage" : "0.0", "peak_power" : "0.0"}
 		if data["class"] == "meter":
 			meter_name_list.append(obj)
 			# initialize values 
 			update_meter_timestep(obj, 3600)
 			data_model[obj] = {"monthly_charges" : "0.0", "monthly_usage" : "0.0", "monthly_power" : "0.0", "monthly_demand" : "0.0", "monthly_updated_charges" : "0.0", "monthly_updated_usage" : "0.0", "monthly_updated_power" : "0.0"}
-			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0", "usage" : "0.0"}
+			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0.0", "usage" : "0.0", "peak_power" : "0.0"}
+	print(data_model)
 	return True
 
 
@@ -602,7 +604,7 @@ def on_term(t):
 	# get results for all triplex meters 
 	charges_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"total_charges"))) for triplex_name in triplex_name_list]
 	usage_triplex_meter_list = [round_decimals(to_float(get_value("bill_" + triplex_name,"total_usage"))) for triplex_name in triplex_name_list]
-	peak_power_triplex_meter_list = [round_decimals(to_float(gridlabd.get_value("bill_" + triplex_name,"peak_power"))) for triplex_name in triplex_name_list]
+	peak_power_triplex_meter_list = [round_decimals(to_float(get_value("bill_" + triplex_name,"peak_power"))) for triplex_name in triplex_name_list]
 	total_power_triplex_meter_list = [round_decimals(to_float(get_value("bill_" + triplex_name,"total_power"))) for triplex_name in triplex_name_list]
 
 
