@@ -281,7 +281,6 @@ def update_meter_results(charges_current_month,usage_current_month,power_current
 	set_value(meter_name, "monthly_usage",  f"{get_value(meter_name, 'monthly_usage')},{usage_current_month}")
 	set_value(meter_name, "monthly_power", f"{get_value(meter_name, 'monthly_power')},{power_current_month}")
 	set_value(meter_name, "monthly_demand", f"{get_value(meter_name, 'monthly_demand')},{demand_current_month}")
-	print(data_model)
 	print(f"Month {month} done")
 
 
@@ -550,7 +549,6 @@ def plot_triplex_meter_histograms(X, x_label, title, result_name):
 def on_term(t):
 	global prev_month
 	global data_model
-	print(data_model)
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	year = clock.year 
 	month = clock.month
