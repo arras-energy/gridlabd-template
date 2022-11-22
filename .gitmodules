@@ -1,0 +1,3 @@
+[submodule "autotest/models"]
+	path = autotest/models
+	url = https://github.com/slacgismo/gridlabd-models.git
