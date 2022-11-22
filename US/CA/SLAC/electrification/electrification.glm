@@ -34,7 +34,7 @@ module residential
 {
 	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
 	implicit_enduse_source EIA2015;
-#if ${PANELDUMP}==yes
+#if ${PANELDUMP:-no}==yes
     paneldump_filename "paneldump.csv";
     paneldump_interval 3600;
 #endif
@@ -78,7 +78,7 @@ object triplex_meter
 }
 #done
 
-#if ${CURRDUMP}==yes
+#if ${CURRDUMP:-no}==yes
 object currdump
 {
     filemode "a";
