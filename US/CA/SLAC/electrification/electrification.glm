@@ -1,9 +1,9 @@
 // Model for electric and gas houses
 
-#if exist "config.csv"
+#ifexists "config.csv"
 #input "config.csv" -f config -t config
 #else
-#if exist "config.glm"
+#ifexists "config.glm"
 #include "config.glm"
 #endif
 #endif
