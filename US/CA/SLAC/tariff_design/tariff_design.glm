@@ -1,4 +1,8 @@
 // GridLAB-D tariff design model file
+
+#input modelname -o input_model.json
+
+
 #ifexist "config.csv"
 #input "config.csv" -f config -t config
 #endif
