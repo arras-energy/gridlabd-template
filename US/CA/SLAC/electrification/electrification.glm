@@ -20,9 +20,9 @@ object climate
 // Clock
 clock 
 {
-	timezone ${TIMEZONE};
-	starttime ${STARTTIME};
-	stoptime ${STOPTIME};
+    timezone ${TIMEZONE};
+    starttime ${STARTTIME};
+    stoptime ${STOPTIME};
 }
 
 module tape
@@ -32,8 +32,8 @@ module tape
 
 module residential
 {
-	implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
-	implicit_enduse_source EIA2015;
+    implicit_enduses REFRIGERATOR|LIGHTS|PLUGS|WATERHEATER|RANGE|DRYER|CLOTHESWASHER|FREEZER|MICROWAVE|DISHWASHER;
+    implicit_enduse_source EIA2015;
 #if ${PANELDUMP:-no}==yes
     paneldump_filename "paneldump.csv";
     paneldump_interval 3600;
@@ -71,20 +71,12 @@ object triplex_meter
     measured_energy_delta_timestep 3600s;
     object recorder
     {
-        property "measured_real_energy_delta";
+        property "phases,nominal_voltage,measured_real_energy_delta,measured_demand";
         file phase_${PHASE}.csv;
-        interval 3600s;
+        interval 52wk;
     };
 }
 #done
 
-#if ${CURRDUMP:-no}==yes
-object currdump
-{
-    filemode "a";
-    filename "curr_dump.csv";
-    interval 3600;
-    maxcount 0;
-    mode "POLAR";
-}
-#endif 
+#on_exit 0 (head -n 1 phase_A.csv ; tail -q -n 1 phase_[ABC].csv ; rm phase_[ABC].csv ) > electrification.csv
+#on_exit 0 gridlabd plot -i=electrification.csv -o=electrification.png --plot:legend --plot:grid --plot:y=measured_real_energy_delta,measured_demand --plot:x=phases --plot:kind=bar  --plot:ylabel=Power[W]/Energy[Wh] --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC} electric / ${NHOUSES_GAS} gas" --plot:fontsize=10
