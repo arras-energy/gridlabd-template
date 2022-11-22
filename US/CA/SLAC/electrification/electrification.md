@@ -33,5 +33,6 @@ To specify gas heating, use `HEATINGSYSTEMTYPE,GAS`.
 3. Run the template: `gridlabd config.csv -t electrification` 
 
 ## Output
-The output from all the defined run in configuration will appear in...
+
+The output  will appear in `electrification.csv` and `electrification.png`. The total annual energy use and the peak demand are recorded and plotted.
 
