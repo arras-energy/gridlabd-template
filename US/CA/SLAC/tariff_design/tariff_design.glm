@@ -7,6 +7,12 @@
 #input "config.csv" -f config -t config
 #endif
 
+// CLOCK
+clock {
+	timezone ${TIMEZONE};
+	starttime ${STARTTIME};
+	stoptime ${STOPTIME};
+}
 
 //#ifexist "${WEATHER_STATION}.tmy3" 
 //#input "${WEATHER_STATION}.tmy3"
