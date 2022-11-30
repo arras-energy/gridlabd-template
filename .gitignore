@@ -2,7 +2,6 @@
 __MACOSX/
 __pycache__/
 *.pyc
-*.csv
 config.glm
 power_output/
 *.json
