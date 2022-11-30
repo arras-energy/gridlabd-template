@@ -94,7 +94,7 @@ for ORG in $(grep -v ^# ".orgs"); do
                 cp $SOURCE $TESTDIR || warning "unable to copy $SOURCE to $TESTDIR"
                 cp $ORG/$TEMPLATE/$AUTOTEST $TESTDIR || warning "unable to copy $AUTOTEST to $TESTDIR"
 
-                if time -p gridlabd -W $TESTDIR autotest.glm $(basename $SOURCE) -o gridlabd.json -t $TEMPLATE 1>$TESTDIR/gridlabd.out 2>&1; then
+                if gridlabd -W $TESTDIR autotest.glm $(basename $SOURCE) -o gridlabd.json -t $TEMPLATE 1>$TESTDIR/gridlabd.out 2>&1; then
                     echo "[Success: exit code $?]" >> $TESTDIR/gridlabd.out
                     output "$AUTOTEST ok" >> $VALIDATE
                     status OK

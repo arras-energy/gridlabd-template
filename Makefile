@@ -20,7 +20,7 @@ OPTIONS += --debug
 endif
 
 validate:
-	@time -p ./validate.sh
+	@./validate.sh
 
 clean:
 	@rm -rf test validate.txt validate.tar.gz stderr stdout
