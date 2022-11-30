@@ -9,21 +9,18 @@ help:
 	@echo "Options:"
 	@echo "  LIMIT='timeout TIME'"
 	@echo "  VERBOSE=yes"
+	@echo "  DEBUG=yes"
 
 OPTIONS=
 ifeq ($(VERBOSE),yes)
+OPTIONS += --verbose
+endif
+ifeq ($(DEBUG),yes)
 OPTIONS += --debug
 endif
 
-TEMPLATES=$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune))
-TESTDIR=autotest/models/gridlabd-4
-TESTFILES=$(foreach GLM,$(shell find $(TESTDIR) -name '*.glm' -print),$(TESTDIR)/$(GLM))
-
-validate: clean $(TESTFILES)
-	@cat validate.txt
+validate:
+	@time -p ./validate.sh
 
 clean:
-	@rm -rf test validate.txt
-
-$(TESTDIR)/%.glm: %.glm
-	@$(foreach TEMPLATE,$(TEMPLATES),$(LIMIT) ./validate.sh $(OPTIONS) "$<" "$(TEMPLATE)") >> validate.txt
+	@rm -rf test validate.txt validate.tar.gz stderr stdout

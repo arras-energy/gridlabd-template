@@ -1,60 +1,117 @@
 #!/bin/bash
 
-if [ $# -eq 0 ]; then
-    echo "Syntax: $(basename $0) [--debug] GLMNAME ORGANIZATION"
-    exit 1
-fi
+set -u
 
-if [ $1 == "--debug" ]; then
-    set -x
-    shift 1
-fi
-
+BASENAME="$(basename $0)"
+cd "$(dirname $0)"
 ROOTDIR=$PWD
-result="OK"
-for TEMPLATE in $(cat $2/.index); do
-    GLMNAME="$(basename "$1")"
-    DIRNAME="${GLMNAME/.glm/}"
-    cd "$ROOTDIR"
-    CHECKDIR="$2/$TEMPLATE/$(dirname "$1")/$DIRNAME"
-    # if gridlabd template get "$TEMPLATE" 1>stdout 2>stderr; then
-    #    echo "$TEMPLATE: template error $?" >> /dev/stderr
-    # elif
-    if [ -d "$CHECKDIR" ]; then
-        TESTDIR="test/$CHECKDIR"
-        mkdir -p "$ROOTDIR/$TESTDIR"
-        cp "$1" $CHECKDIR/autotest.* "$TESTDIR"
-        cd "$ROOTDIR/$TESTDIR"
-        AUTOTESTGLM=$(find . -name autotest.glm -type f -print)
-        err=""
-        ok="OK"
-        if gridlabd "$GLMNAME" "$AUTOTESTGLM" -t "$TEMPLATE" --redirect all 1>>stdout 2>>stderr; then
-            err="gridlabd error $?"
-        else
-            for FILE in $(find "$ROOTDIR/$CHECKDIR" -type f -print); do
-                TARGET=$(basename "$FILE")
-                if [ ! "${TARGET%.*}" == "autotest" ]; then
-                    if [ ! -f "$TARGET" ]; then
-                        err="$CHECKDIR/$TARGET not found"
-                    else
-                        diff -w "$FILE" "$TARGET" >> gridlabd.diff || err="output $TARGET differs"
-                    fi            
-                fi
-            done
-        fi
-        if [ ! -z "$err" ]; then
-            result="FAIL"
-            ok="FAIL"
-            echo "$GLMNAME: $err" >/dev/stderr
-        fi            
-        echo "${CHECKDIR}: $ok"
+
+function warning()
+{
+    [ $WARNING == yes ] && echo "WARNING [$BASENAME]: $*"> /dev/stderr
+}
+
+function error()
+{
+    XC=$1
+    shift 1
+    [ $SILENT == no ] && echo "ERROR [$BASENAME]: $2 (exit code $XC)" > /dev/stderr
+    exit $XC
+}
+
+function output()
+{
+    [ $QUIET == no ] && echo $*
+}
+
+function processing()
+{
+    [ $QUIET == no ] && echo -n "Processing $*..." > /dev/stderr
+}
+
+function status()
+{
+    [ $QUIET == no ] && echo " $*"> /dev/stderr
+}
+
+function debug()
+{
+    [ $DEBUG == yes ] && echo "DEBUG [$BASENAME]: $*"> /dev/stderr
+}
+
+DEBUG=no
+QUIET=no
+SILENT=no
+WARNING=yes
+
+TEMPLATES=$(gridlabd --version=install)/share/gridlabd/template
+VALIDATE=$ROOTDIR/validate.txt
+echo "Validation process started $(date)" > $VALIDATE
+
+while [ $# -gt 0 ]; do
+    if [ $1 == '--verbose' ]; then
+        set -x
+    elif [ $1 == '--debug' ]; then
+        DEBUG=yes
+    elif [ $1 == '--quiet' ]; then
+        QUIET=yes
+    elif [ $1 == '--silent' ]; then
+        SILENT=yes
+    elif [ $1 == '--warning' ]; then
+        WARNING=no
     else
-        echo "WARNING: $CHECKDIR not found" >/dev/stderr
+        error 1 "option '$1' is invalid" 
     fi
+    shift 1
 done
 
-if [ "$result" != "OK" ]; then
-    exit 1
-fi
+TESTED=0
+FAILED=0
 
-exit 0
+for ORG in $(grep -v ^# ".orgs"); do
+    debug "organization $ORG..."
+    for TEMPLATE in $(cd $ORG ; find * -type d -print -prune); do
+        if [ -d $TEMPLATES/$TEMPLATE ]; then
+            gridlabd get ${TEMPLATE} || error 2 "gridlabd template get ${TEMPLATE} failed"
+        fi
+        debug "template $TEMPLATE..."
+        if [ ! -d autotest ]; then
+            warning "$ORG/$TEMPLATE has no autotest"
+        else
+            for AUTOTEST in $(cd $ORG/$TEMPLATE ; find * -name autotest.glm 2>/dev/null); do
+                debug AUTOTEST=$ORG/$TEMPLATE/$AUTOTEST
+                SOURCE=${AUTOTEST/\/autotest.glm/.glm}
+                debug SOURCE=$SOURCE
+                TESTDIR=test/${ORG}/${TEMPLATE}/${SOURCE/.glm/}
+                debug TESTDIR=$TESTDIR
+                
+                MODEL=${AUTOTEST/$TEMPLATE\/}
+                processing $ORG/$TEMPLATE/$SOURCE
+
+                mkdir -p $TESTDIR || warning "unable to create $TESTDIR"
+                rm -f $TESTDIR/* || warning "unable to cleanup $TESTDIR"
+
+                cp $SOURCE $TESTDIR || warning "unable to copy $SOURCE to $TESTDIR"
+                cp $ORG/$TEMPLATE/$AUTOTEST $TESTDIR || warning "unable to copy $AUTOTEST to $TESTDIR"
+
+                if time -p gridlabd -W $TESTDIR autotest.glm $(basename $SOURCE) -o gridlabd.json -t $TEMPLATE 1>$TESTDIR/gridlabd.out 2>&1; then
+                    echo "[Success: exit code $?]" >> $TESTDIR/gridlabd.out
+                    output "$AUTOTEST ok" >> $VALIDATE
+                    status OK
+                else
+                    echo "[Failed: exit code $?]" >> $TESTDIR/gridlabd.out
+                    output "$AUTOTEST failed" >> $VALIDATE
+                    status FAILED
+                    FAILED=$(($FAILED+1))
+                fi
+                TESTED=$(($TESTED+1))
+            done
+        fi
+    done
+done
+
+echo "$TESTED tested"
+echo "$FAILED failed"
+[ $TESTED -eq 0 ] && echo "0% success" || echo "$((100-100*$FAILED/$TESTED))% success"
+
+[ $FAILED -gt 0 ] && tar cfz validate.tar.gz test
