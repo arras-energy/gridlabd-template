@@ -100,21 +100,11 @@ done
 TESTED=0
 FAILED=0
 
-TEMPLATE_CONFIG="$(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf"
-if [ -f "$TEMPLATE_CONFIG" ]; then
-    source "$TEMPLATE_CONFIG"
-    output "Testing templates on $GITUSER/$GITBRANCH"
-fi
-
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
     for TEMPLATE in $(cd $ORG ; find * -type d -print -prune); do
-        if [ ! -d "$TEMPLATES/$ORG/$TEMPLATE" ]; then
-            gridlabd template get ${TEMPLATE} || warning "gridlabd template get ${TEMPLATE} failed"
-        fi
         if [ -d "$TEMPLATES/$ORG/$TEMPLATE" ]; then
             debug "template $TEMPLATE..."
-            record "TEMPLATE $GITUSER/$GITBRANCH/$ORG/$TEMPLATE"
             if [ ! -d autotest ]; then
                 warning "$ORG/$TEMPLATE has no autotest"
             else
@@ -134,7 +124,7 @@ for ORG in $(grep -v ^# ".orgs"); do
                     cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
                     cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
 
-                    if gridlabd -W "$TESTDIR" autotest.glm $(basename $SOURCE) -o gridlabd.json -t $TEMPLATE 1>"$TESTDIR/gridlabd.out" 2>&1; then
+                    if gridlabd -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
                         echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
                         debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
                         DIFFER=0
