@@ -14,8 +14,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: nelonoel/branch-name@v1
     - name: Get test files
+      uses: nelonoel/branch-name@v1
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       run: |
         git submodule sync
         git submodule update --init --recursive
