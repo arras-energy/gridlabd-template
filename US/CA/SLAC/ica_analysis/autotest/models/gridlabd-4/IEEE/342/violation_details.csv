@@ -1,0 +1,4 @@
+objname,propname,timestamp,real,reactive,violation
+P1,measured_voltage_A,2020-07-01 00:00:00,10000.0,1000.0,NONE
+P1,measured_voltage_B,2020-07-01 00:00:00,10000.0,1000.0,NONE
+P1,measured_voltage_C,2020-07-01 00:00:00,10000.0,1000.0,NONE

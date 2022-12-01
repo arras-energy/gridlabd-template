@@ -13,14 +13,14 @@ help:
 
 OPTIONS=
 ifeq ($(VERBOSE),yes)
-OPTIONS += --verbose
+OPTIONS+=--verbose
 endif
 ifeq ($(DEBUG),yes)
-OPTIONS += --debug
+OPTIONS+=--debug
 endif
 
 validate:
-	@./validate.sh
+	@./validate.sh $(OPTIONS)
 
 clean:
 	@rm -rf test validate.txt validate.tar.gz stderr stdout
