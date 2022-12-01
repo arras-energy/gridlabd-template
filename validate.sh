@@ -48,6 +48,11 @@ function output()
     [ $QUIET == no ] && echo $*
 }
 
+function record()
+{
+    echo $* >> "$VALIDATE"
+}
+
 function processing()
 {
     [ $QUIET == no ] && echo -n "Processing $*..." > /dev/stderr
@@ -70,7 +75,7 @@ WARNING=yes
 
 TEMPLATES=$(gridlabd --version=install)/share/gridlabd/template
 VALIDATE=$ROOTDIR/validate.txt
-echo "Validation process started $(date)" > $VALIDATE
+echo "Validation process started $(date)" > "$VALIDATE"
 
 while [ $# -gt 0 ]; do
     if [ $1 == '--verbose' ]; then
@@ -95,6 +100,12 @@ done
 TESTED=0
 FAILED=0
 
+GITUSER=$(gridlabd template config get GITUSER)
+GITBRANCH=$(gridlabd template config get GITBRANCH)
+if [ "$GITUSER" != "hipas" -o "$GITBRANCH" != "master" ]; then
+    output "Testing templates on $GITUSER/$GITBRANCH"
+fi
+
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
     for TEMPLATE in $(cd $ORG ; find * -type d -print -prune); do
@@ -103,6 +114,7 @@ for ORG in $(grep -v ^# ".orgs"); do
         fi
         if [ -d $TEMPLATES/$ORG/$TEMPLATE ]; then
             debug "template $TEMPLATE..."
+            record "TEMPLATE $GITUSER/$GITBRANCH/$ORG/$TEMPLATE"
             if [ ! -d autotest ]; then
                 warning "$ORG/$TEMPLATE has no autotest"
             else
@@ -134,16 +146,16 @@ for ORG in $(grep -v ^# ".orgs"); do
                             fi
                         done
                         if [ $DIFFER -gt 0 ]; then
-                            output "$AUTOTEST outputs differ" >> "$VALIDATE"
+                            record "$AUTOTEST outputs differ"
                             status DIFF
                             FAILED=$(($FAILED+1))
                         else
-                            output "$AUTOTEST ok" >> "$VALIDATE"
+                            record "$AUTOTEST ok"
                             status OK
                         fi
                     else
                         echo "[Failed: exit code $?]" >> "$TESTDIR/gridlabd.out"
-                        output "$AUTOTEST failed" >> "$VALIDATE"
+                        record "$AUTOTEST failed"
                         status FAIL
                         FAILED=$(($FAILED+1))
                     fi
