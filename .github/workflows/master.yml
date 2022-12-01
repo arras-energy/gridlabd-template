@@ -20,8 +20,8 @@ jobs:
         git submodule update --init --recursive
     - name: Validation
       run: |
-        gridlabd template config set GITUSER slacgismo
-        gridlabd template config set GITBRANCH ${GITHUB_REF#refs/heads/}
+        echo 'GITUSER="slacgismo"' > $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
+        echo 'GITBRANCH="'${GITHUB_REF#refs/heads/}'"' >> $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
         make validate
     - name: Save results
       uses: actions/upload-artifact@v2

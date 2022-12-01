@@ -100,32 +100,32 @@ done
 TESTED=0
 FAILED=0
 
-GITUSER=$(gridlabd template config get GITUSER)
-GITBRANCH=$(gridlabd template config get GITBRANCH)
-if [ "$GITUSER" != "hipas" -o "$GITBRANCH" != "master" ]; then
+TEMPLATE_CONFIG="$(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf"
+if [ -f "$TEMPLATE_CONFIG" ]; then
+    source "$TEMPLATE_CONFIG"
     output "Testing templates on $GITUSER/$GITBRANCH"
 fi
 
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
     for TEMPLATE in $(cd $ORG ; find * -type d -print -prune); do
-        if [ ! -d $TEMPLATES/$ORG/$TEMPLATE ]; then
+        if [ ! -d "$TEMPLATES/$ORG/$TEMPLATE" ]; then
             gridlabd template get ${TEMPLATE} || warning "gridlabd template get ${TEMPLATE} failed"
         fi
-        if [ -d $TEMPLATES/$ORG/$TEMPLATE ]; then
+        if [ -d "$TEMPLATES/$ORG/$TEMPLATE" ]; then
             debug "template $TEMPLATE..."
             record "TEMPLATE $GITUSER/$GITBRANCH/$ORG/$TEMPLATE"
             if [ ! -d autotest ]; then
                 warning "$ORG/$TEMPLATE has no autotest"
             else
-                for AUTOTEST in $(cd $ORG/$TEMPLATE ; find * -name autotest.glm 2>/dev/null); do
+                for AUTOTEST in $(cd "$ORG/$TEMPLATE" ; find * -name autotest.glm 2>/dev/null); do
                     debug "AUTOTEST=$ORG/$TEMPLATE/$AUTOTEST"
                     SOURCE=${AUTOTEST/\/autotest.glm/.glm}
                     debug "SOURCE=$SOURCE"
-                    TESTDIR=test/${ORG}/${TEMPLATE}/${SOURCE/.glm/}
+                    TESTDIR="test/${ORG}/${TEMPLATE}/${SOURCE/.glm/}"
                     debug "TESTDIR=$TESTDIR"
                     
-                    MODEL=${AUTOTEST/$TEMPLATE\/}
+                    MODEL="${AUTOTEST/$TEMPLATE\/}"
                     processing "$ORG/$TEMPLATE/$SOURCE"
 
                     mkdir -p "$TESTDIR" || warning "unable to create $TESTDIR"
