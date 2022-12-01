@@ -39,3 +39,4 @@ data:
 
 %.pdf: %.tex
 	(cd $(shell dirname $?); pdflatex -halt-on-error $(shell basename $?))
+	(cd $(shell dirname $?); pdflatex -halt-on-error $(shell basename $?))

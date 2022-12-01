@@ -18,6 +18,8 @@ for file in sys.argv[1:]:
 	print("{{\\footnotesize")
 	print(f"\\begin{{longtable}}{{|{'|'.join(align)}|}}")
 	print(f"\\caption{{Validation data for {template} {model} {data}}}",'\\\\','\\hline')
+	print(' & '.join(["\\textbf{"+escape(x)+"}" for x in csv.columns]), '\\\\', '\\hline','\\endfirsthead')
+	print(f"\\caption[]{{Validation data for {template} {model} {data}}} (cont.)",'\\\\','\\hline')
 	print(' & '.join(["\\textbf{"+escape(x)+"}" for x in csv.columns]), '\\\\', '\\hline','\\endhead')
 	for n, row in csv.iterrows():
 		print(' & '.join([escape(x) for x in row]), '\\\\', '\\hline')
