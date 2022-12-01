@@ -328,8 +328,8 @@ def on_sync(t):
                         load_limit = base - value
                         limit_list[objname][propname] = {
                             "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
-                            "real" : load_limit.real, 
-                            "reactive" : load_limit.imag}
+                            "real" : round(load_limit.real,1), 
+                            "reactive" : round(load_limit.imag,1)}
                     limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violation_detected")
 
                     # flag that processing is done
@@ -347,8 +347,8 @@ def on_sync(t):
                         load_limit = base - value
                         limit_list[objname][propname] = {
                             "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
-                            "real" : load_limit.real, 
-                            "reactive" : load_limit.imag}
+                            "real" : round(load_limit.real,1), 
+                            "reactive" : round(load_limit.imag,1)}
                     limit_list[objname][propname]["violation"] = "POWERLIMIT"
 
                     # flag that processing is done
@@ -366,8 +366,8 @@ def on_sync(t):
                         load_limit = base - value
                         limit_list[objname][propname] = {
                             "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
-                            "real" : load_limit.real, 
-                            "reactive" : load_limit.imag}
+                            "real" : round(load_limit.real,1), 
+                            "reactive" : round(load_limit.imag,1)}
                     limit_list[objname][propname]["violation"] = "VOLTAGELIMIT"
 
                     # flag that processing is done
@@ -387,8 +387,8 @@ def on_sync(t):
                     # record the load limit
                     limit_list[objname][propname] = {
                         "timestamp":str(datetime.datetime.fromtimestamp(t)), 
-                        "real":load_limit.real, 
-                        "reactive":load_limit.imag,
+                        "real": round(load_limit.real,1), 
+                        "reactive": round(load_limit.imag,1),
                         "violation" : "NONE"
                         }
 
