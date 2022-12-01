@@ -73,7 +73,6 @@ QUIET=no
 SILENT=no
 WARNING=yes
 
-TEMPLATES=$(gridlabd --version=install)/share/gridlabd/template
 VALIDATE=$ROOTDIR/validate.txt
 echo "Validation process started $(date)" > "$VALIDATE"
 
@@ -103,55 +102,53 @@ FAILED=0
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
     for TEMPLATE in $(cd $ORG; ls -dF1 * 2>/dev/null | grep '/$' | sed -e 's:/$::'); do
-        if [ -d "$TEMPLATES/$ORG/$TEMPLATE" ]; then
-            debug "template $TEMPLATE..."
-            if [ ! -d autotest ]; then
-                warning "$ORG/$TEMPLATE has no autotest"
-            else
-                for AUTOTEST in $(cd "$ORG/$TEMPLATE" ; find * -name autotest.glm 2>/dev/null); do
-                    debug "AUTOTEST=$ORG/$TEMPLATE/$AUTOTEST"
-                    SOURCE=${AUTOTEST/\/autotest.glm/.glm}
-                    debug "SOURCE=$SOURCE"
-                    TESTDIR="test/${ORG}/${TEMPLATE}/${SOURCE/.glm/}"
-                    debug "TESTDIR=$TESTDIR"
-                    
-                    MODEL="${AUTOTEST/$TEMPLATE\/}"
-                    processing "$ORG/$TEMPLATE/$SOURCE"
+        debug "template $TEMPLATE..."
+        if [ ! -d autotest ]; then
+            warning "$ORG/$TEMPLATE has no autotest"
+        else
+            for AUTOTEST in $(cd "$ORG/$TEMPLATE" ; find * -name autotest.glm 2>/dev/null); do
+                debug "AUTOTEST=$ORG/$TEMPLATE/$AUTOTEST"
+                SOURCE=${AUTOTEST/\/autotest.glm/.glm}
+                debug "SOURCE=$SOURCE"
+                TESTDIR="test/${ORG}/${TEMPLATE}/${SOURCE/.glm/}"
+                debug "TESTDIR=$TESTDIR"
+                
+                MODEL="${AUTOTEST/$TEMPLATE\/}"
+                processing "$ORG/$TEMPLATE/$SOURCE"
 
-                    mkdir -p "$TESTDIR" || warning "unable to create $TESTDIR"
-                    rm -f "$TESTDIR"/* || warning "unable to cleanup $TESTDIR"
+                mkdir -p "$TESTDIR" || warning "unable to create $TESTDIR"
+                rm -f "$TESTDIR"/* || warning "unable to cleanup $TESTDIR"
 
-                    cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
-                    cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
+                cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
+                cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
 
-                    if gridlabd -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
-                        echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
-                        debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
-                        DIFFER=0
-                        for CHECKCSV in $(find $(dirname "$ORG/$TEMPLATE/$AUTOTEST") -name '*.csv' -print); do
-                            debug "Checking $CHECKCSV..."
-                            diff -w "$CHECKCSV" "$TESTDIR/$(basename $CHECKCSV)" 1>"$TESTDIR/gridlabd.diff" 2>/dev/null
-                            if [ $? -ne 0 ]; then
-                                DIFFER=$(($DIFFER+1))
-                            fi
-                        done
-                        if [ $DIFFER -gt 0 ]; then
-                            record "$AUTOTEST outputs differ"
-                            status DIFF
-                            FAILED=$(($FAILED+1))
-                        else
-                            record "$AUTOTEST ok"
-                            status OK
+                if gridlabd -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
+                    echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
+                    debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
+                    DIFFER=0
+                    for CHECKCSV in $(find $(dirname "$ORG/$TEMPLATE/$AUTOTEST") -name '*.csv' -print); do
+                        debug "Checking $CHECKCSV..."
+                        diff -w "$CHECKCSV" "$TESTDIR/$(basename $CHECKCSV)" 1>"$TESTDIR/gridlabd.diff" 2>/dev/null
+                        if [ $? -ne 0 ]; then
+                            DIFFER=$(($DIFFER+1))
                         fi
-                    else
-                        echo "[Failed: exit code $?]" >> "$TESTDIR/gridlabd.out"
-                        record "$AUTOTEST failed"
-                        status FAIL
+                    done
+                    if [ $DIFFER -gt 0 ]; then
+                        record "$AUTOTEST outputs differ"
+                        status DIFF
                         FAILED=$(($FAILED+1))
+                    else
+                        record "$AUTOTEST ok"
+                        status OK
                     fi
-                    TESTED=$(($TESTED+1))
-                done
-            fi
+                else
+                    echo "[Failed: exit code $?]" >> "$TESTDIR/gridlabd.out"
+                    record "$AUTOTEST failed"
+                    status FAIL
+                    FAILED=$(($FAILED+1))
+                fi
+                TESTED=$(($TESTED+1))
+            done
         fi
     done
 done
