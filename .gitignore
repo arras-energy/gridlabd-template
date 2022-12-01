@@ -14,3 +14,4 @@ gridlabd.*
 stdout
 stderr
 validate.tar.gz
+autotest/models/
