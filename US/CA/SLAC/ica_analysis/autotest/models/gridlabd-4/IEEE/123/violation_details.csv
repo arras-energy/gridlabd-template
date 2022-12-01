@@ -1,2 +1,2 @@
 objname,propname,timestamp,real,reactive,violation
-substation_meter,measured_voltage_A,2020-07-01 00:00:00,7598.222900000001,1000.0,NONE
+substation_meter,measured_voltage_A,2020-07-01 00:00:00,7598.2,1000.0,NONE
