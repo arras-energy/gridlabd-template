@@ -1,7 +1,7 @@
 objname,propname,timestamp,real,reactive,violation
-Load634,constant_power_A,2020-07-01 00:00:00,60000.0,41250.0,NONE
-Load634,constant_power_B,2020-07-01 00:00:00,60000.0,45000.0,NONE
-Load634,constant_power_C,2020-07-01 00:00:00,60000.0,45000.0,NONE
-Load634,measured_voltage_A,2020-07-01 00:00:00,9729.5,1014.1,NONE
-Load634,measured_voltage_B,2020-07-01 00:00:00,10137.4,1216.9,NONE
-Load634,measured_voltage_C,2020-07-01 00:00:00,10128.5,753.2,NONE
+Load634,constant_power_A,2020-07-01 00:00:00 PDT,60000.0,41250.0,NONE
+Load634,constant_power_B,2020-07-01 00:00:00 PDT,60000.0,45000.0,NONE
+Load634,constant_power_C,2020-07-01 00:00:00 PDT,60000.0,45000.0,NONE
+Load634,measured_voltage_A,2020-07-01 00:00:00 PDT,9729.5,1014.1,NONE
+Load634,measured_voltage_B,2020-07-01 00:00:00 PDT,10137.4,1216.9,NONE
+Load634,measured_voltage_C,2020-07-01 00:00:00 PDT,10128.5,753.2,NONE
