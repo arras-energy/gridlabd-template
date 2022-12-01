@@ -102,7 +102,7 @@ FAILED=0
 
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
-    for TEMPLATE in $(cd $ORG ; find * -type d -print -prune); do
+    for TEMPLATE in $(cd $ORG; ls -dF1 * 2>/dev/null | grep '/$' | sed -e 's:/$::'); do
         if [ -d "$TEMPLATES/$ORG/$TEMPLATE" ]; then
             debug "template $TEMPLATE..."
             if [ ! -d autotest ]; then
