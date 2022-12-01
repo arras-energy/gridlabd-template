@@ -5,9 +5,9 @@
 help:
 	@echo "Syntax: make TARGETS ... [OPTIONS ...]"
 	@echo "Targets:"
+	@echo "  help       display this help information"
 	@echo "  validate   perform validation tests"
 	@echo "Options:"
-	@echo "  LIMIT='timeout TIME'"
 	@echo "  VERBOSE=yes"
 	@echo "  DEBUG=yes"
 
