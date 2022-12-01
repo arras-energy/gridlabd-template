@@ -19,6 +19,10 @@ ifeq ($(DEBUG),yes)
 OPTIONS+=--debug
 endif
 
+models:
+	git submodule sync
+	git submodule update --init --recursive --force --checkout --remote
+
 validate:
 	@./validate.sh $(OPTIONS)
 
