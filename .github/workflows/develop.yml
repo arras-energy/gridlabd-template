@@ -14,6 +14,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: nelonoel/branch-name@v1
     - name: Get test files
       run: |
         git submodule sync
@@ -21,7 +22,7 @@ jobs:
     - name: Validation
       run: |
         echo 'GITUSER="slacgismo"' > $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
-        echo 'GITBRANCH="'${GITHUB_REF#refs/heads/}'"' >> $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
+        echo 'GITBRANCH="'${BRANCH_NAME}'"' >> $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
         make validate
     - name: Save results
       uses: actions/upload-artifact@v2
