@@ -5,25 +5,22 @@
 help:
 	@echo "Syntax: make TARGETS ... [OPTIONS ...]"
 	@echo "Targets:"
+	@echo "  help       display this help information"
 	@echo "  validate   perform validation tests"
 	@echo "Options:"
-	@echo "  LIMIT='timeout TIME'"
 	@echo "  VERBOSE=yes"
+	@echo "  DEBUG=yes"
 
 OPTIONS=
 ifeq ($(VERBOSE),yes)
-OPTIONS += --debug
+OPTIONS+=--verbose
+endif
+ifeq ($(DEBUG),yes)
+OPTIONS+=--debug
 endif
 
-TEMPLATES=$(foreach ORG,$(shell grep -v ^\# .orgs),$(shell find $(ORG) -type d -print -prune))
-TESTDIR=autotest/models/gridlabd-4
-TESTFILES=$(foreach GLM,$(shell find $(TESTDIR) -name '*.glm' -print),$(TESTDIR)/$(GLM))
-
-validate: clean $(TESTFILES)
-	@cat validate.txt
+validate:
+	@./validate.sh $(OPTIONS)
 
 clean:
-	@rm -rf test validate.txt
-
-$(TESTDIR)/%.glm: %.glm
-	@$(foreach TEMPLATE,$(TEMPLATES),$(LIMIT) ./validate.sh $(OPTIONS) "$<" "$(TEMPLATE)") >> validate.txt
+	@rm -rf test validate.txt validate.tar.gz stderr stdout

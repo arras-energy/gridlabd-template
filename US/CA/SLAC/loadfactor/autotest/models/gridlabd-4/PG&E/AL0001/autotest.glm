@@ -1,0 +1,2 @@
+#define LOAD_FACTOR=0.5
+#define LOAD_FACTOR_LOGFILE=loads.csv

@@ -1,0 +1,8 @@
+clock
+{
+    timezone "PST+8PDT";
+    starttime "2020-07-01 00:00:00 PDT";
+    stoptime "2020-07-01 00:00:00 PDT";
+}
+
+#set iteration_limit=10000

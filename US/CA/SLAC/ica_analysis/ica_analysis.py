@@ -268,7 +268,7 @@ def on_sync(t):
     global limit_list
 
     # get the current timestamp in human readable form
-    dt = datetime.datetime.fromtimestamp(t)
+    dt = gridlabd.get_global("clock")
     gridlabd.debug(f"*** onsync({dt}) ***")
 
     # determine whether a violation has occurred
@@ -327,9 +327,9 @@ def on_sync(t):
                     if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
                         load_limit = base - value
                         limit_list[objname][propname] = {
-                            "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
-                            "real" : load_limit.real, 
-                            "reactive" : load_limit.imag}
+                            "timestamp" : dt, 
+                            "real" : round(load_limit.real,1), 
+                            "reactive" : round(load_limit.imag,1)}
                     limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violation_detected")
 
                     # flag that processing is done
@@ -346,9 +346,9 @@ def on_sync(t):
                     if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
                         load_limit = base - value
                         limit_list[objname][propname] = {
-                            "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
-                            "real" : load_limit.real, 
-                            "reactive" : load_limit.imag}
+                            "timestamp" : dt, 
+                            "real" : round(load_limit.real,1), 
+                            "reactive" : round(load_limit.imag,1)}
                     limit_list[objname][propname]["violation"] = "POWERLIMIT"
 
                     # flag that processing is done
@@ -365,9 +365,9 @@ def on_sync(t):
                     if not objname in limit_list.keys() or not propname in limit_list[objname].keys():
                         load_limit = base - value
                         limit_list[objname][propname] = {
-                            "timestamp" : str(datetime.datetime.fromtimestamp(t)), 
-                            "real" : load_limit.real, 
-                            "reactive" : load_limit.imag}
+                            "timestamp" : dt, 
+                            "real" : round(load_limit.real,1), 
+                            "reactive" : round(load_limit.imag,1)}
                     limit_list[objname][propname]["violation"] = "VOLTAGELIMIT"
 
                     # flag that processing is done
@@ -386,9 +386,9 @@ def on_sync(t):
 
                     # record the load limit
                     limit_list[objname][propname] = {
-                        "timestamp":str(datetime.datetime.fromtimestamp(t)), 
-                        "real":load_limit.real, 
-                        "reactive":load_limit.imag,
+                        "timestamp": dt, 
+                        "real": round(load_limit.real,1), 
+                        "reactive": round(load_limit.imag,1),
                         "violation" : "NONE"
                         }
 
