@@ -18,10 +18,10 @@ jobs:
       run: |
         git submodule sync
         git submodule update --init --recursive
-    - name: Validation
-      uses: nelonoel/branch-name@v1
+    - uses: nelonoel/branch-name@v1
       env:
         ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    - name: Validation
       run: |
         echo 'GITUSER="slacgismo"' > $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
         echo 'GITBRANCH="'${BRANCH_NAME}'"' >> $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf

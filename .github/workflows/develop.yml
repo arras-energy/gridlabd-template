@@ -15,12 +15,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Get test files
-      uses: nelonoel/branch-name@v1
-      env:
-        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       run: |
         git submodule sync
         git submodule update --init --recursive
+    - uses: nelonoel/branch-name@v1
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     - name: Validation
       run: |
         echo 'GITUSER="slacgismo"' > $(gridlabd --version=install)/share/gridlabd/gridlabd-template.conf
