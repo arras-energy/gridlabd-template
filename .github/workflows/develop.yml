@@ -20,6 +20,8 @@ jobs:
         git submodule update --init --recursive
     - name: Validation
       run: |
+        gridlabd template config set GITUSER slacgismo
+        gridlabd template config set GITBRANCH ${GITHUB_REF#refs/heads/}
         make validate
     - name: Save results
       uses: actions/upload-artifact@v2
