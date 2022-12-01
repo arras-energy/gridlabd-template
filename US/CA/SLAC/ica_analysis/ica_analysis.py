@@ -471,7 +471,7 @@ def on_term(t):
                     pass
 
             # write the total power
-            writer.writerow([objname,round(power,1)])
+            writer.writerow([objname,round(power,1) if power != None else None])
 
     if type(details_filename) is str:
         header = None
