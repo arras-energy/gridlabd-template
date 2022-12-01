@@ -38,5 +38,5 @@ data:
 	touch report/Validation_report.tex
 
 %.pdf: %.tex
-	(cd $(shell dirname $?); pdflatex -halt-on-error $(shell basename $?))
-	(cd $(shell dirname $?); pdflatex -halt-on-error $(shell basename $?))
+	(cd $(shell dirname $?); pdflatex -halt-on-error $(shell basename $?)) 1>$?.out 2>$?.err
+	(cd $(shell dirname $?); pdflatex -halt-on-error $(shell basename $?)) 1>>$?.out 2>>$?.err
