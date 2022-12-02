@@ -1,10 +1,10 @@
 // Model for electric and gas houses
 
-#ifexists "config.csv"
-#input "config.csv" -f config -t config
-#else
 #ifexists "config.glm"
 #include "config.glm"
+#implicit_enduse_source
+#ifexists "config.csv"
+#input "config.csv" -f config -t config
 #endif
 #endif
 
