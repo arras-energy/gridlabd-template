@@ -274,17 +274,18 @@ def update_monthly_cumulative_meter_results(total_charges, total_usage, total_po
 
 
 def update_meter_results(charges_current_month,usage_current_month,power_current_month, demand_current_month, meter_name, month):
-	print(f"update_meter_results <-- '{charges_current_month,usage_current_month,power_current_month, demand_current_month}'")
+	# print(f"update_meter_results <-- '{charges_current_month,usage_current_month,power_current_month, demand_current_month}'")
 	global data_model
 	# updates the string representation of a list of results
 	set_value(meter_name, "monthly_charges",  f"{get_value(meter_name, 'monthly_charges')},{charges_current_month}")
 	set_value(meter_name, "monthly_usage",  f"{get_value(meter_name, 'monthly_usage')},{usage_current_month}")
 	set_value(meter_name, "monthly_power", f"{get_value(meter_name, 'monthly_power')},{power_current_month}")
 	set_value(meter_name, "monthly_demand", f"{get_value(meter_name, 'monthly_demand')},{demand_current_month}")
-	print(f"Month {month} done")
+	# print(f"Month {month} done")
 
 
 def update_meter_and_bill(meter_name, month):
+
 	bill = gridlabd.get_object("bill_" + meter_name) # might not have bill object
 	bill_name = bill["name"]
 
@@ -301,7 +302,7 @@ def update_meter_and_bill(meter_name, month):
 	# measured_demand = gridlabd.get_property(meter_name,"measured_demand")
 	# demand_current_month = gridlabd.get_double(measured_demand) #to_float(gridlabd.get_value(meter_name, "measured_demand"))
 	demand_current_month = to_float(gridlabd.get_value(meter_name, "measured_demand"))
-	print("DEMAND: " + str(demand_current_month))
+	# print("DEMAND: " + str(demand_current_month))
 	gridlabd.set_value(meter_name, "measured_demand", str(0.0))
 	
 
@@ -356,7 +357,7 @@ def freedman_diaconis_width(data):
 
 # Currently used to determine number of bins. 
 def sturg_rule_number_of_bins(data):
-	return int(1 + round((3.322 * np.log10(len(data)))))
+	return int(1 + round((3.322 * np.log10(len(data))))) if len(data) > 0 else 1
 
 def generate_results_date_and_days(year, month, day, hour, delta_days):
 	result_dates = []
@@ -392,7 +393,6 @@ def update_monthly_demand_triplex(triplex_meter_name):
 
 
 def on_init(t):
-
 	# set up logging
 	# logging.basicConfig(level=logging.DEBUG)
 	# logger = logging.getLogger()
@@ -467,7 +467,6 @@ def on_init(t):
 			update_meter_timestep(obj, 3600)
 			data_model[obj] = {"monthly_charges" : "0.0", "monthly_usage" : "0.0", "monthly_power" : "0.0", "monthly_demand" : "0.0", "monthly_updated_charges" : "0.0", "monthly_updated_usage" : "0.0", "monthly_updated_power" : "0.0"}
 			data_model["bill_"+obj]={"total_power" : "0.0", "total_usage" : "0.0", "billing_hrs" : "0.0", "usage" : "0.0", "peak_power" : "0.0"}
-	print(data_model)
 	return True
 
 
@@ -495,7 +494,6 @@ def on_commit(t):
 
 		for meter_name in meter_name_list:
 			# update bill values for each meter
-
 			meter_bill = gridlabd.get_object("bill_" + meter_name)
 			update_bill_values(meter_bill, meter_name, prev_day,clock)
 
@@ -521,6 +519,7 @@ def plot_meter_graph(X, Y, y_label, title, result_name):
 	plt.title(title)
 	# pdf.savefig(bbox_inches="tight", dpi=150)
 	plt.savefig(result_name, bbox_inches='tight', dpi=150)
+	plt.close()
 	#pdf = PdfPages("results_" + str(meter_name) + ".pdf")
 	#pages = convert_from_path("results_" + str(meter_name) + ".pdf", 500)
 	#page.save("results_" + str(meter_name) + ".png", 'PNG')
@@ -549,12 +548,17 @@ def plot_triplex_meter_histograms(X, x_label, title, result_name):
 def on_term(t):
 	global prev_month
 	global data_model
+	global meter_name_list
 	clock = to_datetime(gridlabd.get_global('clock'),'%Y-%m-%d %H:%M:%S %Z')
 	year = clock.year 
 	month = clock.month
 	day = clock.day
 	hour = clock.hour
+	print(clock)
+	if not meter_name_list:
+		return
 	for index, meter_name in enumerate(meter_name_list):
+		print("METER "+ str(meter_name))
 		# updates each meter for the current month (when simulation ends in middle of month)
 		update_meter_and_bill(meter_name, month-1)
 	for triplex_meter_name in triplex_name_list:
@@ -607,7 +611,7 @@ def on_term(t):
 
 
 
-	meter_name_dupe_list = [val for val in meter_name_list for i in get_value(meter_name, "monthly_charges").split(",")] # duplicate meter name for each month value 
+	meter_name_dupe_list = [val for val in meter_name_list for i in get_value(meter_name, "monthly_charges").split(",")] # duplicate meter name for each month value
 
 	plot_triplex_meter_histograms(charges_triplex_meter_list, "Charges ($)", "Distribution of Charges", "distribution_of_charges.png")
 	plot_triplex_meter_histograms(usage_triplex_meter_list, "Usage (kWh)", "Distribution of Usage", "distribution_of_usage.png")
@@ -628,7 +632,7 @@ def on_term(t):
 	# add to dataframe by column 
 	df = pandas.DataFrame({"Meter_ID": meter_name_dupe_list})
 	df["Date"] = months_meter_list
-	df["Days"] = days
+	df["Days"] = days * len(meter_name_list)
 	df["Cost ($)"] = charges_meter_list
 	df["Energy (kWh)"] = usage_meter_list
 	df["Peak Power (W)"] = measured_demand_meter_list
