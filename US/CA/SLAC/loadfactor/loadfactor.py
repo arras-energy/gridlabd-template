@@ -16,7 +16,7 @@ Options
 
     LOAD_FACTOR - the multiplier to apply to the property (required)
 
-    LOAD_FACTOR_CLASS - the object class to modify (default is 'load')
+    LOAD_FACTOR_CLASS - the object class to modify (default is 'load,triplex_load')
 
     LOAD_FACTOR_PROPERTY - the property to modify (default is 'constant_power_')
 
@@ -29,10 +29,10 @@ def on_init(t):
         # get class of object to modify
         OBJECT_CLASS = gridlabd.get_global("LOAD_FACTOR_CLASS")
         if not OBJECT_CLASS:
-            OBJECT_CLASS = "load"
+            OBJECT_CLASS = ["load","triplex_load"]
         if "," in OBJECT_CLASS:
             OBJECT_CLASS = OBJECT_CLASS.split(",")
-        else:
+        elif type(OBJECT_CLASS) is str:
             OBJECT_CLASS = [OBJECT_CLASS]
 
         # get property to modify
