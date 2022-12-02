@@ -15,6 +15,6 @@ fi
 for CSV in $(ls -1 test/*/*/*/$1/autotest/models/gridlabd-4/*/*/*.csv 2>/dev/null); do
 	DST=${CSV/test\//}
 	if [ $CSV -nt $DST ]; then
-		echo Updating $DST...
+		echo TODO: Updating $DST...
 	fi
 done
