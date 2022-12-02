@@ -558,7 +558,6 @@ def on_term(t):
 	if not meter_name_list:
 		return
 	for index, meter_name in enumerate(meter_name_list):
-		print("METER "+ str(meter_name))
 		# updates each meter for the current month (when simulation ends in middle of month)
 		update_meter_and_bill(meter_name, month-1)
 	for triplex_meter_name in triplex_name_list:
