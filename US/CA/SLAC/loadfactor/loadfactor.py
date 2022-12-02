@@ -16,7 +16,7 @@ Options
 
     LOAD_FACTOR - the multiplier to apply to the property (required)
 
-    LOAD_FACTOR_CLASS - the object class to modify (default is 'load')
+    LOAD_FACTOR_CLASS - the object class to modify (default is 'load,triplex_load')
 
     LOAD_FACTOR_PROPERTY - the property to modify (default is 'constant_power_')
 
@@ -31,10 +31,10 @@ def on_init(t):
         # get class of object to modify
         OBJECT_CLASS = gridlabd.get_global("LOAD_FACTOR_CLASS")
         if not OBJECT_CLASS:
-            OBJECT_CLASS = "load"
+            OBJECT_CLASS = ["load","triplex_load"]
         if "," in OBJECT_CLASS:
             OBJECT_CLASS = OBJECT_CLASS.split(",")
-        else:
+        elif type(OBJECT_CLASS) is str:
             OBJECT_CLASS = [OBJECT_CLASS]
 
         # get property to modify
@@ -47,6 +47,8 @@ def on_init(t):
         if LOG_FILE:
             LOG = open(LOG_FILE,"w")
             print("class,name,property,nominal.real,nominal.reactive,actual.real,actual.reactive",file=LOG)
+        else:
+            LOG = None
 
         # get load factor to apply
         LOAD_FACTOR = float(gridlabd.get_global("LOAD_FACTOR"))
@@ -66,8 +68,8 @@ def on_init(t):
                                 else:
                                     update = f"{str(complex(modify))[1:-1]}"
                                 gridlabd.set_value(obj,name,update)
-                                if LOG_FILE:
-                                print(f"{data['class']},{obj},{name},{value.real},{value.imag},{modify.real},{modify.imag}",file=LOG)
+                                if LOG:
+                                    print(f"{data['class']},{obj},{name},{value.real},{value.imag},{modify.real},{modify.imag}",file=LOG)
     except Exception as err:
         gridlabd.warning(f"{obj}.{name}: {err}")
     return True

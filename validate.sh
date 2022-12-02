@@ -1,51 +1,171 @@
 #!/bin/bash
+#
+# validate.sh - Validate the templates in this repository
+#
+# Syntax: ./validate.sh [OPTIONS ...]
+#
+# Options
+#   --debug    enable debug output
+#   --quiet    disable standard output
+#   --silent   disable error output
+#   --verbose  echo all commands as they are executed
+#   --warning  disable warning output
+#   --limit    solver time limit in seconds (default 60s)
+#
+# The validate process generates the file validate.tar.gz when a failure is detected.
+# The following outcomes are possible for each test case:
+#
+#   OK    the test succeeded
+#   FAIL  the simulation run failed
+#   DIFF  the simulation output did not match expected results
+#
+# The autotest files are stored in the `autotest` folder in each template. The folder
+# tree matches the folder tree structure in the `autotest` folder.  The testing output
+# is saved in the `test` folder. All CSV files in the autotest folder are checked
+# against files in the `test` folder and differences are reported as test failures.
+#
 
-if [ $1 == "--debug" ]; then
-    set -x
-    shift 1
-fi
+set -u
 
+BASENAME="$(basename $0)"
+cd "$(dirname $0)"
 ROOTDIR=$PWD
-result="OK"
-for TEMPLATE in $(cat $2/.index); do
-    GLMNAME=$(basename "$1")
-    DIRNAME=${GLMNAME/.glm/}
-    cd $ROOTDIR
-    CHECKDIR="$2/$TEMPLATE/$(dirname "$1")/$DIRNAME"
-    if [ -d "$CHECKDIR" ]; then
-        TESTDIR=test/$CHECKDIR
-        mkdir -p "$ROOTDIR/$TESTDIR"
-        cp "$1" $CHECKDIR/autotest.* "$TESTDIR"
-        cd "$ROOTDIR/$TESTDIR"
-        AUTOTESTGLM=$(find . -name autotest.glm -type f -print)
-        gridlabd template config set GITUSER $(basename $(dirname $(git rev-parse --show-toplevel)))
-        gridlabd template config set GITREPO $(basename $(git rev-parse --show-toplevel))
-        gridlabd template config set GITBRANCH $(git rev-parse --abbrev-ref HEAD)
-        gridlabd template get "$TEMPLATE" 1>stdout 2>stderr
-        ok="OK"
-        gridlabd "$GLMNAME" $AUTOTESTGLM -t "$TEMPLATE" --redirect all 1>>stdout 2>>stderr || ok="FAIL"
-        if [ "$ok" == "ok" ]; then
-            for FILE in $(find $ROOTDIR/$CHECKDIR -type f -print); do
-                TARGET=$(basename "$FILE")
-                if [ ! "${TARGET%.*}" == "autotest" ]; then
-                    if [ ! -f "$TARGET" ]; then
-                        echo "ERROR: '$CHECKDIR/$TARGET' not found" > /dev/stderr
-                    else
-                        diff -w "$FILE" "$TARGET" >> gridlabd.diff || ok="FAIL"
-                        if [ "$ok" == "FAIL" ]; then
-                            result="FAIL"
-                            echo "ERROR: '$CHECKDIR/$TARGET' is different" >/dev/stderr
-                        fi
-                    fi
-                fi
-            done
-        fi
-        echo ${CHECKDIR/autotest\/models\/gridlabd-4/...}/$TARGET: $ok
+
+function warning()
+{
+    [ $WARNING == yes ] && echo "WARNING [$BASENAME]: $*"> /dev/stderr
+}
+
+function error()
+{
+    XC=$1
+    shift 1
+    [ $SILENT == no ] && echo "ERROR [$BASENAME]: $2 (exit code $XC)" > /dev/stderr
+    exit $XC
+}
+
+function output()
+{
+    [ $QUIET == no ] && echo $*
+}
+
+function record()
+{
+    echo $* >> "$VALIDATE"
+}
+
+function processing()
+{
+    [ $QUIET == no ] && echo -n "Processing $*..." > /dev/stderr
+}
+
+function status()
+{
+    [ $QUIET == no ] && echo " $*"> /dev/stderr
+}
+
+function debug()
+{
+    [ $DEBUG == yes ] && echo "DEBUG [$BASENAME]: $*"> /dev/stderr
+}
+
+DEBUG=no
+QUIET=no
+SILENT=no
+WARNING=yes
+LIMIT=60
+
+VALIDATE=$ROOTDIR/validate.txt
+echo "Validation process started $(date)" > "$VALIDATE"
+
+while [ $# -gt 0 ]; do
+    if [ $1 == '--verbose' ]; then
+        set -x
+    elif [ $1 == '--debug' ]; then
+        DEBUG=yes
+    elif [ $1 == '--quiet' ]; then
+        QUIET=yes
+    elif [ $1 == '--silent' ]; then
+        SILENT=yes
+    elif [ $1 == '--warning' ]; then
+        WARNING=no
+    elif [ $1 == '--limit' ]; then
+        LIMIT=$1
+    elif [ $1 == '--help' -o $1 == '-h' -o $1 == 'help' ]; then
+        grep ^# validate.sh | tail -n +3 | cut -c3- | more
+        exit 0
+    else
+        error 1 "option '$1' is invalid" 
     fi
+    shift 1
 done
 
-if [ "$result" != "OK" ]; then
+TESTED=0
+FAILED=0
+
+for ORG in $(grep -v ^# ".orgs"); do
+    debug "organization $ORG..."
+    for TEMPLATE in $(cd $ORG; ls -dF1 * 2>/dev/null | grep '/$' | sed -e 's:/$::'); do
+        debug "template $TEMPLATE..."
+        if [ ! -d autotest ]; then
+            warning "$ORG/$TEMPLATE has no autotest"
+        else
+            for AUTOTEST in $(cd "$ORG/$TEMPLATE" ; find * -name autotest.glm 2>/dev/null); do
+                debug "AUTOTEST=$ORG/$TEMPLATE/$AUTOTEST"
+                SOURCE=${AUTOTEST/\/autotest.glm/.glm}
+                debug "SOURCE=$SOURCE"
+                TESTDIR="test/${ORG}/${TEMPLATE}/${SOURCE/.glm/}"
+                debug "TESTDIR=$TESTDIR"
+                
+                MODEL="${AUTOTEST/$TEMPLATE\/}"
+                processing "$ORG/$TEMPLATE/$SOURCE"
+
+                mkdir -p "$TESTDIR" || warning "unable to create $TESTDIR"
+                rm -f "$TESTDIR"/* || warning "unable to cleanup $TESTDIR"
+
+                cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
+                cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
+
+                if gridlabd -D maximum_synctime=$LIMIT -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
+                    echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
+                    debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
+                    DIFFER=0
+                    for CHECKCSV in $(find $(dirname "$ORG/$TEMPLATE/$AUTOTEST") -name '*.csv' -print); do
+                        debug "Checking $CHECKCSV..."
+                        diff -w "$CHECKCSV" "$TESTDIR/$(basename $CHECKCSV)" 1>"$TESTDIR/gridlabd.diff" 2>/dev/null
+                        if [ $? -ne 0 ]; then
+                            DIFFER=$(($DIFFER+1))
+                        fi
+                    done
+                    if [ $DIFFER -gt 0 ]; then
+                        record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} results differ"
+                        status DIFF
+                        FAILED=$(($FAILED+1))
+                    else
+                        record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} test passes"
+                        status OK
+                    fi
+                else
+                    CODE=$?
+                    record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} simulation failed (code $CODE)"
+                    echo "[Failed: exit code $CODE]" >> "$TESTDIR/gridlabd.out"
+                    status "FAIL (code $CODE)"
+                    FAILED=$(($FAILED+1))
+                fi
+                TESTED=$(($TESTED+1))
+            done
+        fi
+    done
+done
+
+echo "$TESTED tested"
+echo "$FAILED failed"
+[ $TESTED -eq 0 ] && echo "0% success" || echo "$((100-100*$FAILED/$TESTED))% success"
+if [ $FAILED -gt 0 ]; then
+    tar cfz validate.tar.gz test
     exit 1
+else
+    exit 0
 fi
 
-exit 0
+

@@ -2,6 +2,10 @@
 __MACOSX/
 __pycache__/
 *.pyc
+config.glm
+power_output/
+*.json
+*.png
 test/
 gridlabd-pmap-*
 validate
@@ -13,3 +17,4 @@ US/CA/SLAC/tariff_design/config.glm
 *.png
 US/CA/SLAC/tariff_design/output.csv
 *.csv
+validate.tar.gz
