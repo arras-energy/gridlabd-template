@@ -95,9 +95,9 @@ To run the validate test, use the `make validate` command.  The test command is
 gridlabd -D pythonpath=TEMPLATEDIR -W OUTPUTDIR autotest.glm MODELNAME.glm -o gridlabd.json TEMPLATE.glm 1>OUTPUTDIR/gridlabd.out" 2>&1
 ~~~
 
-If the validation test fails then the test result is reported at `FAIL`.
+If the validation test fails then the test result is reported as `FAIL`.
 
-Results are written to the `test` folder in a tree that replicates the template source tree.  Output files are written to the `OUTPUTDIR` folders created by the `create_autotest` command. These output files will be compared to reference copies in the template `autotest` folder. If the files then the test result is reported as `DIFFER`. At this time only CSV files are compared.
+Results are written to the `test` folder in a tree that replicates the template source tree.  Output files are written to the `OUTPUTDIR` folders created by the `create_autotest` command. These output files will be compared to reference copies in the template `autotest` folder. If the files are different then the test result is reported as `DIFFER`. At this time only CSV files are compared.
 
 ## Validation Test Results
 
@@ -109,4 +109,4 @@ The contents of the `test` folder are delivered in a file called `validate.tar.g
 
 To update the validate test data use by a template, run the command `./update_results.sh TEMPLATE`. This will copy the test results back to the template `autotest` folder to use as reference data for future validation tests.
 
-A validate data report is created using the `make report` command. The report documents the `autotest` data used to compare the results of validation tests.
+A validate data report is created using the `make report` command. The report documents the `autotest` data used to compare the results of validation tests. The report can be downloaded from https://github.com/slacgismo/gridlabd-template/raw/develop/report/Validation_Report.pdf.
