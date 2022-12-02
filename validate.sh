@@ -10,6 +10,7 @@
 #   --silent   disable error output
 #   --verbose  echo all commands as they are executed
 #   --warning  disable warning output
+#   --limit    solver time limit in seconds (default 60s)
 #
 # The validate process generates the file validate.tar.gz when a failure is detected.
 # The following outcomes are possible for each test case:
@@ -72,6 +73,7 @@ DEBUG=no
 QUIET=no
 SILENT=no
 WARNING=yes
+LIMIT=60
 
 VALIDATE=$ROOTDIR/validate.txt
 echo "Validation process started $(date)" > "$VALIDATE"
@@ -87,6 +89,8 @@ while [ $# -gt 0 ]; do
         SILENT=yes
     elif [ $1 == '--warning' ]; then
         WARNING=no
+    elif [ $1 == '--limit' ]; then
+        LIMIT=$1
     elif [ $1 == '--help' -o $1 == '-h' -o $1 == 'help' ]; then
         grep ^# validate.sh | tail -n +3 | cut -c3- | more
         exit 0
@@ -122,7 +126,7 @@ for ORG in $(grep -v ^# ".orgs"); do
                 cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
                 cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
 
-                if gridlabd -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
+                if gridlabd -D maximum_synctime=$LIMIT -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
                     echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
                     debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
                     DIFFER=0
@@ -134,17 +138,18 @@ for ORG in $(grep -v ^# ".orgs"); do
                         fi
                     done
                     if [ $DIFFER -gt 0 ]; then
-                        record "$AUTOTEST outputs differ"
+                        record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} results differ"
                         status DIFF
                         FAILED=$(($FAILED+1))
                     else
-                        record "$AUTOTEST ok"
+                        record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} test passes"
                         status OK
                     fi
                 else
-                    echo "[Failed: exit code $?]" >> "$TESTDIR/gridlabd.out"
-                    record "$AUTOTEST failed"
-                    status FAIL
+                    CODE=$?
+                    record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} simulation failed (code $CODE)"
+                    echo "[Failed: exit code $CODE]" >> "$TESTDIR/gridlabd.out"
+                    status "FAIL (code $CODE)"
                     FAILED=$(($FAILED+1))
                 fi
                 TESTED=$(($TESTED+1))
