@@ -83,16 +83,30 @@ where `<PERMISSIONS>` can be any combination of 'r' and 'x'.
 
 # Validation
 
-This repository automatic validates the templates with models in the `autotest` submodule. Every template with a matching subfolder in `autotest` will run a copy in the `test` folder.  The `autotest` GLM file is copied to the same folder in the `test` tree, and all `autotest.*` files are copied from the template `autotest`.  All results are posted in the `validate.txt` file upon completion.
+This repository automatic validates the templates with models in the `autotest/models` submodule. To get the latest version of the test models, use the `make models` commands.  This will require a new pull request to update and validate the repository if the models are changed.
 
-The run folder used is:
+Each template must have an `autotest` folder to have validation performed. Within the autotest folders, the `autotest/models` folder structure must be replicated, except that for each `glm` in the models tree a folder by the same name must be created and a file name `autotest.glm` must be created within it.  You may use the `./create_autotest TEMPLATE` to perform this task on a template.  The `autotest.glm` should contain any GLM model elements, macros, etc. necessary to run the run the validation test.
 
-~~~
-test/COUNTRY/REGION/ORGANIZATION/TEMPLATE/autotest/models/gridlabd-4/COLLECTION/MODELNAME
-~~~
+## Running Validation
 
-The run command used is:
+To run the validate test, use the `make validate` command.  The test command is 
 
 ~~~
-gridlabd MODELNAME.glm [autotest.glm] -t TEMPLATENAME --redirect all
+gridlabd -D pythonpath=TEMPLATEDIR -W OUTPUTDIR autotest.glm MODELNAME.glm -o gridlabd.json TEMPLATE.glm 1>OUTPUTDIR/gridlabd.out" 2>&1
 ~~~
+
+If the validation test fails then the test result is reported at `FAIL`.
+
+Results are written to the `test` folder in a tree that replicates the template source tree.  Output files are written to the `OUTPUTDIR` folders created by the `create_autotest` command. These output files will be compared to reference copies in the template `autotest` folder. If the files then the test result is reported as `DIFFER`. At this time only CSV files are compared.
+
+## Validation Test Results
+
+If the validation test succeeds and the files match then the test result is reported as `OK.`
+
+The contents of the `test` folder are delivered in a file called `validate.tar.gz`, which is made available for download when the validation workflow fails.
+
+## Validation Test Data
+
+To update the validate test data use by a template, run the command `./update_results.sh TEMPLATE`. This will copy the test results back to the template `autotest` folder to use as reference data for future validation tests.
+
+A validate data report is created using the `make report` command. The report documents the `autotest` data used to compare the results of validation tests.
