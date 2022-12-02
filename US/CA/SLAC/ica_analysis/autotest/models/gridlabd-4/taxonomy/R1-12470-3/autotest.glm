@@ -1,4 +1,3 @@
-#set maximum_synctime=600
 clock
 {
     timezone "PST+8PDT";
