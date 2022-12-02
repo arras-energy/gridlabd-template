@@ -17,7 +17,8 @@ jobs:
     - name: Sync submodules
       run: make models
     - name: Validation
-      run: make validate LIMIT='timeout 60s' || tar czf validate.tar.gz test
+      run: |
+        make validate
     - name: Save results
       uses: actions/upload-artifact@v2
       if: failure()

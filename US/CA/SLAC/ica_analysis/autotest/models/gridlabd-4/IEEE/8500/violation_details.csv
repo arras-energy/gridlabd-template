@@ -1,0 +1,4 @@
+objname,propname,timestamp,real,reactive,violation
+substation_meter,measured_voltage_A,2020-07-01 00:00:00 PDT,-59506.8,1849.2,NONE
+substation_meter,measured_voltage_B,2020-07-01 00:00:00 PDT,45511.8,60808.7,NONE
+substation_meter,measured_voltage_C,2020-07-01 00:00:00 PDT,44058.6,-59691.7,NONE

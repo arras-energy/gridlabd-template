@@ -1,0 +1,8 @@
+*.aux
+*.log
+*.toc
+*.lot
+*.err
+*.out
+ica_analysis_*.tex
+loadfactor_*.tex
