@@ -1,0 +1,72 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{longtable}
+\usepackage[margin=1in]{geometry}
+
+\def\code#1{\texttt{#1}}
+% \csvtable{TEMPLATE}{MODEL}{FILE}
+\newcommand\csvtable[3]{\begin{table}\caption{Validation data for #1 #2 #3}\footnotesize\csvautotabular[respect underscore=true]{../US/CA/SLAC/#1/autotest/models/gridlabd-4/#2/#3.csv}\end{table}}
+
+\title
+{
+	HiPAS GridLAB-D Template Validation Data Addendum
+}
+
+\author
+{
+	David P. Chassin, Principal Investigator
+\\
+	SLAC National Accelerator Laboratory
+\\
+	Menlo Park, California (USA) 
+}
+
+\date { \today }
+
+\begin{document}
+
+\maketitle
+
+\center 
+{
+	Copyright \copyright\ 2022, Regents of the Leland Stanford Junior University
+
+\vspace{1cm}
+
+	This report was created with funding from the California Energy Commission under grant EPC-17-046.
+
+\vspace{1cm}
+
+	SLAC National Accelerator Laboratory is operated by Stanford University for the US Department of Energy
+	under Contract DE-AC02-67SF00515.
+}
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\listoftables
+
+\newpage
+
+\section{Background}
+
+The HiPAS GridLAB-D Template repository \code{autotest} system runs all the published templates are all the models Version 4 models published on GitHuB. This report documents the validation data used when comparing the results of a proposed code change to the repository. Errors arising from this validation process will be reported as a \code{DIFF} error and cause a failure of the validation process.
+
+\section{Loadfactor Template}
+
+The \code{loadfactor} template allows loads in a model to be rescaled by an arbitrary factor. The validation test for this template rescales all the models by 50\%.
+
+\input{loadfactor_loads.tex}
+
+\section{ICA Analysis Template}
+
+The \code{ica\_analysis} template allows Integration Capacity Analsys (ICA) to be performed on reference models. 
+
+\input{ica_analysis_solar_capacity.tex}
+\input{ica_analysis_violation_details.tex}
+
+\end{document}

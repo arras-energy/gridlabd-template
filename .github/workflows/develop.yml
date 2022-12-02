@@ -20,7 +20,7 @@ jobs:
         git submodule update --init --recursive
     - name: Validation
       run: |
-        make validate LIMIT='timeout 60s' || tar czf validate.tar.gz test
+        make validate VERBOSE=yes DEBUG=yes
     - name: Save results
       uses: actions/upload-artifact@v2
       if: failure()
