@@ -51,7 +51,7 @@ function output()
 
 function record()
 {
-    echo $* >> "$VALIDATE"
+    echo $(date +'%Y-%m-%d %H:%M:%S %Z') [dt=${TIME:-(na)}s]: $* >> "$VALIDATE"
 }
 
 function processing()
@@ -130,8 +130,11 @@ for ORG in $(grep -v ^# ".orgs"); do
                 cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
                 cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
 
+                START=$(date +'%s')
                 if gridlabd -D maximum_synctime=$LIMIT -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
                     echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
+                    STOP=$(date +'%s')
+                    TIME=$(($STOP-$START))
                     debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
                     DIFFER=0
                     for CHECKCSV in $(find $(dirname "$ORG/$TEMPLATE/$AUTOTEST") -name '*.csv' -print); do
@@ -151,6 +154,8 @@ for ORG in $(grep -v ^# ".orgs"); do
                     fi
                 else
                     CODE=$?
+                    STOP=$(date +'%s')
+                    TIME=$(($STOP-$START))
                     record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} simulation failed (code $CODE)"
                     echo "[Failed: exit code $CODE]" >> "$TESTDIR/gridlabd.out"
                     status "FAIL (code $CODE)"
