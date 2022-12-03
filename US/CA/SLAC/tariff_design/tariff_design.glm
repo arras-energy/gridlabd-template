@@ -1,0 +1,47 @@
+// GridLAB-D tariff design model file
+
+#set savefile=input_model.json
+
+#ifexist "config.csv"
+#input "config.csv" -f config -t config
+#endif
+
+//#ifexist "${WEATHER_STATION}.tmy3" 
+//#input "${WEATHER_STATION}.tmy3"
+//#else 
+//#weather get "${WEATHER_STATION}.tmy3"
+//#input "${WEATHER_STATION}.tmy3"
+//#endif
+
+//GridLAB-D modules
+module revenue;
+
+//py modules
+module tariff_design;
+module powerflow;
+
+//Define classes here (inputs and outputs)
+
+object tariff {
+	name "tariff";
+}
+
+
+#for tri_meter in ${FIND class=triplex_meter}
+object billing {
+	name "bill_${tri_meter}";
+	meter "${tri_meter}";
+	tariff "tariff";
+	total_charges "0.0";
+}
+#done
+
+#for meter in ${FIND class=meter}
+object billing {
+	name "bill_${meter}";
+	meter "${meter}";
+	tariff "tariff";
+	total_charges "0.0";
+}
+#done
+

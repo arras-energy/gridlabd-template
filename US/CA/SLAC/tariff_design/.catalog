@@ -1,0 +1,6 @@
+tariff_design.glm:a=r
+tariff_design.py:a=rx
+tariff_design.md:a=r
+tariff_library_config.csv:a=r
+default_billing.py:a=rx
+module_revenue.glm:a=r

@@ -24,6 +24,8 @@ Options
 """
 import gridlabd;
 
+LOG = None
+
 def on_init(t):
     try:
         # get class of object to modify
