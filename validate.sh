@@ -107,6 +107,7 @@ done
 TESTED=0
 FAILED=0
 
+STARTTIME=$(date +'%s')
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
     for TEMPLATE in $(cd $ORG; ls -dF1 ${TEMPLATES:-*} 2>/dev/null | grep '/$' | sed -e 's:/$::'); do
@@ -166,13 +167,16 @@ for ORG in $(grep -v ^# ".orgs"); do
         fi
     done
 done
+STOPTIME=$(date +'%s')
 
-echo "$TESTED tested"
-echo "$FAILED failed"
-[ $TESTED -eq 0 ] && echo "0% success" || echo "$((100-100*$FAILED/$TESTED))% success"
+echo "Tested: $TESTED"
+echo -n "Failed: $FAILED"
+[ $TESTED -eq 0 ] && echo " (0%)" || echo " ($((100-100*$FAILED/$TESTED))%)"
+echo "Runtime: $(($STOPTIME-$STARTTIME)) seconds"
 if [ $FAILED -gt 0 ]; then
     tar cfz validate.tar.gz test
     exit 1
 else
     exit 0
 fi
+
