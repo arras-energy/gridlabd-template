@@ -1,4 +1,19 @@
 // Model for electric and gas houses
+//
+// Configuration parameters
+//
+//    WEATHER               TMY3 weather file (default none)
+//    NHOUSES_ELEC          number of fully electrified homes (default 1)
+//    NHOUSES_GAS           number of partial gas homes (default 0)
+//    TIMEZONE              timezone (default PST+8PDT)
+//    YEAR                  year of analysis (default 2020)
+//    MONTH                 month of analysis (default none)
+//    HEATINGSYSTEMTYPE     heating system type for electric homes (default HEAT_PUMP)
+//    COOLINGSYSTEMTYPE     cooling system type for electric homes (default HEAT_PUMP)
+//    HEATINGSETPOINT       heating setpoint temperature (default 70)
+//    COOLINGSETPOINT       cooling setpoint temperature (default 75)
+//    THERMALINTEGRITYLEVEL home thermal integrity (default GOOD)
+//    GASENDUSES            gas enduses in partial gas homes (default WATERHEATER|RANGE|DRYER)
 
 #ifexists "config.glm"
 #include "config.glm"
@@ -23,8 +38,8 @@ object climate
 clock 
 {
     timezone "${TIMEZONE:-PST+8PDT}";
-    starttime "${YEAR:-2020}-01-01 00:00:00";
-    stoptime "${YEAR:-2020}-12-31 23:59:59";
+    starttime "${YEAR:-2020}-${MONTH:-01}-01 00:00:00";
+    stoptime "${YEAR:-2020}-${MONTH:-12}-28 00:00:00";
 }
 
 module tape
@@ -76,11 +91,11 @@ object triplex_meter
     {
         property "phases,nominal_voltage,measured_real_energy_delta[kWh],measured_demand[kW]";
         file phase_${PHASE}.csv;
-        interval 52wk;
         line_units NONE;
+        interval 1 day;
     };
 }
 #done
 
 #on_exit 0 (head -n 1 phase_A.csv ; tail -q -n 1 phase_[ABC].csv ; rm phase_[ABC].csv ) > electrification.csv
-#on_exit 0 gridlabd plot -i=electrification.csv -o=electrification.png --plot:legend --plot:grid --plot:'y=measured_real_energy_delta[kWh],measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:ylabel=Power[W]/Energy[Wh] --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
+#on_exit 0 gridlabd plot -i=electrification.csv -o=electrification.png --plot:legend --plot:grid --plot:'y=measured_real_energy_delta[kWh],measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Peak power [W] / Total energy [Wh]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
