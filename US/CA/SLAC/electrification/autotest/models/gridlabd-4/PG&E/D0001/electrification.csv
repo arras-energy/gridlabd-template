@@ -1,0 +1,4 @@
+timestamp,phases,nominal_voltage,measured_real_energy_delta[kWh],measured_demand[kW]
+2020-12-30 00:00:00 PST,AS,+120,+1.06046,+7.36536
+2020-12-30 00:00:00 PST,BS,+120,+1.06046,+7.36536
+2020-12-30 00:00:00 PST,CS,+120,+1.06046,+7.36536
