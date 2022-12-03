@@ -83,4 +83,4 @@ object triplex_meter
 #done
 
 #on_exit 0 (head -n 1 phase_A.csv ; tail -q -n 1 phase_[ABC].csv ; rm phase_[ABC].csv ) > electrification.csv
-#on_exit 0 gridlabd plot -i=electrification.csv -o=electrification.png --plot:legend --plot:grid --plot:'y=measured_real_energy_delta[kWh],measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:ylabel=Power[W]/Energy[Wh] --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC} electric / ${NHOUSES_GAS} gas" --plot:fontsize=10
+#on_exit 0 gridlabd plot -i=electrification.csv -o=electrification.png --plot:legend --plot:grid --plot:'y=measured_real_energy_delta[kWh],measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:ylabel=Power[W]/Energy[Wh] --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
