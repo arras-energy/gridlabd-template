@@ -1,0 +1,2 @@
+#define NHOUSES_ELEC=20
+#define NHOUSES_GAS=10

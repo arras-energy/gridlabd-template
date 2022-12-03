@@ -51,7 +51,7 @@ function output()
 
 function record()
 {
-    echo $* >> "$VALIDATE"
+    echo $(date +'%Y-%m-%d %H:%M:%S %Z') [dt=${TIME:-(na)}s]: $* >> "$VALIDATE"
 }
 
 function processing()
@@ -76,21 +76,25 @@ WARNING=yes
 LIMIT=60
 
 VALIDATE=$ROOTDIR/validate.txt
-echo "Validation process started $(date)" > "$VALIDATE"
+echo "Validation process started on commit $(git rev-parse HEAD) at $(date)" > "$VALIDATE"
 
 while [ $# -gt 0 ]; do
-    if [ $1 == '--verbose' ]; then
+    if [ $1 == '--verbose' -o $1 == '-v' ]; then
         set -x
-    elif [ $1 == '--debug' ]; then
+    elif [ $1 == '--debug'  -o $1 == '-d' ]; then
         DEBUG=yes
-    elif [ $1 == '--quiet' ]; then
+    elif [ $1 == '--quiet'  -o $1 == '-q' ]; then
         QUIET=yes
-    elif [ $1 == '--silent' ]; then
+    elif [ $1 == '--silent'  -o $1 == '-s' ]; then
         SILENT=yes
-    elif [ $1 == '--warning' ]; then
+    elif [ $1 == '--warning'  -o $1 == '-w' ]; then
         WARNING=no
-    elif [ $1 == '--limit' ]; then
-        LIMIT=$1
+    elif [ $1 == '--limit' -o $1 == '-l' ]; then
+        LIMIT=$2
+        shift 1
+    elif [ $1 == '--template' -o $1 == '-t' ]; then
+        TEMPLATES=$2
+        shift 1
     elif [ $1 == '--help' -o $1 == '-h' -o $1 == 'help' ]; then
         grep ^# validate.sh | tail -n +3 | cut -c3- | more
         exit 0
@@ -103,9 +107,10 @@ done
 TESTED=0
 FAILED=0
 
+STARTTIME=$(date +'%s')
 for ORG in $(grep -v ^# ".orgs"); do
     debug "organization $ORG..."
-    for TEMPLATE in $(cd $ORG; ls -dF1 * 2>/dev/null | grep '/$' | sed -e 's:/$::'); do
+    for TEMPLATE in $(cd $ORG; ls -dF1 ${TEMPLATES:-*} 2>/dev/null | grep '/$' | sed -e 's:/$::'); do
         debug "template $TEMPLATE..."
         if [ ! -d autotest ]; then
             warning "$ORG/$TEMPLATE has no autotest"
@@ -126,8 +131,11 @@ for ORG in $(grep -v ^# ".orgs"); do
                 cp "$SOURCE" "$TESTDIR" || warning "unable to copy $SOURCE to $TESTDIR"
                 cp "$ORG/$TEMPLATE/$AUTOTEST" "$TESTDIR" || warning "unable to copy $AUTOTEST to $TESTDIR"
 
+                START=$(date +'%s')
                 if gridlabd -D maximum_synctime=$LIMIT -D pythonpath="$ROOTDIR/$ORG/$TEMPLATE" -W "$TESTDIR" autotest.glm $(basename "$SOURCE") -o gridlabd.json "$ROOTDIR/$ORG/$TEMPLATE/$TEMPLATE.glm" 1>"$TESTDIR/gridlabd.out" 2>&1; then
                     echo "[Success: exit code $?]" >> "$TESTDIR/gridlabd.out"
+                    STOP=$(date +'%s')
+                    TIME=$(($STOP-$START))
                     debug "Searching $(dirname $ORG/$TEMPLATE/$AUTOTEST) for check CSV files..."
                     DIFFER=0
                     for CHECKCSV in $(find $(dirname "$ORG/$TEMPLATE/$AUTOTEST") -name '*.csv' -print); do
@@ -147,6 +155,8 @@ for ORG in $(grep -v ^# ".orgs"); do
                     fi
                 else
                     CODE=$?
+                    STOP=$(date +'%s')
+                    TIME=$(($STOP-$START))
                     record "${AUTOTEST/autotest\/models\/gridlabd-4/$TEMPLATE} simulation failed (code $CODE)"
                     echo "[Failed: exit code $CODE]" >> "$TESTDIR/gridlabd.out"
                     status "FAIL (code $CODE)"
@@ -157,15 +167,16 @@ for ORG in $(grep -v ^# ".orgs"); do
         fi
     done
 done
+STOPTIME=$(date +'%s')
 
-echo "$TESTED tested"
-echo "$FAILED failed"
-[ $TESTED -eq 0 ] && echo "0% success" || echo "$((100-100*$FAILED/$TESTED))% success"
+echo "Tested: $TESTED"
+echo -n "Failed: $FAILED"
+[ $TESTED -eq 0 ] && echo " (0%)" || echo " ($((100-100*$FAILED/$TESTED))%)"
+echo "Runtime: $(($STOPTIME-$STARTTIME)) seconds"
 if [ $FAILED -gt 0 ]; then
     tar cfz validate.tar.gz test
     exit 1
 else
     exit 0
 fi
-
 

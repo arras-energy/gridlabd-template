@@ -13,8 +13,10 @@ if [ $# -eq 0 ]; then
 fi
 
 for CSV in $(ls -1 test/*/*/*/$1/autotest/models/gridlabd-4/*/*/*.csv 2>/dev/null); do
-	DST=${CSV/test\//}
-	if [ $CSV -nt $DST ]; then
-		echo TODO: Updating $DST...
+	DST="${CSV/test\//}"
+	if [ ! -f "$DST" -o "$CSV" -nt "$DST" ]; then
+		echo -n "Updating $DST... "
+		cp "$CSV" "$DST"
+		echo "ok"
 	fi
 done
