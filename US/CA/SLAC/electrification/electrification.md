@@ -14,7 +14,7 @@ To configure the model use file `config.csv`. For example:
 | HEATINGSETPOINT | 71
 | COOLINGSETPOINT | 74
 | THERMALINTEGRITYLEVEL | GOOD
-| GASENDUSES | HOTWATER
+| GASENDUSES | WATERHEATER
 | CURRDUMP | ENABLE
 
 Appliances that can defined as `GASENDUSES`, separate by '|':
