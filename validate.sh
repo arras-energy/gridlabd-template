@@ -76,7 +76,7 @@ WARNING=yes
 LIMIT=60
 
 VALIDATE=$ROOTDIR/validate.txt
-echo "Validation process started $(date)" > "$VALIDATE"
+echo "Validation process started on commit $(git rev-parse HEAD) at $(date)" > "$VALIDATE"
 
 while [ $# -gt 0 ]; do
     if [ $1 == '--verbose' -o $1 == '-v' ]; then
