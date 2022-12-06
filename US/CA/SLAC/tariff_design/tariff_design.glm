@@ -1,17 +1,32 @@
 // GridLAB-D tariff design model file
+#print "Running correct file"
 
-#set savefile=input_model.json
+//#set suppress_repeat_messages=FALSE
 
+#ifexist "config.glm"
+#include "config.glm"
+#else
 #ifexist "config.csv"
 #input "config.csv" -f config -t config
 #endif
+#endif
 
-//#ifexist "${WEATHER_STATION}.tmy3" 
-//#input "${WEATHER_STATION}.tmy3"
-//#else 
-//#weather get "${WEATHER_STATION}.tmy3"
-//#input "${WEATHER_STATION}.tmy3"
-//#endif
+#set minimum_timestep=3600
+
+#ifexist "${WEATHER_STATION}.glm"
+#include "${WEATHER_STATION}.glm"
+#else
+#ifmissing "${WEATHER_STATION}.tmy3" 
+#weather get "${WEATHER_STATION}.tmy3"
+#endif
+#input "${WEATHER_STATION}.tmy3"
+#endif
+
+#gridlabd -C $modelname -o input_model.json
+#python -m create_meters input_model.json model-meters.json
+#input "model-meters.json" --noclock 
+
+
 
 //GridLAB-D modules
 module revenue;
