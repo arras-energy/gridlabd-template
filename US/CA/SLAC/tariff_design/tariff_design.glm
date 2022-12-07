@@ -24,9 +24,7 @@
 
 #gridlabd -C $modelname -o input_model.json
 #python -m create_meters input_model.json model-meters.json
-#input "model-meters.json" --noclock 
-
-
+#input -D "json_load_options=--noclock" model-meters.json
 
 //GridLAB-D modules
 module revenue;
