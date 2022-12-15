@@ -5,12 +5,13 @@
 # Syntax: ./validate.sh [OPTIONS ...]
 #
 # Options
-#   --debug    enable debug output
-#   --quiet    disable standard output
-#   --silent   disable error output
-#   --verbose  echo all commands as they are executed
-#   --warning  disable warning output
-#   --limit    solver time limit in seconds (default 60s)
+#   --debug|-d             enable debug output
+#   --quiet|-q             disable standard output
+#   --silent|-s            disable error output
+#   --verbose|-v           echo all commands as they are executed
+#   --warning|-w           disable warning output
+#   --limit|-l TIME        solver time limit in seconds (default 60s)
+#   --template|-t NAME     validate specific template only
 #
 # The validate process generates the file validate.tar.gz when a failure is detected.
 # The following outcomes are possible for each test case:
