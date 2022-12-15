@@ -89,7 +89,7 @@ object triplex_meter
     measured_energy_delta_timestep 3600s;
     object recorder
     {
-        property "phases,nominal_voltage,measured_real_energy_delta[kWh],measured_demand[kW]";
+        property "phases,nominal_voltage,measured_real_energy[kWh],measured_demand[kW]";
         file phase_${PHASE}.csv;
         line_units NONE;
         interval 1 day;
@@ -98,4 +98,5 @@ object triplex_meter
 #done
 
 #on_exit 0 (head -n 1 phase_A.csv ; tail -q -n 1 phase_[ABC].csv ; rm phase_[ABC].csv ) > electrification.csv
-#on_exit 0 gridlabd plot -i=electrification.csv -o=electrification.png --plot:legend --plot:grid --plot:'y=measured_real_energy_delta[kWh],measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Peak power [W] / Total energy [Wh]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
+#on_exit 0 gridlabd plot -i=electrification.csv -o=total_energy.png --plot:legend --plot:grid --plot:'y=measured_real_energy[kWh]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Total energy [Wh]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
+#on_exit 0 gridlabd plot -i=electrification.csv -o=peak_power.png --plot:legend --plot:grid --plot:'y=measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Peak power [W]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
