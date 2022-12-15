@@ -62,6 +62,7 @@ module powerflow;
 #for PHASE in A B C
 object triplex_meter 
 {
+    name "electric_phase_${PHASE}";
     bustype SWING_PQ;
     object house:..${NHOUSES_ELEC:-1} 
     {
@@ -73,7 +74,23 @@ object triplex_meter
          cooling_system_type ${COOLINGSYSTEMTYPE:-HEAT_PUMP};
     };
 
-    object house:..${NHOUSES_GAS:-0} 
+    nominal_voltage 120V;
+    phases S${PHASE};
+    measured_energy_delta_timestep 3600s;
+    object recorder
+    {
+        property "phases,nominal_voltage,measured_real_energy[kWh],measured_demand[kW]";
+        file electric_phase_${PHASE}.csv;
+        line_units NONE;
+        interval 1 day;
+    };
+}
+
+object triplex_meter 
+{
+    name "gas_phase_${PHASE}";
+    bustype SWING_PQ;
+    object house:..${NHOUSES_GAS:-1} 
     {
          thermal_integrity_level ${THERMALINTEGRITYLEVEL:-GOOD};
          floor_area ${FLOOR_AREA:-1500};
@@ -90,13 +107,14 @@ object triplex_meter
     object recorder
     {
         property "phases,nominal_voltage,measured_real_energy[kWh],measured_demand[kW]";
-        file phase_${PHASE}.csv;
+        file gas_phase_${PHASE}.csv;
         line_units NONE;
         interval 1 day;
     };
 }
 #done
 
-#on_exit 0 (head -n 1 phase_A.csv ; tail -q -n 1 phase_[ABC].csv ; rm phase_[ABC].csv ) > electrification.csv
-#on_exit 0 gridlabd plot -i=electrification.csv -o=total_energy.png --plot:legend --plot:grid --plot:'y=measured_real_energy[kWh]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Total energy [Wh]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
-#on_exit 0 gridlabd plot -i=electrification.csv -o=peak_power.png --plot:legend --plot:grid --plot:'y=measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Peak power [W]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric / ${NHOUSES_GAS:-0} gas" --plot:fontsize=10
+#on_exit 0 (head -n 1 electric_phase_A.csv ; tail -q -n 1 electric_phase_[ABC].csv ; rm electric_phase_[ABC].csv ) > electrification.csv
+#on_exit 0 (tail -q -n 1 gas_phase_[ABC].csv ; rm gas_phase_[ABC].csv ) >> electrification.csv
+#on_exit 0 gridlabd plot -i=electrification.csv -o=total_energy.png --plot:legend --plot:grid --plot:'y=measured_real_energy[kWh]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Total energy [kWh]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric (left) vs. ${NHOUSES_GAS:-1} gas (right)" --plot:fontsize=10
+#on_exit 0 gridlabd plot -i=electrification.csv -o=peak_power.png --plot:legend --plot:grid --plot:'y=measured_demand[kW]' --plot:x=phases --plot:kind=bar  --plot:'ylabel=Peak power [kW]' --plot:xlabel=Phase --plot:title="Residential electrification: ${NHOUSES_ELEC:-1} electric (left) vs. ${NHOUSES_GAS:-1} gas (right)" --plot:fontsize=10
