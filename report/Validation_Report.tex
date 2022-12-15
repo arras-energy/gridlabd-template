@@ -28,8 +28,9 @@
 
 \maketitle
 
-\center 
 {
+	\center 
+	
 	Copyright \copyright\ 2022, Regents of the Leland Stanford Junior University
 
 \vspace{1cm}
@@ -58,17 +59,24 @@ The HiPAS GridLAB-D Template repository \code{autotest} system runs all the publ
 
 It should be noted that this validation process does not constitute verification that the previously stored results of the analyses are themselves correct. These results were obtained from original sources or from early runs of the analysis of other tools and/or earlier versions of the analysis.  The sole purpose of this validation suite is to ensure that any changes in the output results are detected to signal the need for follow-up verification.
 
-\section{Loadfactor Template}
-
-The \code{loadfactor} template allows loads in a model to be rescaled by an arbitrary factor. The validation test for this template rescales all the models by 50\%.
-
-\input{loadfactor_loads.tex}
-
 \section{ICA Analysis Template}
 
 The \code{ica\_analysis} template allows Integration Capacity Analsys (ICA) to be performed on reference models. 
 
 \input{ica_analysis_solar_capacity.tex}
 \input{ica_analysis_violation_details.tex}
+
+\section{Electrification Template}
+
+The \code{electrification} templates allows evaluation of the electrification impacts to be performed on models.
+
+
+\input{electrification_details.tex}
+
+\section{Loadfactor Template}
+
+The \code{loadfactor} template allows loads in a model to be rescaled by an arbitrary factor. The validation test for this template rescales all the models by 50\%.
+
+\input{loadfactor_loads.tex}
 
 \end{document}
