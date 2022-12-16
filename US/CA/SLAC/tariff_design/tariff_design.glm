@@ -1,5 +1,4 @@
 // GridLAB-D tariff design model file
-#print "Running correct file"
 
 //#set suppress_repeat_messages=FALSE
 
@@ -22,9 +21,9 @@
 #input "${WEATHER_STATION}.tmy3"
 #endif
 
-#gridlabd -C $modelname -o input_model.json
-#python -m create_meters input_model.json model-meters.json
-#input -D "json_load_options=--noclock" model-meters.json
+//#output "input_model.json"
+//#python -m create_meters input_model.json model-meters.json
+//#input -D "json_load_options=--noclock" model-meters.json
 
 //GridLAB-D modules
 module revenue;
@@ -57,4 +56,3 @@ object billing {
 	total_charges "0.0";
 }
 #done
-
