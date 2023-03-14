@@ -7,6 +7,7 @@ The electrification template applies a residential electrification model to the 
 To configure the model use file `config.csv` or `config.glm`. For example:
 
 | Parameter | Example | Default |
+|----|---|---|
 | WEATHER | CA-San_Jose_Intl_Ap.tmy3 | None |
 | NHOUSES_ELEC | 20 | 1 |
 | NHOUSES_GAS | 10 | 0 |
@@ -18,13 +19,15 @@ To configure the model use file `config.csv` or `config.glm`. For example:
 | HEATINGSETPOINT | 71 | 70 |
 | COOLINGSETPOINT | 74 | 75 |
 | THERMALINTEGRITYLEVEL | GOOD | GOOD |
-| GASENDUSES | WATERHEATER\|DRYER\|RANGE |
+| GASENDUSES | WATERHEATER\|DRYER\|RANGE | WATERHEATER\|DRYER\|RANGE 
 
 Valid `GASENDUSES` are:
 
-| Clothes Dryer | DRYER
-| Waterheater | WATERHEATER
-| Cooking | RANGE
+| Enduse | Type |
+|----|---|
+| Clothes Dryer | DRYER |
+| Waterheater | WATERHEATER |
+| Cooking | RANGE |
 
 To specify gas heating, use `HEATINGSYSTEMTYPE` `GAS`. To disable air conditioning use `COOLINGSYSTEMTYPE` `NONE`.
 
