@@ -18,7 +18,7 @@ To configure the model use file `config.csv` or `config.glm`. For example:
 | HEATINGSETPOINT | 71 | 70
 | COOLINGSETPOINT | 74 | 75
 | THERMALINTEGRITYLEVEL | GOOD | GOOD
-| GASENDUSES | WATERHEATER | WATERHEATER\|DRYER\|RANGE
+| GASENDUSES | WATERHEATER |DRYER | RANGE
 
 Valid `GASENDUSES` are:
 
