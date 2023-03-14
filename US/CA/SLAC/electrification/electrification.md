@@ -6,19 +6,19 @@ The electrification template applies a residential electrification model to the 
 
 To configure the model use file `config.csv` or `config.glm`. For example:
 
-| Parameter | Example | Default
-| WEATHER | CA-San_Jose_Intl_Ap.tmy3 | None
-| NHOUSES_ELEC | 20 | 1
-| NHOUSES_GAS | 10 | 0
-| TIMEZONE | PST+8PDT | PST+8PDT
-| YEAR | 2020 | 2020
-| MONTH | 7 | None
-| HEATINGSYSTEMTYPE | HEAT_PUMP | HEAT_PUMP 
-| COOLINGSYSTEMTYPE | HEAT_PUMP | HEAT_PUMP 
-| HEATINGSETPOINT | 71 | 70
-| COOLINGSETPOINT | 74 | 75
-| THERMALINTEGRITYLEVEL | GOOD | GOOD
-| GASENDUSES | WATERHEATER |DRYER | RANGE
+| Parameter | Example | Default |
+| WEATHER | CA-San_Jose_Intl_Ap.tmy3 | None |
+| NHOUSES_ELEC | 20 | 1 |
+| NHOUSES_GAS | 10 | 0 |
+| TIMEZONE | PST+8PDT | PST+8PDT |
+| YEAR | 2020 | 2020 |
+| MONTH | 7 | None |
+| HEATINGSYSTEMTYPE | HEAT_PUMP | HEAT_PUMP |
+| COOLINGSYSTEMTYPE | HEAT_PUMP | HEAT_PUMP | 
+| HEATINGSETPOINT | 71 | 70 |
+| COOLINGSETPOINT | 74 | 75 |
+| THERMALINTEGRITYLEVEL | GOOD | GOOD |
+| GASENDUSES | WATERHEATER\|DRYER\|RANGE |
 
 Valid `GASENDUSES` are:
 
