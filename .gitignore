@@ -13,4 +13,8 @@ validate.txt
 gridlabd.*
 stdout
 stderr
+US/CA/SLAC/tariff_design/config.glm
+*.png
+US/CA/SLAC/tariff_design/output.csv
+*.csv
 validate.tar.gz

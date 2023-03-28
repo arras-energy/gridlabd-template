@@ -29,6 +29,10 @@ models:
 validate:
 	@./validate.sh $(OPTIONS)
 
+models:
+	@git submodule sync
+	@git submodule update --init --recursive
+
 clean:
 	@rm -rf test validate.txt validate.tar.gz stderr stdout
 

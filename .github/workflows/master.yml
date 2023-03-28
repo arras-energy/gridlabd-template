@@ -14,10 +14,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Get test files
-      run: |
-        git submodule sync
-        git submodule update --init --recursive
+    - name: Sync submodules
+      run: make models
     - name: Validation
       run: |
         make validate
