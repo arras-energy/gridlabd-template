@@ -37,7 +37,11 @@ object climate {
 	name weather;
 	object player {
 		property wind_speed; 
-		file "./input/wind_speed.player";
+		#ifdef $WIND_SPEED
+			file "$WIND_SPEED";
+		#elseif
+			print("NO WIND SPEED DEFINED")
+		#endif
 	};
 	//tmyfile "CA-Chino_Airport.tmy3";
 }
