@@ -1,0 +1,43 @@
+// Test poles
+//
+//
+// Convert command:
+//   gridlabd convert CARDINAL_Polar\ -\ Design\ CalcDesign\ DSO.xlsx cardinal_poles.csv -f xlsx-spida -t csv-geodata
+//
+// Run command:
+//   gridlabd main_cardinal_poles.glm // cardinal_poles.glm
+//
+// Python command:
+//   convert('CARDINAL_Polar - Design CalcDesign DSO.xlsx', 'CARDINAL_PolarDesign Attachment and Equipment_Asset Details from SPIDA and SAP.xlsx', 'cardinal_poles.csv', options={'extract_equipment':'yes','include_network':'yes', 'include_mount':'yes', 'include_network':'CARDINAL.csv'})
+//
+#define suppress_repeat_messages=TRUE
+
+module status_log;
+module climate;
+module tape;
+
+module powerflow {
+	solver_method NR;
+	line_capacitance true;
+	message_flags VERBOSE;
+	}
+module reliability {
+    report_event_log false;
+}
+
+object fault_check
+{
+    check_mode ONCHANGE;
+    output_filename "./output/fault_check.txt";
+    reliability_mode TRUE;
+}
+
+//#weather get CA-Chino_Airport.tmy3
+object climate {
+	name weather;
+	object player {
+		property wind_speed; 
+		file "./input/wind_speed.player";
+	};
+	//tmyfile "CA-Chino_Airport.tmy3";
+}

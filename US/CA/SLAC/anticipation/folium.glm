@@ -1,0 +1,47 @@
+module powerflow;
+#set relax_naming_rules=TRUE
+class pole
+{
+	double pole_height;
+	double position;
+	double linesag;
+	double linesway;
+	double contact;
+	double strike;
+}
+class point
+{
+	double latitude;
+	double longitude;
+	double position;
+	double linesag;
+	double linesway;
+	double contact;
+	double strike;
+	char1024 status;
+}
+object pole_configuration
+{
+	name "tower";
+}
+object pole_configuration
+{
+	name "3pole";
+}
+object pole_configuration
+{
+	name "2pole";
+}
+object pole_configuration
+{
+	name "vert3";
+}
+object pole_configuration
+{
+	name "sideT";
+}
+object pole_configuration
+{
+	name "flat3";
+}
+#input "path_result_plot.csv" -f "table" -t "object" -C "point" -M "powerflow"
