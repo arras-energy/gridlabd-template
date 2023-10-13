@@ -27,7 +27,7 @@ module reliability {
 
 
 
-#ifdef $WIND_SPEED
+#ifdef WIND_SPEED
 object climate {
 	name weather;
 	object player {
