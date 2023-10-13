@@ -49,5 +49,5 @@ def on_commit(t) :
 def on_term(t) : 
     global data
 
-    df_energy = dump_csv(data,'pole_status.csv')
+    df_energy = dump_csv(data,'/tmp/output/pole_status.csv')
     return None
