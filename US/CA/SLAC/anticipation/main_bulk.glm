@@ -11,9 +11,8 @@
 //   convert('CARDINAL_Polar - Design CalcDesign DSO.xlsx', 'CARDINAL_PolarDesign Attachment and Equipment_Asset Details from SPIDA and SAP.xlsx', 'cardinal_poles.csv', options={'extract_equipment':'yes','include_network':'yes', 'include_mount':'yes', 'include_network':'CARDINAL.csv'})
 //
 #define suppress_repeat_messages=TRUE
-//#setenv GLPATH=${GLPATH}:${GLD_ETC}/template/US/CA/SLAC/anticipation/
 
-module status_log;
+//module status_log;
 module climate;
 module tape;
 
@@ -23,26 +22,22 @@ module powerflow {
 	message_flags VERBOSE;
 	}
 module reliability {
-    report_event_log false;
+    report_event_log true;
 }
 
-object fault_check
-{
-    check_mode ONCHANGE;
-    output_filename "./output/fault_check.txt";
-    reliability_mode TRUE;
-}
 
-//#weather get CA-Chino_Airport.tmy3
+#weather get CA-Chino_Airport.tmy3
+#ifdef $WIND_SPEED
 object climate {
 	name weather;
 	object player {
 		property wind_speed; 
-		#ifdef $WIND_SPEED
-			file "$WIND_SPEED";
-		#else
-			print("NO WIND SPEED DEFINED")
-		#endif
+		file "$WIND_SPEED";
 	};
-	//tmyfile "CA-Chino_Airport.tmy3";
 }
+#else 
+object climate {
+	name weather;
+	tmyfile "CA-Chino_Airport.tmy3";
+}
+#endif
