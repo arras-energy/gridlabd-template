@@ -26,7 +26,7 @@ module reliability {
 }
 
 
-#weather get CA-Chino_Airport.tmy3
+
 #ifdef $WIND_SPEED
 object climate {
 	name weather;
@@ -36,6 +36,7 @@ object climate {
 	};
 }
 #else 
+#weather get CA-Chino_Airport.tmy3
 object climate {
 	name weather;
 	tmyfile "CA-Chino_Airport.tmy3";
