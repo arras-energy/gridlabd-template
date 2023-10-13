@@ -1,4 +1,5 @@
 main_bulk.glm:a=r
 folium.glm:a=r
 add_info.py:a=rx
+status_log.py:a=rx
 folium_data.py:a=rx
