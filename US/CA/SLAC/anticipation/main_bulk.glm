@@ -40,7 +40,7 @@ object climate {
 		property wind_speed; 
 		#ifdef $WIND_SPEED
 			file "$WIND_SPEED";
-		#elseif
+		#else
 			print("NO WIND SPEED DEFINED")
 		#endif
 	};
