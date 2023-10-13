@@ -12,7 +12,7 @@
 //
 #define suppress_repeat_messages=TRUE
 
-//module status_log;
+module status_log;
 module climate;
 module tape;
 
