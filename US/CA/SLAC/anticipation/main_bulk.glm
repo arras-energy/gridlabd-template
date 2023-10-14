@@ -33,7 +33,7 @@ object climate {
 	name weather;
 	object player {
 		property wind_speed; 
-		file "/tmp/output/$WIND_SPEED_FILE";
+		file ${WIND_SPEED_FILE};
 	};
 }
 #else 
