@@ -12,6 +12,7 @@
 //
 #define suppress_repeat_messages=TRUE
 #define pythonpath="/usr/local/opt/gridlabd/current/share/gridlabd/template/US/CA/SLAC/anticipation"
+#exec printenv
 
 module status_log;
 module climate;
