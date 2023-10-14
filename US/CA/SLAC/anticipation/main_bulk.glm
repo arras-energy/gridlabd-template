@@ -28,12 +28,12 @@ module reliability {
 
 
 
-#ifdef WIND_SPEED_FILE
+#ifdef WIND_SPEED
 object climate {
 	name weather;
 	object player {
 		property wind_speed; 
-		file ${WIND_SPEED_FILE};
+		file ${WIND_SPEED};
 	};
 }
 #else 
