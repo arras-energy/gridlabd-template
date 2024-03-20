@@ -1,9 +1,8 @@
 import pandas as pd
 import datetime
 
-pole_status = {} 
 metered_energy = {}
-data = {}
+pole_status = {}
 objs = {}
 wrn_count = 0
 
@@ -35,7 +34,7 @@ def on_init(t) :
     return True
 
 def on_commit(t) :
-    global pole_status, wrn_count
+    global pole_status, metered_energy, wrn_count
     pole_status.update(get_info(t,'pole', 'status'))
     # pole_status.update(get_info(t,'pole', 'total_moment'))
     try : 
@@ -47,7 +46,8 @@ def on_commit(t) :
     return True 
 
 def on_term(t) : 
-    global data
+    global pole_status, metered_energy
 
-    df_energy = dump_csv(data,'/tmp/output/pole_status.csv')
+    df_energy = dump_csv(pole_status,'/tmp/output/pole_status.csv')
+    dump_csv(metered_energy, '/tmp/output/metered_energy.csv')
     return None

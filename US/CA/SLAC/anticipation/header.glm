@@ -13,6 +13,8 @@
 #define suppress_repeat_messages=TRUE
 #define pythonpath="/usr/local/opt/gridlabd/current/share/gridlabd/template/US/CA/SLAC/anticipation"
 //#exec printenv
+#set minimum_timestep=3600
+
 
 module status_log;
 module climate;
@@ -23,10 +25,38 @@ module powerflow {
 	line_capacitance true;
 	message_flags VERBOSE;
 	}
+#ifdef RELIABILITY_ON
 module reliability {
     report_event_log true;
 }
+object fault_check {				
+	name test_fault;
+	check_mode ONCHANGE;	
+	reliability_mode true;		
+//	output_filename ${FAULT_OUT_PATH};	
+	grid_association true;
+};
 
+object power_metrics {		
+	name pwrmetrics;
+	base_time_value 1 h;	
+}
+
+object metrics {
+	name testmetrics;
+	report_file metrics.txt;						
+	module_metrics_object pwrmetrics;					
+	metrics_of_interest "SAIFI,SAIDI,CAIDI,ASAI,MAIFI";
+	customer_group "class=meter";			
+	metric_interval 5 h; 								
+	report_interval 5 h;								
+};
+#endif
+clock {
+	starttime "${STARTTIME}";
+	stoptime "${STOPTIME}";
+	timezone "${TIMEZONE}";
+}
 
 
 #ifdef WIND_SPEED
