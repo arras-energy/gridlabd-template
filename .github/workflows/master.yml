@@ -10,19 +10,22 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: slacgismo/gridlabd:latest
+    container: lfenergy/arras:latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+    
     - name: Get test files
       run: |
         git submodule sync
         git submodule update --init --recursive
+        
     - name: Validation
       run: |
         make validate
+        
     - name: Save results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       if: failure()
       with:
         name: validate-result
