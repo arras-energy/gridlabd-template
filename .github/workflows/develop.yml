@@ -17,6 +17,7 @@ jobs:
     
     - name: Get test files
       run: |
+        git config --global --add safe.directory /__w/gridlabd-template/gridlabd-template
         git submodule sync
         git submodule update --init --recursive
         
