@@ -1,5 +1,5 @@
-[![master](https://github.com/slacgismo/gridlabd-template/actions/workflows/master.yml/badge.svg)](https://github.com/slacgismo/gridlabd-template/actions/workflows/master.yml)
-[![develop](https://github.com/slacgismo/gridlabd-template/actions/workflows/develop.yml/badge.svg)](https://github.com/slacgismo/gridlabd-template/actions/workflows/develop.yml)
+[![master](https://github.com/arras-energy/gridlabd-template/actions/workflows/master.yml/badge.svg)](https://github.com/arras-energy/gridlabd-template/actions/workflows/master.yml)
+[![develop](https://github.com/arras-energy/gridlabd-template/actions/workflows/develop.yml/badge.svg)](https://github.com/arras-energy/gridlabd-template/actions/workflows/develop.yml)
 
 To view the online documentation please use the [Docs Browser](https://docs.gridlabd.us/) and select the `gridlabd-template` project.
 # GridLAB-D Analysis Templates
