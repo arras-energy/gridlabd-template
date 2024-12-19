@@ -1,0 +1,76 @@
+// Test poles
+//
+//
+// Convert command:
+//   gridlabd convert CARDINAL_Polar\ -\ Design\ CalcDesign\ DSO.xlsx cardinal_poles.csv -f xlsx-spida -t csv-geodata
+//
+// Run command:
+//   gridlabd main_cardinal_poles.glm // cardinal_poles.glm
+//
+// Python command:
+//   convert('CARDINAL_Polar - Design CalcDesign DSO.xlsx', 'CARDINAL_PolarDesign Attachment and Equipment_Asset Details from SPIDA and SAP.xlsx', 'cardinal_poles.csv', options={'extract_equipment':'yes','include_network':'yes', 'include_mount':'yes', 'include_network':'CARDINAL.csv'})
+//
+#define suppress_repeat_messages=TRUE
+#define pythonpath="/usr/local/opt/gridlabd/current/share/gridlabd/template/US/CA/SLAC/anticipation"
+//#exec printenv
+#set minimum_timestep=3600
+
+
+module status_log;
+module climate;
+module tape;
+
+module powerflow {
+	solver_method NR;
+	line_capacitance true;
+	message_flags VERBOSE;
+	}
+#ifdef RELIABILITY_ON
+module reliability {
+    report_event_log true;
+}
+object fault_check {				
+	name test_fault;
+	check_mode ONCHANGE;	
+	reliability_mode true;		
+//	output_filename ${FAULT_OUT_PATH};	
+	grid_association true;
+};
+
+object power_metrics {		
+	name pwrmetrics;
+	base_time_value 1 h;	
+}
+
+object metrics {
+	name testmetrics;
+	report_file metrics.txt;						
+	module_metrics_object pwrmetrics;					
+	metrics_of_interest "SAIFI,SAIDI,CAIDI,ASAI,MAIFI";
+	customer_group "class=meter";			
+	metric_interval 5 h; 								
+	report_interval 5 h;								
+};
+#endif
+clock {
+	starttime "${STARTTIME}";
+	stoptime "${STOPTIME}";
+	timezone "${TIMEZONE}";
+}
+
+
+#ifdef WIND_SPEED
+object climate {
+	name weather;
+	object player {
+		property wind_speed; 
+		file ${WIND_SPEED};
+	};
+}
+#else 
+#weather get CA-Chino_Airport.tmy3
+object climate {
+	name weather;
+	tmyfile "CA-Chino_Airport.tmy3";
+}
+#endif
