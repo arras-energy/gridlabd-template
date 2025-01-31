@@ -22,12 +22,15 @@ Options
 
     LOAD_FACTOR_LOGFILE - the log file to record changes in (default is None)
 """
-import gridlabd;
+try:
+    import gldcore
+except:
+    import gridlabd as gldcore
 
 def on_init(t):
     try:
         # get class of object to modify
-        OBJECT_CLASS = gridlabd.get_global("LOAD_FACTOR_CLASS")
+        OBJECT_CLASS = gldcore.get_global("LOAD_FACTOR_CLASS")
         if not OBJECT_CLASS:
             OBJECT_CLASS = ["load","triplex_load"]
         if "," in OBJECT_CLASS:
@@ -36,12 +39,12 @@ def on_init(t):
             OBJECT_CLASS = [OBJECT_CLASS]
 
         # get property to modify
-        OBJECT_PROPERTY = gridlabd.get_global("LOAD_FACTOR_PROPERTY")
+        OBJECT_PROPERTY = gldcore.get_global("LOAD_FACTOR_PROPERTY")
         if not OBJECT_PROPERTY:
             OBJECT_PROPERTY = "constant_power_"
 
         # get file to load changes
-        LOG_FILE = gridlabd.get_global("LOAD_FACTOR_LOGFILE")
+        LOG_FILE = gldcore.get_global("LOAD_FACTOR_LOGFILE")
         if LOG_FILE:
             LOG = open(LOG_FILE,"w")
             print("class,name,property,nominal.real,nominal.reactive,actual.real,actual.reactive",file=LOG)
@@ -49,11 +52,11 @@ def on_init(t):
             LOG = None
 
         # get load factor to apply
-        LOAD_FACTOR = float(gridlabd.get_global("LOAD_FACTOR"))
+        LOAD_FACTOR = float(gldcore.get_global("LOAD_FACTOR"))
         if LOAD_FACTOR:
-            objects = gridlabd.get("objects")
+            objects = gldcore.get("objects")
             for obj in objects:
-                data = gridlabd.get_object(obj)
+                data = gldcore.get_object(obj)
                 if data["class"] in OBJECT_CLASS:
                     for name,value in data.items():
                         if name.startswith(OBJECT_PROPERTY):
@@ -65,10 +68,10 @@ def on_init(t):
                                     update = str(modify.real)
                                 else:
                                     update = f"{str(complex(modify))[1:-1]}"
-                                gridlabd.set_value(obj,name,update)
+                                gldcore.set_value(obj,name,update)
                                 if LOG:
                                     print(f"{data['class']},{obj},{name},{value.real},{value.imag},{modify.real},{modify.imag}",file=LOG)
     except Exception as err:
-        gridlabd.warning(f"{obj}.{name}: {err}")
+        gldcore.warning(f"{obj}.{name}: {err}")
     return True
 

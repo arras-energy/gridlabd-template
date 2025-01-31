@@ -20,7 +20,11 @@ The ICA analysis files may be downloaded from the GridLAB-D template library usi
 
 """
 
-import sys, re, csv, datetime, gridlabd
+import sys, re, csv, datetime
+try:
+    import gldcore
+except:
+    import gridlabd as gldcore
 
 # 
 # Module globals
@@ -137,7 +141,7 @@ except:
 # Module utilities
 #
 
-def add_property(objname,propname,limittype,nonzero=True,noexception=True,onexception=gridlabd.warning):
+def add_property(objname,propname,limittype,nonzero=True,noexception=True,onexception=gldcore.warning):
     """Add a property to the list of properties to consider
 
     Parameters:
@@ -151,7 +155,7 @@ def add_property(objname,propname,limittype,nonzero=True,noexception=True,onexce
     
     try:
         # get the property
-        prop = gridlabd.property(objname,propname)
+        prop = gldcore.property(objname,propname)
 
         # get the value of the property
         value = prop.get_value()
@@ -205,7 +209,7 @@ def on_init(t):
     global target_properties
 
     # get the output folder name from the global variable list
-    output_folder = gridlabd.get_global("OUTPUT")
+    output_folder = gldcore.get_global("OUTPUT")
 
     # if none is defined
     if not output_folder:
@@ -217,25 +221,25 @@ def on_init(t):
     if not object_list:
 
         # use list of all objects
-        object_list = gridlabd.get("objects")
+        object_list = gldcore.get("objects")
 
     # for each object in the object list
     for objname in object_list:
 
         # the object's class
-        classname = gridlabd.get_value(objname,"class")
+        classname = gldcore.get_value(objname,"class")
 
         # if the class is listed among the targets
         for classname, target_list in target_properties.items():
 
             # get the object's data
-            objdata = gridlabd.get_object(objname)
+            objdata = gldcore.get_object(objname)
 
             # if the object has phase data
             if "phases" in objdata.keys():
 
                 # get the object's class structure
-                classdata = gridlabd.get_class(classname)
+                classdata = gldcore.get_class(classname)
 
                 # for each property in the class's target property list
                 for property_name, limittype in target_list.items():
@@ -268,13 +272,13 @@ def on_sync(t):
     global limit_list
 
     # get the current timestamp in human readable form
-    dt = gridlabd.get_global("clock")
-    gridlabd.debug(f"*** onsync({dt}) ***")
+    dt = gldcore.get_global("clock")
+    gldcore.debug(f"*** onsync({dt}) ***")
 
     # determine whether a violation has occurred
-    violation_active = int(gridlabd.get_global("powerflow::violation_active"))
+    violation_active = int(gldcore.get_global("powerflow::violation_active"))
     if violation_active:
-        gridlabd.debug(f"{dt}: violation detected (violation_active={violation_active})")
+        gldcore.debug(f"{dt}: violation detected (violation_active={violation_active})")
 
     # start by assuming there's nothing left to do with the property being considered
     done = None
@@ -284,7 +288,7 @@ def on_sync(t):
 
         # get the object name of the property to consider (the first one in the list of keys
         objname = list(property_list.keys())[0]
-        gridlabd.debug(f"{dt}: updating {objname}")
+        gldcore.debug(f"{dt}: updating {objname}")
         if objname not in limit_list:
             limit_list[objname] = {}
 
@@ -318,7 +322,7 @@ def on_sync(t):
 
                 # if a violation has occurred
                 if violation_active:
-                    gridlabd.debug(f"{dt}: resetting {objname}.{propname} to base {base}")
+                    gldcore.debug(f"{dt}: resetting {objname}.{propname} to base {base}")
 
                     # reset the property to its original value
                     prop.set_value(base)
@@ -330,14 +334,14 @@ def on_sync(t):
                             "timestamp" : dt, 
                             "real" : round(load_limit.real,1), 
                             "reactive" : round(load_limit.imag,1)}
-                    limit_list[objname][propname]["violation"] = gridlabd.get_value(objname,"violation_detected")
+                    limit_list[objname][propname]["violation"] = gldcore.get_value(objname,"violation_detected")
 
                     # flag that processing is done
                     done = objname
 
                 # if the maximum solar limit is reached
                 elif power_limit and value.real < power_limit and limit == "POWER":
-                    gridlabd.debug(f"{dt}: power limit reach for {objname}.{propname} = {value}")
+                    gldcore.debug(f"{dt}: power limit reach for {objname}.{propname} = {value}")
 
                     # reset the property to its original value
                     prop.set_value(base)
@@ -356,7 +360,7 @@ def on_sync(t):
 
                 # if the maximum solar limit is reached
                 elif voltage_limit and base.real != 0.0 and abs((value.real-base.real)/base.real) > voltage_limit and limit == "VOLTAGE":
-                    gridlabd.debug(f"{dt}: power deviation limit reach for {objname}.{propname} = {value}")
+                    gldcore.debug(f"{dt}: power deviation limit reach for {objname}.{propname} = {value}")
 
                     # reset the property to its original value
                     prop.set_value(base)
@@ -376,7 +380,7 @@ def on_sync(t):
 
                 # if no violation has occurred
                 else:
-                    gridlabd.debug(f"{dt}: updating {objname}.{propname} = {value}")
+                    gldcore.debug(f"{dt}: updating {objname}.{propname} = {value}")
 
                     # set the new value of the property
                     prop.set_value(value)
@@ -401,7 +405,7 @@ def on_sync(t):
 
         # if done
         if done:
-            gridlabd.debug(f"{dt}: finished with {objname}")
+            gldcore.debug(f"{dt}: finished with {objname}")
 
             # if property list is empty
             if proplist == {}:
@@ -417,26 +421,26 @@ def on_sync(t):
 
             # if the property list is non-empty
             if property_list:
-                gridlabd.debug(f"{dt}: next is {list(property_list.keys())[0]}")
+                gldcore.debug(f"{dt}: next is {list(property_list.keys())[0]}")
 
         # if a violation occurred
         if violation_active:
 
             # clear the violation
-            gridlabd.debug(f"{dt}: clearing violation")
-            gridlabd.set_global("powerflow::violation_active","0")
+            gldcore.debug(f"{dt}: clearing violation")
+            gldcore.set_global("powerflow::violation_active","0")
 
         # wait 1 minute for controls to settle before trying the next value
         tt = t+60
-        gridlabd.debug(f"updating to {datetime.datetime.fromtimestamp(tt)}")
+        gldcore.debug(f"updating to {datetime.datetime.fromtimestamp(tt)}")
         return tt
 
     # no objects or properties left to consider
     else:
 
         # nothing left to do
-        gridlabd.debug(f"updating to NEVER")
-        return gridlabd.NEVER
+        gldcore.debug(f"updating to NEVER")
+        return gldcore.NEVER
 
 def on_term(t):
     """GridLAB-D on_term event handler
@@ -467,7 +471,7 @@ def on_term(t):
                         power = 0.0
                     power += data["real"]/1000.0
                 except:
-                    gridlabd.warning(f"no real power in data={data}")
+                    gldcore.warning(f"no real power in data={data}")
                     pass
 
             # write the total power
